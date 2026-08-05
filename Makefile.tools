@@ -1,0 +1,12 @@
+TOOL_DIRS = tools/funkinisopak tools/funkinarcpak tools/funkinchartpak \
+	tools/funkinpicopak tools/funkintimconv tools/funkinchrpak \
+	tools/psxavenc tools/xainterleave tools/funkinmultitool
+
+TOOLS = $(foreach tool,$(TOOL_DIRS),$(tool)/$(notdir $(tool)).exe)
+
+all: $(TOOLS)
+
+$(TOOLS):
+	cd $(dir $@) && $(MAKE)
+
+.PHONY: all

@@ -1,0 +1,281 @@
+/*
+	"mem" by Regan "CuckyDev" Green:
+	A tiny portable C89 memory allocator.
+	
+	This is a single-header library. You must include this file alongside `#define MEM_IMPLEMENTATION` in one file in order to use.
+	You can then include `mem.h` in other files for the function declarations.
+	
+	Additional control defines:
+	MEM_STAT - This will enable the Mem_GetStat function which returns information about available memory in the heap.
+	MEM_POOL - This will enable memory pool functionality for frequently allocated objects.
+*/
+
+#ifndef MEM_GUARD_MEM_H
+#define MEM_GUARD_MEM_H
+
+#include <stddef.h>
+
+/* Constants and macros */
+#define MEM_ALIGNSIZE 0x10
+#define MEM_ALIGN(x) (((size_t)(x) + 0xF) & ~0xF)
+
+#ifdef PSXF_STDMEM
+
+#include <stdlib.h>
+
+#undef MEM_STAT /* Control unsupported */
+#undef MEM_POOL /* Control unsupported */
+
+#define Mem_Init(x,y)
+#define Mem_Alloc malloc
+#define Mem_Free free
+
+#else
+
+/* Function declarations */
+int Mem_Init(void *ptr, size_t size);
+void *Mem_Alloc(size_t size);
+void Mem_Free(void *ptr);
+#ifdef MEM_STAT
+	void Mem_GetStat(size_t *used, size_t *size, size_t *max);
+#endif
+
+#ifdef MEM_POOL
+	/* Memory pool functions for frequently allocated objects */
+	void *Mem_PoolAlloc(size_t size);
+	void Mem_PoolFree(void *ptr);
+	void Mem_PoolInit(void);
+	void Mem_PoolCleanup(void);
+#endif
+
+/* Implementation */
+#ifdef MEM_IMPLEMENTATION
+
+typedef struct Mem_Header
+{
+	struct Mem_Header *prev, *next;
+	size_t size;
+} Mem_Header;
+#define MEM_HEDSIZE (MEM_ALIGN(sizeof(Mem_Header)))
+
+static Mem_Header *mem = NULL;
+#ifdef MEM_STAT
+	static size_t mem_used, mem_max;
+#endif
+
+#ifdef MEM_POOL
+/* Memory pool for frequently allocated objects - Optimized for full 2MB usage */
+#define MEM_POOL_SIZE 16
+#define MEM_POOL_MAX_ENTRIES 32
+
+typedef struct Mem_PoolEntry
+{
+	void *ptr;
+	size_t size;
+	boolean in_use;
+} Mem_PoolEntry;
+
+static Mem_PoolEntry mem_pool[MEM_POOL_MAX_ENTRIES];
+static size_t mem_pool_count = 0;
+
+void Mem_PoolInit(void)
+{
+	for (int i = 0; i < MEM_POOL_MAX_ENTRIES; i++)
+	{
+		mem_pool[i].ptr = NULL;
+		mem_pool[i].size = 0;
+		mem_pool[i].in_use = false;
+	}
+	mem_pool_count = 0;
+}
+
+void *Mem_PoolAlloc(size_t size)
+{
+	//Try to find an existing pool entry of the right size
+	for (size_t i = 0; i < mem_pool_count; i++)
+	{
+		if (!mem_pool[i].in_use && mem_pool[i].size >= size)
+		{
+			mem_pool[i].in_use = true;
+			return mem_pool[i].ptr;
+		}
+	}
+	
+	//Allocate new entry if pool not full
+	if (mem_pool_count < MEM_POOL_MAX_ENTRIES)
+	{
+		void *ptr = Mem_Alloc(size);
+		if (ptr != NULL)
+		{
+			mem_pool[mem_pool_count].ptr = ptr;
+			mem_pool[mem_pool_count].size = size;
+			mem_pool[mem_pool_count].in_use = true;
+			mem_pool_count++;
+		}
+		return ptr;
+	}
+	
+	//Fall back to regular allocation
+	return Mem_Alloc(size);
+}
+
+void Mem_PoolFree(void *ptr)
+{
+	//Find and mark as free
+	for (size_t i = 0; i < mem_pool_count; i++)
+	{
+		if (mem_pool[i].ptr == ptr && mem_pool[i].in_use)
+		{
+			mem_pool[i].in_use = false;
+			return;
+		}
+	}
+	
+	//Not in pool, use regular free
+	Mem_Free(ptr);
+}
+
+void Mem_PoolCleanup(void)
+{
+	for (size_t i = 0; i < mem_pool_count; i++)
+	{
+		if (mem_pool[i].ptr != NULL)
+		{
+			Mem_Free(mem_pool[i].ptr);
+			mem_pool[i].ptr = NULL;
+		}
+	}
+	mem_pool_count = 0;
+}
+#endif
+
+int Mem_Init(void *ptr, size_t size)
+{
+	/* Make sure there's enough space for mem header */
+	if (ptr == NULL || size < MEM_HEDSIZE)
+		return 1;
+	
+	/* Get mem pointer and available range (after 16 byte alignment) */
+	mem = (Mem_Header*)MEM_ALIGN(ptr);
+	
+	/* Initial mem header */
+	mem->prev = NULL;
+	mem->next = NULL;
+	mem->size = ((char*)ptr + size) - (char*)mem;
+	
+	/* Initial mem state */
+	#ifdef MEM_STAT
+		mem_max = mem_used = MEM_HEDSIZE;
+	#endif
+	
+	#ifdef MEM_POOL
+		Mem_PoolInit();
+	#endif
+	
+	return 0;
+}
+
+static Mem_Header *Mem_GetHeader(void *ptr)
+{
+	if (ptr == NULL)
+		return NULL;
+	return (Mem_Header*)((char*)ptr - MEM_HEDSIZE);
+}
+
+void *Mem_Alloc(size_t size)
+{
+	/* Ensure we have a heap */
+	if (mem == NULL)
+		return NULL;
+	
+	/* Get true size we have to fit */
+	size = MEM_ALIGN(size + MEM_HEDSIZE);
+	
+	/* Get header pointer */
+	Mem_Header *head, *prev, *next;
+	char *hpos = (char*)mem + MEM_HEDSIZE;
+	
+	prev = mem;
+	next = prev->next;
+	
+	while (1)
+	{
+		if (next != NULL)
+		{
+			/* Check against the next block */
+			size_t cleft = (char*)next - hpos;
+			if (cleft >= size)
+			{
+				/* Set pointer */
+				head = (Mem_Header*)hpos;
+				break;
+			}
+			
+			/* Check next header */
+			hpos = (char*)next + next->size;
+			prev = next;
+			next = prev->next;
+		}
+		else
+		{
+			/* Check against end of heap */
+			size_t cleft = ((char*)mem + mem->size) - hpos;
+			if (cleft < size)
+				return NULL;
+			
+			/* Set pointer */
+			head = (Mem_Header*)hpos;
+			break;
+		}
+	}
+	
+	/* Link header */
+	head->size = size;
+	head->prev = prev;
+	if ((head->next = prev->next) != NULL)
+		head->next->prev = head;
+	prev->next = head;
+	
+	#ifdef MEM_STAT
+		/* Update stats */
+		if ((mem_used += size) >= mem_max)
+			mem_max = mem_used;
+	#endif
+	
+	return (void*)(hpos + MEM_HEDSIZE);
+}
+
+void Mem_Free(void *ptr)
+{
+	/* Get header of pointer */
+	if (ptr == NULL)
+		return;
+	Mem_Header *head = Mem_GetHeader(ptr);
+	
+	/* Unlink header */
+	if ((head->prev->next = head->next) != NULL)
+		head->next->prev = head->prev;
+	
+	#ifdef MEM_STAT
+		/* Update stats */
+		mem_used -= head->size;
+	#endif
+}
+
+#ifdef MEM_STAT
+	void Mem_GetStat(size_t *used, size_t *size, size_t *max)
+	{
+		if (used != NULL)
+			*used = mem_used;
+		if (size != NULL)
+			*size = mem->size;
+		if (max != NULL)
+			*max = mem_max;
+	}
+#endif
+
+#endif /* MEM_IMPLEMENTATION */
+
+#endif /* PSXF_STDMEM */
+
+#endif /* MEM_GUARD_MEM_H */

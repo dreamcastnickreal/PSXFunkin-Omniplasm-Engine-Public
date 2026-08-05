@@ -1,0 +1,121 @@
+TARGET = funkin_disc3
+TYPE = ps-exe
+RAM_ORIGIN ?= 0x80000000
+RAM_LENGTH ?= 2M
+STACK_SIZE ?= 0x400
+GFX_OTLEN ?= 6
+GFX_PRIBUFF_LEN ?= 16384
+
+SRCS = src/main.c \
+       src/mutil.c \
+       src/random.c \
+       src/archive.c \
+       src/font.c \
+       src/trans.c \
+       src/loadscr.c \
+       src/menu.c \
+       src/stage.c \
+       src/songswap.c \
+	src/event.c \
+	src/events.c \
+       src/debug.c \
+       src/save.c \
+       src/psx.c \
+	src/disc_swap_disc3.c \
+	src/str.c \
+       src/io.c \
+       src/gfx.c \
+       src/audio.c \
+       src/pad.c \
+       src/timer.c \
+       src/tween.c \
+       src/stage/dummy.c \
+       src/stage/bvoid.c \
+       src/stage/week1.c \
+       src/stage/week2.c \
+       src/stage/week3.c \
+       src/stage/trio.c \
+       src/stage/kitchen.c \
+       src/animation.c \
+       src/character.c \
+       src/character/bf.c \
+       src/character/speaker.c \
+       src/character/dad.c \
+       src/character/spook.c \
+       src/character/pico.c \
+       src/character/monster.c \
+       src/character/gf.c \
+       src/character/exep3.c \
+       src/character/apple.c \
+       src/character/orange.c \
+	src/character/jerry.c \
+	src/character/logan.c \
+	src/character/eyes.c \
+	src/character/abot_speaker.c \
+	src/character/menuo.c \
+	src/character/menup.c \
+	src/character/menugf.c \
+       src/object.c \
+       src/object/combo.c \
+       src/object/splash.c \
+       src/pause.c \
+	src/psn00b/vlc.c \
+       src/psn00b/vlc2.s \
+       mips/common/crt0/crt0.s
+
+# Small-build include lists: files always included plus per-disc used extras
+EVERYWHERE_LIST = \
+       src/stage/dummy.c \
+       src/stage/bvoid.c \
+       src/stage/week1.c \
+       src/character/bf.c \
+       src/character/speaker.c \
+       src/character/dad.c \
+       src/character/gf.c \
+       src/character/abot_speaker.c \
+       src/character/menuo.c \
+       src/character/menup.c \
+       src/character/menugf.c
+
+# Disc3 extras (used on disc3)
+DISC3_INCLUDE = \
+       src/character/apple.c \
+       src/character/orange.c \
+       src/character/jerry.c \
+       src/character/logan.c \
+       src/character/eyes.c \
+       src/stage/kitchen.c
+
+# Runtime disc switching needs constructors used by every disc's stage table.
+
+CPPFLAGS += -Wall -Wextra -pedantic -mno-check-zero-division -DDISC3_ONLY
+CPPFLAGS += -DGFX_OTLEN_DEFAULT=$(GFX_OTLEN) -DGFX_PRIBUFF_LEN_DEFAULT=$(GFX_PRIBUFF_LEN)
+LDFLAGS += -Wl,--defsym=RAM_ORIGIN=$(RAM_ORIGIN) -Wl,--defsym=RAM_LENGTH=$(RAM_LENGTH) -Wl,--defsym=__stack_size=$(STACK_SIZE)
+LDFLAGS += -Wl,--start-group
+# TODO: remove unused libraries
+LDFLAGS += -lapi
+#LDFLAGS += -lc
+LDFLAGS += -lc2
+LDFLAGS += -lcd
+#LDFLAGS += -lcomb
+LDFLAGS += -lds
+LDFLAGS += -letc
+LDFLAGS += -lgpu
+LDFLAGS += -lgcc
+#LDFLAGS += -lgs
+#LDFLAGS += -lgte
+#LDFLAGS += -lgun
+#LDFLAGS += -lhmd
+#LDFLAGS += -lmath
+#LDFLAGS += -lmcx
+LDFLAGS += -lpad
+#+LDFLAGS += -lcard
+#+LDFLAGS += -lmcrd
+#+LDFLAGS += -lpress
+#LDFLAGS += -lsio
+LDFLAGS += -lsnd
+LDFLAGS += -lspu
+#LDFLAGS += -ltap
+LDFLAGS += -flto -Wl,--end-group
+
+include mips/common.mk\

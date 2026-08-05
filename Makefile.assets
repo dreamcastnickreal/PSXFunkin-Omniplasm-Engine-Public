@@ -1,0 +1,44 @@
+BUILD ?= Debug
+OPTIMIZE_HOT ?= 1
+# Keep the full per-disc object set size-optimized.  This is required for the
+# 0x1B1000 usable-heap guarantee with the bundled GCC 11.2 toolchain.
+HOT_CFLAGS ?= -Os
+
+ifeq ($(BUILD),Debug)
+ENABLE_DEBUG ?= 1
+else
+ENABLE_DEBUG ?= 0
+endif
+
+GAME_MAKE_FLAGS = BUILD=$(BUILD) OPTIMIZE_HOT=$(OPTIMIZE_HOT) HOT_CFLAGS=$(HOT_CFLAGS) ENABLE_DEBUG=$(ENABLE_DEBUG)
+
+all:
+	@$(MAKE) -B -f Makefile DISC=1 $(GAME_MAKE_FLAGS)
+	@$(MAKE) -B -f Makefile DISC=2 $(GAME_MAKE_FLAGS)
+	@$(MAKE) -B -f Makefile DISC=3 $(GAME_MAKE_FLAGS)
+	@$(MAKE) -f Makefile.tools
+	@$(MAKE) -f Makefile.tim
+	@$(MAKE) -f Makefile.cht
+	@$(MAKE) -f Makefile.xa
+	@$(MAKE) -f Makefile.str
+	@mkpsxiso -y funkin_disc1.xml
+	@mkpsxiso -y funkin_disc2.xml
+	@mkpsxiso -y funkin_disc3.xml
+
+.PHONY: small
+small:
+	@$(MAKE) -B -f Makefile DISC=1 SMALL_BUILD=1 $(GAME_MAKE_FLAGS)
+	@$(MAKE) -B -f Makefile DISC=2 SMALL_BUILD=1 $(GAME_MAKE_FLAGS)
+	@$(MAKE) -B -f Makefile DISC=3 SMALL_BUILD=1 $(GAME_MAKE_FLAGS)
+	@$(MAKE) -f Makefile.tools
+	@$(MAKE) -f Makefile.tim
+	@$(MAKE) -f Makefile.cht
+	@$(MAKE) -f Makefile.xa
+	@$(MAKE) -f Makefile.str
+	@mkpsxiso -y funkin_disc1.xml
+	@mkpsxiso -y funkin_disc2.xml
+	@mkpsxiso -y funkin_disc3.xml
+
+.PHONY: all small clean
+clean:
+	@bash tools/clean-assets.sh

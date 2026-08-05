@@ -1,0 +1,704 @@
+/*
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+#include "audio.h"
+
+#include "io.h"
+#include "main.h"
+#include "stage.h"
+
+#include "disc_swap_disc1.h"
+#include "disc_swap_disc2.h"
+#include "disc_swap_disc3.h"
+
+//XA state
+
+#define XA_STATE_INIT    (1 << 0)
+#define XA_STATE_PLAYING (1 << 1)
+#define XA_STATE_LOOPS   (1 << 2)
+#define XA_STATE_SEEKING (1 << 3)
+static CdlFILE xa_file;
+static u8 xa_state, xa_resync, xa_volume, xa_channel;
+static u64 xa_pos, xa_start, xa_end;
+static s16 xa_offset;
+
+//Loudness tracking for visualizer (7 frequency bands 0-255)
+static u8 lc_level[7];
+static u16 lc_target[7];
+static u16 lc_counter;
+
+// Pseudo-frequency analyzer state
+// 7 bands with different center frequencies (simulated via oscillators)
+static s16 osc_phase[7];
+static s16 osc_freq[7] = { 13, 11, 9, 7, 5, 3, 2 };  // relative frequencies per band
+static s16 osc_depth[7] = { 80, 100, 120, 140, 150, 160, 170 };  // modulation depth
+static s16 env_attack[7]  = { 6, 5, 4, 3, 2, 1, 1 };
+static s16 env_release[7] = { 2, 3, 4, 5, 6, 7, 8 };
+
+#define BUFFER_SIZE (10 << 11)
+#define CHUNK_SIZE (BUFFER_SIZE)
+#define CHUNK_SIZE_MAX (BUFFER_SIZE * 3)
+
+#define BUFFER_TIME FIXED_DEC(((BUFFER_SIZE * 28) / 16), 44100)
+
+#define BUFFER_START_ADDR 0x1010
+#define DUMMY_ADDR (BUFFER_START_ADDR + (CHUNK_SIZE_MAX * 2))
+#define ALLOC_START_ADDR (BUFFER_START_ADDR + (CHUNK_SIZE_MAX * 2) + 64)
+
+//SPU registers
+typedef struct
+{
+	u16 vol_left;
+	u16 vol_right;
+	u16 freq;
+	u16 addr;
+	u32 adsr_param;
+	u16 _reserved;
+	u16 loop_addr;
+} Audio_SPUChannel;
+
+#define SPU_CTRL     *((volatile u16*)0x1f801daa)
+#define SPU_DMA_CTRL *((volatile u16*)0x1f801dac)
+#define SPU_IRQ_ADDR *((volatile u16*)0x1f801da4)
+#define SPU_KEY_ON   *((volatile u32*)0x1f801d88)
+#define SPU_KEY_OFF  *((volatile u32*)0x1f801d8c)
+
+#define SPU_CHANNELS    ((volatile Audio_SPUChannel*)0x1f801c00)
+#define SPU_RAM_ADDR(x) ((u16)(((u32)(x)) >> 3))
+
+static volatile u32 audio_alloc_ptr = 0;
+
+//XA files and tracks
+static CdlFILE xa_files_disc1[XA_Max1];
+static CdlFILE xa_files_disc2[XA_Max2];
+static CdlFILE xa_files_disc3[XA_Max3];
+
+#include "audio_def.h"
+
+u32 Audio_GetLengthDisc1(XA_Track1 lengthtrack)
+{
+	return (xa_tracks_disc1[lengthtrack].length / 75) / IO_SECT_SIZE;
+}
+
+u32 Audio_GetLengthDisc2(XA_Track2 lengthtrack)
+{
+	return (xa_tracks_disc2[lengthtrack].length / 75) / IO_SECT_SIZE;
+}
+
+u32 Audio_GetLengthDisc3(XA_Track3 lengthtrack)
+{
+	return (xa_tracks_disc3[lengthtrack].length / 75) / IO_SECT_SIZE;
+}
+
+//Internal XA functions
+static u8 XA_BCD(u8 x)
+{
+	return x - 6 * (x >> 4);
+}
+
+static u32 XA_TellSector(void)
+{
+	u8 result[8];
+	CdControlB(CdlGetlocP, NULL, result);
+	return (XA_BCD(result[2]) * 75 * 60) + (XA_BCD(result[3]) * 75) + XA_BCD(result[4]);
+}
+
+static void XA_SetVolume(u8 x)
+{
+	//Set CD mix volume
+	CdlATV cd_vol;
+	xa_volume = cd_vol.val0 = cd_vol.val1 = cd_vol.val2 = cd_vol.val3 = x;
+	CdMix(&cd_vol);
+}
+
+static void XA_Init(void)
+{
+	u8 param[4];
+	
+	//Set XA state
+	if (xa_state & XA_STATE_INIT)
+		return;
+	xa_state = XA_STATE_INIT;
+	xa_resync = 0;
+	
+	//Set CD mix flag
+	SpuCommonAttr spu_attr;
+	spu_attr.mask = SPU_COMMON_CDMIX | SPU_COMMON_CDVOLL | SPU_COMMON_CDVOLR;
+	spu_attr.cd.mix = SPU_ON;
+	spu_attr.cd.volume.left = spu_attr.cd.volume.right = 0x6000; //Lame magic number
+	SpuSetCommonAttr(&spu_attr);
+	
+	//Set initial volume
+	XA_SetVolume(0);
+	
+	//Prepare CD drive for XA reading
+	param[0] = CdlModeRT | CdlModeSF | CdlModeSize1;
+	
+	CdControlB(CdlSetmode, param, NULL);
+	CdControlF(CdlPause, NULL);
+}
+
+static void XA_Quit(void)
+{
+	//Set XA state
+	if (!(xa_state & XA_STATE_INIT))
+		return;
+	xa_state = 0;
+	
+	//Stop playing XA
+	XA_SetVolume(0);
+	CdControlB(CdlPause, NULL, NULL);
+}
+
+static void XA_Play(u32 start)
+{
+	//Play at given position
+	CdlLOC cd_loc;
+	CdIntToPos(start, &cd_loc);
+	CdControlF(CdlReadS, (u8*)&cd_loc);
+}
+
+static void XA_Pause(void)
+{
+	//Set XA state
+	if (!(xa_state & XA_STATE_PLAYING))
+		return;
+	xa_state &= ~XA_STATE_PLAYING;
+	
+	//Pause playback
+	CdControlB(CdlPause, NULL, NULL);
+}
+
+static void XA_SetFilter(u8 channel)
+{
+	//Change CD filter
+	CdlFILTER filter;
+	filter.file = 1;
+	xa_channel = filter.chan = channel;
+	CdControlF(CdlSetfilter, (u8*)&filter);
+}
+
+static void SeekXA(void)
+{
+	Audio_ReloadXAFiles();
+}
+
+void Audio_ReloadXAFiles(void)
+{
+	CdlFILE *filep = NULL;
+	const char **pathp = NULL;
+
+	if (currentDisc == 1) {
+		filep = xa_files_disc1;
+		pathp = xa_paths_disc1;
+	} else if (currentDisc == 2) {
+		filep = xa_files_disc2;
+		pathp = xa_paths_disc2;
+	} else if (currentDisc == 3) {
+		filep = xa_files_disc3;
+		pathp = xa_paths_disc3;
+	}
+
+	if (filep == NULL || pathp == NULL)
+		return;
+
+	// Refresh XA LBAs after boot or a real disc change.
+	for (; *pathp != NULL; pathp++)
+		IO_FindFile(filep++, *pathp);
+}
+
+//Audio functions
+void Audio_Init(void)
+{
+	//Initialize SPU
+	SpuInit();
+	Audio_ClearAlloc();
+	
+	//Set SPU common attributes
+	SpuCommonAttr spu_attr;
+	spu_attr.mask = SPU_COMMON_MVOLL | SPU_COMMON_MVOLR;
+	spu_attr.mvol.left  = 0x3FFF;
+	spu_attr.mvol.right = 0x3FFF;
+	SpuSetCommonAttr(&spu_attr);
+	
+	//Set XA state
+	xa_state = 0;
+	
+	//Get file positions
+	Audio_ReloadXAFiles();
+}
+
+void Audio_Quit(void)
+{
+	
+}
+
+static void Audio_GetXAFileDisc1(CdlFILE *file, XA_Track1 track)
+{
+    const XA_TrackDef1 *track_def1;
+
+    track_def1 = &xa_tracks_disc1[track];
+    file->pos = xa_files_disc1[track_def1->file].pos;
+    file->size = track_def1->length;
+}
+
+static void Audio_GetXAFileDisc2(CdlFILE *file, XA_Track2 track)
+{
+    const XA_TrackDef2 *track_def2;
+
+    track_def2 = &xa_tracks_disc2[track];
+    file->pos = xa_files_disc2[track_def2->file].pos;
+    file->size = track_def2->length;
+}
+
+static void Audio_GetXAFileDisc3(CdlFILE *file, XA_Track3 track)
+{
+    const XA_TrackDef3 *track_def3;
+
+    track_def3 = &xa_tracks_disc3[track];
+    file->pos = xa_files_disc3[track_def3->file].pos;
+    file->size = track_def3->length;
+}
+
+static void Audio_PlayXA_File(CdlFILE *file, u8 volume, u8 channel, boolean loop, s32 start_position_centiseconds)
+{
+	u8 xa_mode = CdlModeRT | CdlModeSF | CdlModeSize1;
+
+	//Initialize XA system and stop previous song
+	XA_Init();
+	XA_SetVolume(0);
+	/* STR playback may adaptively enable CdlModeSpeed. XA_Init is intentionally
+	 * idempotent, so it cannot be relied on to restore the drive mode here.
+	 * Always return to true 1x XA playback before seeking into the song. */
+	CdControlB(CdlSetmode, &xa_mode, NULL);
+	
+	//Set XA state
+	xa_start = xa_pos = (u64)CdPosToInt(&file->pos);
+	xa_end = xa_start + (u64)(file->size / IO_SECT_SIZE) - 1;
+	xa_state = XA_STATE_INIT | XA_STATE_PLAYING | XA_STATE_SEEKING;
+	xa_resync = 0;
+	if (loop)
+		xa_state |= XA_STATE_LOOPS;
+	
+	if (start_position_centiseconds > 0)
+	{
+		/* XA sectors run at 75 Hz. Centiseconds retain sub-second resume
+		 * precision while rounding to the nearest physical sector. */
+		xa_pos += (start_position_centiseconds * 75 + 50) / 100;
+	}
+	
+	//Start seeking to XA and use parameters
+	IO_SeekFile(file);
+	XA_SetFilter(channel);
+	XA_SetVolume(volume);
+
+	//Shitty emulator average user smh
+	xa_offset = XA_TellSector() - xa_start;
+}
+
+void Audio_PlayXA_TrackDisc1(XA_Track1 track, u8 volume, u8 channel, boolean loop, s32 start_position_seconds)
+{
+	Audio_GetXAFileDisc1(&xa_file, track);
+
+	//Play track
+	Audio_PlayXA_File(&xa_file, volume, channel, loop, start_position_seconds * 100);
+}
+
+void Audio_PlayXA_TrackDisc1Centiseconds(XA_Track1 track, u8 volume, u8 channel, boolean loop, s32 start_position_centiseconds)
+{
+	Audio_GetXAFileDisc1(&xa_file, track);
+	Audio_PlayXA_File(&xa_file, volume, channel, loop, start_position_centiseconds);
+}
+
+void Audio_SeekXA_TrackDisc1(XA_Track1 track, s32 start_position_seconds)
+{
+    SeekXA();
+    Audio_GetXAFileDisc1(&xa_file, track);
+
+    xa_start = (u64)CdPosToInt(&xa_file.pos);
+    xa_pos   = xa_start + (u64)(start_position_seconds * 75);
+    xa_end   = xa_start + (u64)(xa_file.size / IO_SECT_SIZE) - 1;
+
+    IO_SeekFile(&xa_file);
+
+    xa_offset = (s16)(XA_TellSector() - xa_start);
+}
+
+void Audio_PlayXA_TrackDisc2(XA_Track2 track, u8 volume, u8 channel, boolean loop, s32 start_position_seconds)
+{
+	Audio_GetXAFileDisc2(&xa_file, track);
+
+	//Play track
+	Audio_PlayXA_File(&xa_file, volume, channel, loop, start_position_seconds * 100);
+}
+
+void Audio_PlayXA_TrackDisc2Centiseconds(XA_Track2 track, u8 volume, u8 channel, boolean loop, s32 start_position_centiseconds)
+{
+	Audio_GetXAFileDisc2(&xa_file, track);
+	Audio_PlayXA_File(&xa_file, volume, channel, loop, start_position_centiseconds);
+}
+
+void Audio_SeekXA_TrackDisc2(XA_Track2 track, s32 start_position_seconds)
+{
+    SeekXA();
+    Audio_GetXAFileDisc2(&xa_file, track);
+
+    xa_start = (u64)CdPosToInt(&xa_file.pos);
+    xa_pos   = xa_start + (u64)(start_position_seconds * 75);
+    xa_end   = xa_start + (u64)(xa_file.size / IO_SECT_SIZE) - 1;
+
+    IO_SeekFile(&xa_file);
+
+    xa_offset = (s16)(XA_TellSector() - xa_start);
+}
+
+void Audio_PlayXA_TrackDisc3(XA_Track3 track, u8 volume, u8 channel, boolean loop, s32 start_position_seconds)
+{
+	//Get track information
+	Audio_GetXAFileDisc3(&xa_file, track);
+
+	//Play track
+	Audio_PlayXA_File(&xa_file, volume, channel, loop, start_position_seconds * 100);
+}
+
+void Audio_PlayXA_TrackDisc3Centiseconds(XA_Track3 track, u8 volume, u8 channel, boolean loop, s32 start_position_centiseconds)
+{
+	Audio_GetXAFileDisc3(&xa_file, track);
+	Audio_PlayXA_File(&xa_file, volume, channel, loop, start_position_centiseconds);
+}
+
+void Audio_SeekXA_TrackDisc3(XA_Track3 track, s32 start_position_seconds)
+{
+    SeekXA();
+    Audio_GetXAFileDisc3(&xa_file, track);
+
+    xa_start = (u64)CdPosToInt(&xa_file.pos);
+    xa_pos   = xa_start + (u64)(start_position_seconds * 75);
+    xa_end   = xa_start + (u64)(xa_file.size / IO_SECT_SIZE) - 1;
+
+    IO_SeekFile(&xa_file);
+
+    xa_offset = (s16)(XA_TellSector() - xa_start);
+}
+
+void Audio_SetPos(s32 time)
+{
+	xa_pos = xa_start + (u64)(time * 75);
+}
+
+void Audio_PauseXA(void)
+{
+	//Pause playing XA file
+	XA_Pause();
+}
+
+void Audio_HandoffXA(void)
+{
+	/* STR immediately replaces the XA ReadS command. Do not wait for a full
+	 * mechanical pause first: that creates a visible hitch at movie entry on
+	 * real drives. Preserve XA_Pause's state bookkeeping so normal playback
+	 * can still be resumed later. */
+	if (!(xa_state & XA_STATE_PLAYING))
+		return;
+
+	xa_state &= ~XA_STATE_PLAYING;
+	CdControlF(CdlPause, NULL);
+}
+
+void Audio_ResumeXA(void)
+{
+	if (xa_state & XA_STATE_PLAYING)
+		return;
+	xa_state |= XA_STATE_PLAYING;
+
+	XA_Play(xa_pos);
+}
+
+void Audio_StopXA(void)
+{
+	//Deinitialize XA system
+	XA_Quit();
+}
+
+void Audio_ChannelXA(u8 channel)
+{
+	//Set XA filter to the given channel
+	XA_SetFilter(channel);
+}
+
+s32 Audio_TellXA_Sector(void)
+{
+	//Get CD position
+	return (s32)(xa_pos - xa_start); //Meh casting
+}
+
+s32 Audio_TellXA_Milli(void)
+{
+	return (s32)((xa_pos - xa_start) * 1000 / 75); //1000 / (75 * speed (1x))
+}
+
+boolean Audio_PlayingXA(void)
+{
+	return (xa_state & XA_STATE_PLAYING) != 0;
+}
+
+void Audio_StartAt(u32 music_start_position_seconds)
+{
+	xa_pos += (u64)(music_start_position_seconds * 75);
+}
+
+void Audio_WaitPlayXA(void)
+{
+	while (1)
+	{
+		Audio_ProcessXA();
+		/* XA_STATE_PLAYING is set before the initial seek completes. Wait for
+		 * ReadS to actually start so callers never synchronize the chart to a
+		 * stale pre-cutscene CD position. */
+		if (Audio_PlayingXA() && !(xa_state & XA_STATE_SEEKING))
+			return;
+		VSync(0);
+	}
+}
+
+void Audio_ProcessXA(void)
+{
+	//Handle playing state
+	if (xa_state & XA_STATE_PLAYING)
+	{
+		//Retrieve CD status
+		CdControl(CdlNop, NULL, NULL);
+		u8 cd_status = CdStatus();
+		
+		//Handle resync timer
+		if (xa_resync != 0)
+		{
+			//Wait for resync timer
+			if (--xa_resync != 0)
+				return;
+			
+			//Check if we're in a proper state
+			if (cd_status & CdlStatShellOpen)
+				return;
+			
+			//Attempt to get CD drive active
+			while (1)
+			{
+				CdControl(CdlNop, NULL, NULL);
+				cd_status = CdStatus();
+				if (cd_status & CdlStatStandby)
+					break;
+			}
+			
+			//Re-initialize XA system
+			u8 prev_state = xa_state;
+			XA_Init();
+			xa_state = prev_state;
+			
+			XA_SetFilter(xa_channel);
+			XA_SetVolume(xa_volume);
+			
+			//Get new CD status
+			CdControl(CdlNop, NULL, NULL);
+			cd_status = CdStatus();
+		}
+		
+		//Check CD status for issues
+		if (cd_status & CdlStatShellOpen)
+		{
+			//Seek just ahead of last reported valid position
+			if (!(xa_state & XA_STATE_SEEKING))
+			{
+				xa_pos++;
+				xa_state |= XA_STATE_SEEKING;
+			}
+			
+			//Wait a moment before attempting the actual resync
+			xa_resync = 60;
+			return;
+		}
+		
+		//Handle seeking state
+		if (xa_state & XA_STATE_SEEKING)
+		{
+			//Check if CD is still seeking to the XA's beginning
+			if (!(cd_status & CdlStatSeek))
+			{
+				//Stopped seeking
+				xa_state &= ~XA_STATE_SEEKING;
+				XA_Play(xa_pos);
+			}
+			else
+			{
+				//Still seeking
+				return;
+			}
+		}
+		
+		//Get CD position
+		u32 next_pos = XA_TellSector() - xa_offset;
+		if (next_pos > xa_pos)
+			xa_pos = next_pos;
+		
+		//Check position
+		if (xa_pos >= xa_end)
+		{
+			if (xa_state & XA_STATE_LOOPS)
+			{
+				//Reset XA playback
+				CdlLOC cd_loc;
+				CdIntToPos(xa_pos = xa_start, &cd_loc);
+				CdControlB(CdlSeekL, (u8*)&cd_loc, NULL);
+				xa_state |= XA_STATE_SEEKING;
+			}
+			else
+			{
+				//Stop XA playback
+				Audio_StopXA();
+			}
+		}
+	}
+
+	// Pseudo-frequency analyzer using XA position with oscillators
+	// Creates 7 bands with different characteristics that move with the music
+	if (xa_state & XA_STATE_PLAYING)
+	{
+		lc_counter++;
+		
+		// Use XA sector position as time base for oscillators
+		// Each band has its own oscillator frequency and modulation
+		for (int i = 0; i < 7; i++)
+		{
+			// Advance oscillator phase based on XA position and band frequency
+			s16 phase_inc = (s16)((xa_pos / 4 + lc_counter) * osc_freq[i]);
+			osc_phase[i] += phase_inc;
+			
+			// Generate pseudo-frequency content using triangle waves
+			// Band 0: fast oscillation (high freq) - sharp transients
+			// Band 6: slow oscillation (low freq) - sustained rumble
+			
+			// Triangle wave: 0-1023 -> -512 to +512
+			s16 tri = osc_phase[i] & 0x3FF;
+			if (tri > 511) tri = 1023 - tri;
+			tri = (tri - 256) * 2;
+			
+			// Add slower modulation for more organic feel
+			s16 mod_phase = osc_phase[i] / osc_freq[i];
+			s16 mod_tri = mod_phase & 0x3FF;
+			if (mod_tri > 511) mod_tri = 1023 - mod_tri;
+			mod_tri = (mod_tri - 256) * 2;
+			
+			// Combine base oscillation with modulation
+			s16 combined = tri + (mod_tri * osc_depth[i] >> 8);
+			
+			// Rectify and scale to 0-255
+			s16 rectified = combined >= 0 ? combined : -combined;
+			lc_target[i] = (u16)((rectified * 255) >> 10);
+			if (lc_target[i] > 255) lc_target[i] = 255;
+			
+			// Per-band envelope follower
+			s16 diff = (s16)lc_target[i] - (s16)lc_level[i];
+			if (diff > 0)
+			{
+				lc_level[i] += (u8)((diff * env_attack[i] + 7) >> 3);
+			}
+			else if (diff < 0)
+			{
+				lc_level[i] -= (u8)(((-diff) * env_release[i] + 15) >> 4);
+			}
+		}
+	}
+	else
+	{
+		// No XA: fade levels to 0
+		for (int i = 0; i < 7; i++)
+		{
+			if (lc_level[i] > 8)
+				lc_level[i] -= 8;
+			else
+				lc_level[i] = 0;
+			lc_target[i] = 0;
+		}
+	}
+}
+
+u8 Audio_GetLoudness(u8 band)
+{
+	if (band >= 7) return 0;
+	return lc_level[band];
+}
+
+/* .VAG file loader */
+#define VAG_HEADER_SIZE 48
+static int lastChannelUsed = 0;
+
+static int getFreeChannel(void) {
+    int channel = lastChannelUsed;
+    lastChannelUsed = (channel + 1) % 24;
+    return channel;
+}
+
+void Audio_ClearAlloc(void) {
+	audio_alloc_ptr = ALLOC_START_ADDR;
+}
+
+u32 Audio_LoadVAGData(u32 *sound, u32 sound_size) {
+	// subtract size of .vag header (48 bytes), round to 64 bytes
+	u32 xfer_size = ((sound_size - VAG_HEADER_SIZE) + 63) & 0xffffffc0;
+	u8  *data = (u8 *) sound;
+
+	// modify sound data to ensure sound "loops" to dummy sample
+	// https://psx-spx.consoledev.net/soundprocessingunitspu/#flag-bits-in-2nd-byte-of-adpcm-header
+	data[sound_size - 15] = 1; // end + mute
+
+	// allocate SPU memory for sound
+	u32 addr = audio_alloc_ptr;
+	audio_alloc_ptr += xfer_size;
+
+	if (audio_alloc_ptr > 0x80000) {
+		// TODO: add proper error handling code
+		printf("FATAL: SPU RAM overflow! (%d bytes overflowing)\n", audio_alloc_ptr - 0x80000);
+		while (1);
+	}
+
+	SpuSetTransferStartAddr(addr); // set transfer starting address to malloced area
+	SpuSetTransferMode(SPU_TRANSFER_BY_DMA); // set transfer mode to DMA
+	SpuWrite(data + VAG_HEADER_SIZE, xfer_size); // perform actual transfer
+	SpuIsTransferCompleted(SPU_TRANSFER_WAIT); // wait for DMA to complete
+
+	printf("Allocated new sound (addr=%08x, size=%d)\n", addr, xfer_size);
+	return addr;
+}
+
+void Audio_PlaySoundOnChannel(u32 addr, u32 channel, int volume) {
+	SPU_KEY_OFF = (1 << channel);
+
+	SPU_CHANNELS[channel].vol_left   = volume;
+	SPU_CHANNELS[channel].vol_right  = volume;
+	SPU_CHANNELS[channel].addr       = SPU_RAM_ADDR(addr);
+	SPU_CHANNELS[channel].loop_addr  = SPU_RAM_ADDR(DUMMY_ADDR);
+	SPU_CHANNELS[channel].freq       = 0x1000; // 44100 Hz
+	SPU_CHANNELS[channel].adsr_param = 0x1fc080ff;
+
+	SPU_KEY_ON = (1 << channel);
+}
+
+void Audio_PlaySound(u32 addr, int volume) {
+    Audio_PlaySoundOnChannel(addr, getFreeChannel(), volume);
+   // printf("Could not find free channel to play sound (addr=%08x)\n", addr);
+}
+
+u32 VAG_IsPlaying(u32 channel)
+{
+	return (SPU_CHANNELS[channel]._reserved != 0);
+}
+
+boolean Audio_XAEnded(void)
+{
+	if (xa_end <= xa_start)
+		return false;
+	return !(xa_state & XA_STATE_PLAYING) && xa_pos >= xa_end;
+}

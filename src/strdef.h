@@ -1,0 +1,1 @@
+{ "\\MOVIE\\INTRO.STR;1", StageId_Max},
