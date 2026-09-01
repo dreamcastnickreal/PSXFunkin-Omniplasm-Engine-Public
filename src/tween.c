@@ -95,3 +95,120 @@ fixed_t Tween_GetValue(Tween* tween)
 {
 	return tween->current_value;
 }
+
+// Enhanced tween functions for All Stars
+void Tween_SetEase(Tween* tween, Eases ease)
+{
+	tween->ease = ease;
+}
+
+void Tween_SetDuration(Tween* tween, fixed_t duration)
+{
+	tween->duration = duration;
+}
+
+void Tween_Reset(Tween* tween)
+{
+	tween->elapsed_time = 0;
+	tween->current_value = (tween->flags & TWEEN_FLAGS_BACKWARD) ? tween->final_value : tween->initial_value;
+	if (tween->value_pointer != NULL)
+		*tween->value_pointer = tween->current_value;
+}
+
+void Tween_Stop(Tween* tween)
+{
+	tween->elapsed_time = tween->duration;
+}
+
+boolean Tween_IsComplete(Tween* tween)
+{
+	return tween->elapsed_time >= tween->duration;
+}
+
+fixed_t Tween_GetProgress(Tween* tween)
+{
+	if (tween->duration == 0)
+		return FIXED_UNIT;
+	return FIXED_DIV(tween->elapsed_time, tween->duration);
+}
+
+// Advanced easing functions
+fixed_t Tween_EaseInCubic(fixed_t t)
+{
+	return FIXED_MUL(FIXED_MUL(t, t), t);
+}
+
+fixed_t Tween_EaseOutCubic(fixed_t t)
+{
+	fixed_t t_minus_1 = t - FIXED_UNIT;
+	return FIXED_UNIT + FIXED_MUL(FIXED_MUL(t_minus_1, t_minus_1), t_minus_1);
+}
+
+fixed_t Tween_EaseInOutCubic(fixed_t t)
+{
+	if (t < FIXED_DEC(5, 10))
+		return FIXED_MUL(FIXED_DEC(4, 1), FIXED_MUL(FIXED_MUL(t, t), t));
+	else
+	{
+		fixed_t t_shifted = t - FIXED_UNIT;
+		return FIXED_UNIT + FIXED_MUL(FIXED_DEC(4, 1), FIXED_MUL(FIXED_MUL(t_shifted, t_shifted), t_shifted));
+	}
+}
+
+fixed_t Tween_EaseInQuart(fixed_t t)
+{
+	return FIXED_MUL(FIXED_MUL(FIXED_MUL(t, t), t), t);
+}
+
+fixed_t Tween_EaseOutQuart(fixed_t t)
+{
+	fixed_t t_minus_1 = t - FIXED_UNIT;
+	return FIXED_UNIT - FIXED_MUL(FIXED_MUL(FIXED_MUL(t_minus_1, t_minus_1), t_minus_1), t_minus_1);
+}
+
+fixed_t Tween_EaseInOutQuart(fixed_t t)
+{
+	if (t < FIXED_DEC(5, 10))
+		return FIXED_MUL(FIXED_DEC(8, 1), FIXED_MUL(FIXED_MUL(FIXED_MUL(t, t), t), t));
+	else
+	{
+		fixed_t t_shifted = t - FIXED_UNIT;
+		return FIXED_UNIT - FIXED_MUL(FIXED_DEC(8, 1), FIXED_MUL(FIXED_MUL(FIXED_MUL(t_shifted, t_shifted), t_shifted), t_shifted));
+	}
+}
+
+fixed_t Tween_EaseInBounce(fixed_t t)
+{
+	return FIXED_UNIT - Tween_EaseOutBounce(FIXED_UNIT - t);
+}
+
+fixed_t Tween_EaseOutBounce(fixed_t t)
+{
+	if (t < FIXED_DEC(4, 11))
+	{
+		return FIXED_MUL(FIXED_DEC(121, 16), FIXED_MUL(t, t));
+	}
+	else if (t < FIXED_DEC(8, 11))
+	{
+		fixed_t t_adj = t - FIXED_DEC(6, 11);
+		return FIXED_DEC(3, 4) + FIXED_MUL(FIXED_DEC(121, 16), FIXED_MUL(t_adj, t_adj));
+	}
+	else if (t < FIXED_DEC(10, 11))
+	{
+		fixed_t t_adj = t - FIXED_DEC(9, 11);
+		return FIXED_DEC(15, 16) + FIXED_MUL(FIXED_DEC(121, 16), FIXED_MUL(t_adj, t_adj));
+	}
+	else
+	{
+		fixed_t t_adj = t - FIXED_DEC(21, 22);
+		return FIXED_DEC(63, 64) + FIXED_MUL(FIXED_DEC(121, 16), FIXED_MUL(t_adj, t_adj));
+	}
+}
+
+fixed_t Tween_EaseInOutBounce(fixed_t t)
+{
+	if (t < FIXED_DEC(5, 10))
+		return FIXED_MUL(Tween_EaseInBounce(FIXED_MUL(t, FIXED_DEC(2, 1))), FIXED_DEC(5, 10));
+	else
+		return FIXED_DEC(5, 10) + FIXED_MUL(Tween_EaseOutBounce(FIXED_MUL(t, FIXED_DEC(2, 1)) - FIXED_UNIT), FIXED_DEC(5, 10));
+}

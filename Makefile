@@ -49,6 +49,7 @@ SRCS = src/main.c \
        src/loadscr.c \
        src/menu.c \
        src/stage.c \
+	   src/stage_enhanced_draw.c \
        src/songswap.c \
        src/event.c \
        src/events.c \
@@ -107,6 +108,7 @@ EVERYWHERE_LIST = \
        src/trans.c \
        src/loadscr.c \
        src/stage.c \
+	   src/stage_enhanced_draw.c \
        src/songswap.c \
        src/event.c \
        src/events.c \

@@ -1,0 +1,153 @@
+all: \
+	iso/menu/menu.arc \
+	iso/menu/backgrounds/week.arc \
+	iso/menu/loading.tim \
+	iso/icon16.tim \
+	iso/font/fonts.tim \
+	iso/stage/notes/note4k.tim \
+	iso/stage/notes/note5k.tim \
+	iso/stage/notes/note6k.tim \
+	iso/stage/notes/note7k.tim \
+	iso/stage/notes/note9k.tim \
+	iso/stage/notes/type4k0.tim \
+	iso/stage/notes/type5k0.tim \
+	iso/stage/notes/type6k0.tim \
+	iso/stage/notes/type7k0.tim \
+	iso/stage/notes/type9k0.tim \
+	iso/stage/notes/type4k1.tim \
+	iso/stage/notes/type5k1.tim \
+	iso/stage/notes/type6k1.tim \
+	iso/stage/notes/type7k1.tim \
+	iso/stage/notes/type9k1.tim \
+	iso/stage/static.tim \
+	iso/stage/hud0.tim \
+	iso/stage/grid/grid0.tim \
+	iso/stage/grid/grid1.tim \
+	iso/stage/hudextra.tim \
+	iso/stage/phase3.tim \
+	iso/stage/pause.tim \
+	iso/characters/bf/main.arc \
+	iso/characters/bf/dead.arc \
+	iso/characters/apple/main.arc \
+	iso/characters/apple/dead.arc \
+	iso/characters/dad/main.arc \
+	iso/characters/spook/main.arc \
+	iso/characters/pico/main.arc \
+	iso/characters/monster/main.arc \
+	iso/characters/exep3/main.arc \
+	iso/characters/ultram/main.arc \
+	iso/characters/orange/main.arc \
+	iso/characters/jerry/main.arc \
+	iso/characters/gf/main.arc \
+	iso/characters/gf/tut.arc \
+	iso/characters/gf/speaker.tim \
+	iso/characters/logan/main.arc \
+	iso/characters/logan/eyes.tim \
+	iso/characters/abot/body.arc \
+	iso/characters/abot/viz.arc \
+	iso/characters/abot/bg.arc \
+	iso/characters/menup/main.arc \
+	iso/characters/menuo/main.arc \
+	iso/characters/menugf/main.arc \
+	iso/stages/week1/back.arc \
+	iso/stages/week2/back.arc \
+	iso/stages/week3/back.arc \
+	iso/stages/trio/back.arc \
+	iso/stages/kitchen/back.arc \
+	iso/stages/kitchen/handa.arc \
+	iso/stages/kitchen/handb.arc \
+	iso/stages/kitchen/handc.arc \
+
+iso/%.tim: iso/%.png
+	tools/funkintimconv/funkintimconv $@ $<
+
+iso/%.arc:
+	tools/funkinarcpak/funkinarcpak $@ $^
+
+# Menu
+iso/menu/menu.arc: iso/menu/back.tim iso/menu/ng.tim iso/menu/story.tim iso/menu/title.tim iso/menu/icon.tim iso/menu/disc.tim
+iso/menu/backgrounds/week.arc: iso/menu/backgrounds/week0.tim iso/menu/backgrounds/week1.tim iso/menu/backgrounds/week2.tim iso/menu/backgrounds/week3.tim iso/menu/backgrounds/week4.tim
+
+# BF
+iso/characters/bf/main.arc: iso/characters/bf/bf0.tim iso/characters/bf/bf1.tim iso/characters/bf/bf2.tim iso/characters/bf/bf3.tim iso/characters/bf/bf4.tim iso/characters/bf/bf5.tim iso/characters/bf/bf6.tim iso/characters/bf/bfalt0.tim iso/characters/bf/bfalt1.tim iso/characters/bf/bfalt2.tim iso/characters/bf/bfalt3.tim iso/characters/bf/bfalt4.tim iso/characters/bf/dead0.tim
+iso/characters/bf/dead.arc: iso/characters/bf/dead1.tim iso/characters/bf/dead2.tim iso/characters/bf/retry.tim
+
+# Apple
+iso/characters/apple/main.arc: iso/characters/apple/apple0.tim iso/characters/apple/apple1.tim iso/characters/apple/apple2.tim iso/characters/apple/apple3.tim iso/characters/apple/apple4.tim iso/characters/apple/apple5.tim iso/characters/apple/real0.tim iso/characters/apple/real1.tim iso/characters/apple/real2.tim iso/characters/apple/real3.tim iso/characters/apple/real4.tim iso/characters/apple/real5.tim iso/characters/apple/real6.tim iso/characters/apple/real7.tim iso/characters/apple/real8.tim iso/characters/apple/dead0.tim
+iso/characters/apple/dead.arc: iso/characters/apple/dead1.tim iso/characters/apple/dead2.tim iso/characters/apple/retry.tim
+
+# Dad
+iso/characters/dad/main.arc: iso/characters/dad/idle0.tim iso/characters/dad/idle1.tim iso/characters/dad/left.tim iso/characters/dad/down.tim iso/characters/dad/up.tim iso/characters/dad/right.tim
+
+# Spook
+iso/characters/spook/main.arc: iso/characters/spook/idle0.tim iso/characters/spook/idle1.tim iso/characters/spook/idle2.tim iso/characters/spook/left.tim iso/characters/spook/down.tim iso/characters/spook/up.tim iso/characters/spook/right.tim
+
+# Pico
+iso/characters/pico/main.arc: iso/characters/pico/idle.tim iso/characters/pico/hit0.tim iso/characters/pico/hit1.tim
+
+# Monster
+iso/characters/monster/main.arc: iso/characters/monster/idle0.tim iso/characters/monster/idle1.tim iso/characters/monster/left.tim iso/characters/monster/down.tim iso/characters/monster/up.tim iso/characters/monster/right.tim
+
+# Sonic.exe Phase 3
+iso/characters/exep3/main.arc: iso/characters/exep3/eggy0.tim iso/characters/exep3/eggy1.tim iso/characters/exep3/eggy2.tim iso/characters/exep3/eggy3.tim iso/characters/exep3/eggy4.tim iso/characters/exep3/eggy5.tim iso/characters/exep3/eggy6.tim iso/characters/exep3/eggy7.tim iso/characters/exep3/eggy8.tim iso/characters/exep3/eggy9.tim iso/characters/exep3/eggy10.tim iso/characters/exep3/eggy11.tim  iso/characters/exep3/eggy12.tim iso/characters/exep3/eggy13.tim iso/characters/exep3/eggy14.tim iso/characters/exep3/eggy15.tim iso/characters/exep3/eggy16.tim iso/characters/exep3/eggy17.tim iso/characters/exep3/eggy18.tim iso/characters/exep3/eggy19.tim iso/characters/exep3/eggy20.tim iso/characters/exep3/eggy21.tim iso/characters/exep3/eggy22.tim iso/characters/exep3/eggy23.tim iso/characters/exep3/eggy24.tim iso/characters/exep3/eggy25.tim iso/characters/exep3/eggy26.tim iso/characters/exep3/eggy27.tim iso/characters/exep3/eggy28.tim iso/characters/exep3/knux0.tim iso/characters/exep3/knux1.tim iso/characters/exep3/knux2.tim iso/characters/exep3/knux3.tim iso/characters/exep3/knux4.tim iso/characters/exep3/knux5.tim iso/characters/exep3/tails0.tim iso/characters/exep3/tails1.tim iso/characters/exep3/tails2.tim iso/characters/exep3/tails3.tim iso/characters/exep3/tails4.tim iso/characters/exep3/tails5.tim iso/characters/exep3/xeno0.tim iso/characters/exep3/xeno1.tim iso/characters/exep3/xeno2.tim iso/characters/exep3/xeno3.tim iso/characters/exep3/xeno4.tim iso/characters/exep3/xeno5.tim iso/characters/exep3/xeno6.tim iso/characters/exep3/xeno7.tim iso/characters/exep3/xeno8.tim iso/characters/exep3/xeno9.tim iso/characters/exep3/xeno10.tim iso/characters/exep3/xeno11.tim  iso/characters/exep3/xeno12.tim iso/characters/exep3/xeno13.tim iso/characters/exep3/xeno14.tim iso/characters/exep3/xeno15.tim
+
+# All Stars
+iso/characters/ultram/main.arc: iso/characters/ultram/ultram0.tim iso/characters/ultram/ultram1.tim iso/characters/ultram/ultram2.tim iso/characters/ultram/ultram3.tim iso/characters/ultram/ultram4.tim iso/characters/ultram/ultram5.tim iso/characters/ultram/ultram6.tim iso/characters/ultram/ultram7.tim iso/characters/ultram/ultram8.tim iso/characters/ultram/ultram9.tim iso/characters/ultram/ultram10.tim iso/characters/ultram/ultram11.tim iso/characters/ultram/ultram12.tim iso/characters/ultram/ultram13.tim iso/characters/ultram/ultram14.tim iso/characters/ultram/ultram15.tim iso/characters/ultram/ultram16.tim iso/characters/ultram/ultram17.tim iso/characters/ultram/ultram18.tim iso/characters/ultram/ultram19.tim iso/characters/ultram/ultram20.tim iso/characters/ultram/ultram21.tim 
+
+# Orange
+iso/characters/orange/main.arc: iso/characters/orange/orange0.tim iso/characters/orange/orange1.tim iso/characters/orange/orange2.tim iso/characters/orange/orange3.tim iso/characters/orange/orange4.tim iso/characters/orange/orange5.tim iso/characters/orange/scary0.tim iso/characters/orange/scary1.tim iso/characters/orange/scary2.tim iso/characters/orange/scary3.tim iso/characters/orange/scary4.tim iso/characters/orange/scary5.tim iso/characters/orange/scary6.tim iso/characters/orange/scary7.tim iso/characters/orange/scary8.tim iso/characters/orange/scary9.tim iso/characters/orange/scary10.tim iso/characters/orange/scary11.tim iso/characters/orange/scary12.tim
+
+# Jerry
+iso/characters/jerry/main.arc: iso/characters/jerry/jerry0.tim iso/characters/jerry/jerry1.tim iso/characters/jerry/jerry2.tim iso/characters/jerry/jerry3.tim iso/characters/jerry/jerry4.tim iso/characters/jerry/jerry5.tim iso/characters/jerry/jerry6.tim iso/characters/jerry/jerry7.tim 
+
+# GF
+iso/characters/gf/main.arc: iso/characters/gf/gf0.tim iso/characters/gf/gf1.tim iso/characters/gf/gf2.tim
+iso/characters/gf/tut.arc: iso/characters/gf/tut0.tim iso/characters/gf/tut1.tim
+
+# Logan Head
+iso/characters/logan/main.arc: iso/characters/logan/logan0.tim
+
+# ABot Speaker
+iso/characters/abot/body.arc: iso/characters/abot/body0.tim iso/characters/abot/body1.tim iso/characters/abot/body2.tim iso/characters/abot/body3.tim
+iso/characters/abot/viz.arc: iso/characters/abot/viz0.tim
+iso/characters/abot/bg.arc: iso/characters/abot/bg0.tim
+
+# Menu Player
+iso/characters/menup/main.arc: iso/characters/menup/bf.tim
+
+# Menu Opponent
+iso/characters/menuo/main.arc: iso/characters/menuo/dad.tim iso/characters/menuo/spook.tim iso/characters/menuo/pico.tim iso/characters/menuo/shaggy0.tim iso/characters/menuo/shaggy1.tim
+
+# Menu Girlfriend
+iso/characters/menugf/main.arc: iso/characters/menugf/gf0.tim iso/characters/menugf/gf1.tim
+
+# Krab
+iso/characters/krab/main.arc: iso/characters/krab/down0.tim iso/characters/krab/down1.tim iso/characters/krab/down2.tim iso/characters/krab/down3.tim iso/characters/krab/idle0.tim iso/characters/krab/idle1.tim iso/characters/krab/left0.tim iso/characters/krab/left1.tim iso/characters/krab/left2.tim iso/characters/krab/left3.tim iso/characters/krab/right0.tim iso/characters/krab/right1.tim iso/characters/krab/right2.tim iso/characters/krab/right3.tim iso/characters/krab/up0.tim iso/characters/krab/up1.tim iso/characters/krab/up2.tim iso/characters/krab/up3.tim iso/characters/krab/vdown0.tim iso/characters/krab/vdown1.tim iso/characters/krab/vdown2.tim iso/characters/krab/vdown3.tim iso/characters/krab/vdown4.tim iso/characters/krab/vleft0.tim iso/characters/krab/vleft1.tim iso/characters/krab/vleft2.tim iso/characters/krab/vleft3.tim iso/characters/krab/vleft4.tim iso/characters/krab/vright0.tim iso/characters/krab/vright1.tim iso/characters/krab/vright2.tim iso/characters/krab/vright3.tim iso/characters/krab/vright4.tim iso/characters/krab/vup0.tim iso/characters/krab/vup1.tim iso/characters/krab/vup2.tim iso/characters/krab/vup3.tim iso/characters/krab/vup4.tim iso/characters/krab/vidle0.tim iso/characters/krab/vidle1.tim iso/characters/krab/dead0.tim
+
+# Squid
+iso/characters/squid/main.arc: iso/characters/squid/down0.tim iso/characters/squid/down1.tim iso/characters/squid/down2.tim iso/characters/squid/get0.tim iso/characters/squid/get1.tim iso/characters/squid/get2.tim iso/characters/squid/get3.tim iso/characters/squid/get4.tim iso/characters/squid/cidle0.tim iso/characters/squid/cidle1.tim iso/characters/squid/idle0.tim iso/characters/squid/idle1.tim iso/characters/squid/left0.tim iso/characters/squid/left1.tim iso/characters/squid/left2.tim iso/characters/squid/left3.tim iso/characters/squid/left4.tim iso/characters/squid/return0.tim iso/characters/squid/return1.tim iso/characters/squid/return2.tim iso/characters/squid/right0.tim iso/characters/squid/right1.tim iso/characters/squid/right2.tim iso/characters/squid/right3.tim iso/characters/squid/up0.tim iso/characters/squid/up1.tim iso/characters/squid/up2.tim iso/characters/squid/up3.tim iso/characters/squid/up4.tim
+
+# Sheldon
+iso/characters/sheldon/main.arc: iso/characters/sheldon/idle0.tim
+
+# Week 1
+iso/stages/week1/back.arc: iso/stages/week1/back0.tim iso/stages/week1/back1.tim
+
+# Week 2
+iso/stages/week2/back.arc: iso/stages/week2/back0.tim iso/stages/week2/back1.tim iso/stages/week2/back2.tim
+
+# Week 3
+iso/stages/week3/back.arc: iso/stages/week3/back0.tim iso/stages/week3/back1.tim iso/stages/week3/back2.tim iso/stages/week3/back3.tim iso/stages/week3/back4.tim 
+
+# Trio Stage
+iso/stages/trio/back.arc: iso/stages/trio/back0.tim iso/stages/trio/back1.tim iso/stages/trio/back2.tim iso/stages/trio/back3.tim iso/stages/trio/back4.tim iso/stages/trio/back5.tim iso/stages/trio/back6.tim iso/stages/trio/back7.tim iso/stages/trio/back8.tim iso/stages/trio/back9.tim iso/stages/trio/back10.tim 
+
+# Kitchen
+iso/stages/kitchen/back.arc: iso/stages/kitchen/back0.tim iso/stages/kitchen/back1.tim iso/stages/kitchen/cut0.tim
+iso/stages/kitchen/handa.arc: iso/stages/kitchen/handa.tim 
+iso/stages/kitchen/handb.arc: iso/stages/kitchen/handb.tim
+iso/stages/kitchen/handc.arc: iso/stages/kitchen/handc.tim
+
+clean:
+	echo "Cleaning .arc and .tim files:"
+	find iso -type f \( -name "*.arc" -o -name "*.tim" \) -print -delete

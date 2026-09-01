@@ -10,6 +10,7 @@
 #include "random.h"
 #include "mutil.h"
 #include "font_cdrmap.h"
+#include "character_mapping.h"
 
 Events event_speed;
 static fixed_t event_speed_start_time;
@@ -102,6 +103,199 @@ static void Events_Check(ChartEvent* event)
 			// value2: same for HUD
 			shake_hud_intensity = (fixed_t)(event->value2 & 0xFFFF);
 			shake_hud_duration = (u16)(event->value2 >> 16);
+			break;
+		}
+		case EVENTS_FLAG_TRIGGER:
+		{
+			// Universal Event Trigger (All Stars)
+			// value1: act switch (0=Act1, 1=Transition, 2=Act2, 3=Act3, 4=Act4, 6=Death arc selection)
+			// value2: trigger value (e.g., 7 for omega unload at value1=2, value2=7)
+			u8 act_switch = (u8)(event->value1 & 0xFF);
+			u8 trigger_value = (u8)(event->value2 & 0xFF);
+			
+			// Handle act switching and special triggers
+			switch (act_switch)
+			{
+				case 2: // Act 2 triggers
+					switch (trigger_value)
+					{
+						case 1: // Show LG icon over opponent
+							// LG uses normal notes to sing (no special flag needed)
+							// TODO: Implement LG icon overlay system
+							break;
+						case 2: // Spawn w4r (additional icon)
+							// w4r responds to NOTE_FLAG_GFSING for solo singing
+							// TODO: Implement w4r icon positioning and tweens
+							break;
+						case 3: // Spawn y0sh (additional icon)
+							// y0sh responds to NOTE_FLAG_YOSHI for solo singing
+							// TODO: Implement y0sh icon positioning and tweens
+							break;
+						case 5: // Switch iconA4 (case 5 from user description)
+							// TODO: Implement Act 4 icon switching with rotation tween
+							// iconA4.visible = true;
+							// iconA4.animation.play(trigger_value2);
+							// Tween rotation 360 degrees with FlxEase.backOut
+							break;
+						case 6: // Switch death character (case 6 from user description)
+							// switch (trigger2) {
+							//   case 0: GameOverSubstate.characterName = 'bfASdeath';
+							//   case 1: GameOverSubstate.characterName = 'gfASdeath';
+							// }
+							break;
+						case 7: // Omega unload
+							// IMPORTANT: If omega is playing ungrow/unshrink animations,
+							// let them complete uninterrupted before unloading
+							// NOTE_FLAG_ASBUD makes all characters (lg, w4r, y0sh) sing together
+							// Unload omega character and arcs after animation completion
+							break;
+					}
+					break;
+				case 6: // Death arc selection - choose which character's death arc to use
+					switch (trigger_value)
+					{
+						case 0:
+							// Use bfASdeath (boyfriend death arc)
+							// GameOverSubstate.characterName = 'bfASdeath';
+							break;
+						case 1:
+							// Use gfASdeath (girlfriend death arc)
+							// GameOverSubstate.characterName = 'gfASdeath';
+							break;
+					}
+					break;
+				// Other act cases can be added here
+			}
+			break;
+		}
+		case EVENTS_FLAG_PLAYANIM:
+		{
+			// Play Animation Event
+			// value1: pointer to animation name string
+			// value2: character target (0=bf/player, 1=dad/opponent, 2=gf)
+			const char* anim_name = (const char*)event->value1;
+			u8 char_target = (u8)(event->value2 & 0xFF);
+			
+			Character *target_char = NULL;
+			switch (char_target)
+			{
+				case 0: target_char = stage.player; break;
+				case 1: target_char = stage.opponent; break;
+				case 2: target_char = stage.gf; break;
+			}
+			
+			if (target_char != NULL && target_char->set_anim != NULL && anim_name != NULL)
+			{
+				// Map animation string to character animation enum
+				u8 anim_index = CharMap_GetAnimationByName(anim_name, "");
+				target_char->set_anim(target_char, anim_index);
+			}
+			break;
+		}
+		case EVENTS_FLAG_CHAR:
+		{
+			// Change Character Event
+			// value1: character slot (0=bf/pchar1, 1=dad/ochar1, 2=gf/gchar, 3=ochar2, 4=pchar2)
+			// value2: pointer to character name string
+			u8 char_slot = (u8)(event->value1 & 0xFF);
+			const char* char_name = (const char*)event->value2;
+			
+			if (char_name != NULL)
+			{
+				// Get new character from string mapping
+				Character* new_char = CharMap_GetCharacterByName(char_name);
+				if (new_char != NULL)
+				{
+					// Queue the swap - will be applied at next safe frame via IO batching
+					Stage_QueueCharacterSwap(char_slot, new_char);
+				}
+			}
+			break;
+		}
+		case EVENTS_FLAG_STAGE:
+		{
+			// Change Stage Background Event
+			// value1: StageId (small int) OR pointer to stageback name string
+			// value2: transition flags (STAGE_LOAD_* bitmask)
+			u8 transition_flags = (u8)(event->value2 & 0xFF);
+			
+			// Default: only swap the stage background without touching characters
+			if (transition_flags == 0)
+				transition_flags = STAGE_LOAD_STAGE;
+			
+			// Determine if value1 is a StageId or a string pointer
+			if (event->value1 < (u64)StageId_Max)
+			{
+				// value1 is a StageId - use existing asset-only swap
+				Stage_RequestSceneSwapTo((StageId)event->value1, transition_flags);
+			}
+			else
+			{
+				// value1 is a string pointer - look up background by name and queue
+				const char *back_name = (const char*)event->value1;
+				StageBack *new_back = StageBackMap_GetByName(back_name);
+				if (new_back != NULL)
+					Stage_QueueBackSwap(new_back);
+			}
+			break;
+		}
+		case EVENTS_FLAG_SUBTITLE:
+		{
+			// Add Subtitle Event - similar to lyrics
+			event_lyric_text = (const char*)event->value1;
+			event_lyric_end = timer_sec + FIXED_DEC(3,1); // 3 second display time
+			event_lyric_color = (u32)event->value2;
+			event_lyric_scale = 1;
+			event_lyric_font = 0;
+			break;
+		}
+		case EVENTS_FLAG_CAMZOOMCHAIN:
+		{
+			// Camera Zoom Chain Event
+			// value1: high 16 bits = camera intensity, low 16 bits = hud intensity
+			// value2: high 16 bits = count, low 16 bits = interval
+			fixed_t cam_intensity = (fixed_t)(event->value1 >> 16);
+			fixed_t hud_intensity = (fixed_t)(event->value1 & 0xFFFF);
+			u16 zoom_count = (u16)(event->value2 >> 16);
+			u16 zoom_interval = (u16)(event->value2 & 0xFFFF);
+			
+			// Apply multiple camera zooms
+			for (u16 i = 0; i < zoom_count && i < 32; i++)
+			{
+				stage.bump += cam_intensity;
+				stage.sbump += hud_intensity;
+			}
+			break;
+		}
+		case EVENTS_FLAG_SHAKECHAIN:
+		{
+			// Screen Shake Chain Event
+			// value1: high 16 bits = duration (frames), low 16 bits = intensity
+			// value2: high 16 bits = count, low 16 bits = interval (frames)
+			u16 shake_duration_base = (u16)(event->value1 >> 16);
+			fixed_t shake_intensity_base = (fixed_t)(event->value1 & 0xFFFF);
+			u16 shake_count = (u16)(event->value2 >> 16);
+			u16 shake_interval = (u16)(event->value2 & 0xFFFF);
+			
+			// Apply chained screen shakes
+			// Implementation would depend on a shake queue system
+			// For now, apply the base shake with extended duration
+			shake_intensity = shake_intensity_base;
+			shake_duration = shake_duration_base * shake_count;
+			break;
+		}
+		case EVENTS_FLAG_SHOWSONG:
+		{
+			// Show Song Event
+			// value1: show/hide flag (0=hide, 1=show)
+			// Implementation depends on HUD system
+			break;
+		}
+		case EVENTS_FLAG_HIDEHUD:
+		{
+			// Hide HUD Event
+			// value1: hide/show flag (0=show, 1=hide)
+			// Implementation depends on HUD system
 			break;
 		}
         default:

@@ -33,11 +33,11 @@ bin/
 build/
 
 # Exclude converted assets
-**/*.tim
-**/*.arc
-**/*.xa
-**/*.cht
-**/*.str
+iso/**/*.tim
+iso/**/*.arc
+iso/**/*.xa
+iso/**/*.cht
+iso/**/*.str
 
 # Don't remove this
 !main.exe

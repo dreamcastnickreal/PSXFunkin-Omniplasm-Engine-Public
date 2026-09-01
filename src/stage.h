@@ -155,7 +155,7 @@ typedef struct
 typedef struct
 {
 	u64 end; //1/12 steps (was u16)
-	u16 flag;
+	u32 flag;
 } Section;
 
 #define NOTE_FLAG_SUSTAIN     (1 << 4) //Note is a sustain note
@@ -170,11 +170,16 @@ typedef struct
 #define NOTE_FLAG_HIT         (1 << 13) //Note has been hit
 #define NOTE_FLAG_SLAM        (1 << 14) //Note is a slam
 #define NOTE_FLAG_HALF        (1 << 15) //Note is a half slam
+#define NOTE_FLAG_ASBUD       (1 << 16) //Note makes all characters (lg, w4r, y0sh) sing together
+#define NOTE_FLAG_YOSHI       (1 << 17) //Note makes y0sh sing solo
+#define NOTE_FLAG_GFSING      (1 << 18) //Note makes w4r sing solo, also works with mmgf
+#define NOTE_FLAG_GFDUO       (1 << 19) //Note makes gf duet sing with player/opponent
+#define NOTE_FLAG_NOANIM      (1 << 20) //Note doesn't play sing animation
 
 typedef struct
 {
 	u64 pos; //1/12 steps (was u16)
-	u16 type;
+	u32 type;
 	u16 is_opponent;
 } Note;
 
@@ -222,6 +227,7 @@ typedef struct
 	{
 		s32 mode;
 		boolean ghost, downscroll, middlescroll, expsync, debug, songtimer, botplay, flash;
+		boolean icon_bounce;
 		int savescore[StageId_Max][StageDiff_Max];
 	}prefs;	
 	u32 offset;
@@ -310,6 +316,14 @@ typedef struct
 		s16 ta, hudta;
 	} camera;
 	fixed_t bump, sbump;
+	
+	// Icon bounce state (per-icon scale and angle tweens)
+	struct
+	{
+		Tween scale_x, scale_y;  // Per-icon scale tweens
+		fixed_t angle;           // Current icon angle
+		Tween angle_tween;       // Angle tween back to 0
+	} icon_bounce[2];
 	
 	StageBack *back;
 	
@@ -430,7 +444,17 @@ void Stage_RequestSwapTo(StageId target, u8 load_flags);
 void Stage_RequestSceneSwapTo(StageId target, u8 load_flags);
 // Queue a swap using current `stage.stage_def->next_stage` and `next_load`
 void Stage_RequestNextLoadSwap(void);
+// Queue a single-character hot-swap (freed/created at next safe frame via IO batching)
+void Stage_QueueCharacterSwap(u8 slot, Character *new_char);
+// Queue a stage background hot-swap (freed/created at next safe frame via IO batching)
+void Stage_QueueBackSwap(StageBack *new_back);
+// Immediately swap a character in the given slot (call within IO_BeginAssetBatch/EndAssetBatch)
+void Stage_HotSwapCharacter(u8 slot, Character *new_char);
+// Stage background string-name lookup (e.g. "week1", "week3", "kitchen")
+StageBack* StageBackMap_GetByName(const char *name);
 void Stage_SetBGNoteOffset(u8 player_index, fixed_t x, fixed_t y);
 void Stage_BlendTexCol_FlipY(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fixed_t zoom, fixed_t rotation, u8 r, u8 g, u8 b, u8 mode);
+void Stage_DrawTexAll(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fixed_t zoom, fixed_t rotation, u8 angle, u8 r, u8 g, u8 b, u8 alpha, boolean flip_x, boolean flip_y, boolean clipped);
+void Stage_DrawBlendTexAll(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fixed_t zoom, fixed_t rotation, u8 angle, u8 r, u8 g, u8 b, u8 alpha, boolean flip_x, boolean flip_y, boolean clipped, u8 mode);
 
 #endif

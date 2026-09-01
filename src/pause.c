@@ -104,6 +104,7 @@ void OptionsState()
 		"DOWNSCROLL",
 		"SHOW SONG TIME",
 		"BOTPLAY",
+		"ICON BOUNCE",
 		"DEBUG MODE"
 	};
 
@@ -132,7 +133,10 @@ void OptionsState()
 			case 5: //Botplay
 				stage.prefs.botplay = !stage.prefs.botplay;
 				break;
-			case 6: //Debug mode
+			case 6: //Icon bounce
+				stage.prefs.icon_bounce = !stage.prefs.icon_bounce;
+				break;
+			case 7: //Debug mode
 				stage.prefs.debug = !stage.prefs.debug;
 				break;
 		}

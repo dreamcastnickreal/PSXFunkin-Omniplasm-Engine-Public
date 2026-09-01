@@ -6,6 +6,7 @@
 
 #include "stage.h"
 
+#include "debug.h"
 #include "mem.h"
 #include "timer.h"
 #include "audio.h"
@@ -355,6 +356,186 @@ static const StageDef *Stage_GetDef(StageId id)
 	return &stage_defs[id - STAGE_DEF_FIRST];
 }
 
+// --- Character mapping (string name -> constructor) ---
+
+#include "character_mapping.h"
+#include <string.h>
+
+typedef Character* (*CharCtor)(fixed_t x, fixed_t y);
+
+typedef struct { const char *name; CharCtor ctor; } CharMapEntry;
+
+static const CharMapEntry char_map[] =
+{
+	{"bf",        Char_BF_New},
+	{"boyfriend", Char_BF_New},
+	{"dad",       Char_Dad_New},
+	{"spook",     Char_Spook_New},
+	{"monster",   Char_Monster_New},
+	{"pico",      Char_Pico_New},
+	{"exep3",     Char_ExeP3_New},
+	{"jerry",     Char_Jerry_New},
+	{"logan",     Char_Logan_New},
+	{"apple",     Char_Apple_New},
+	{"orange",    Char_Orange_New},
+	{"gf",        Char_GF_New},
+	{"girlfriend",Char_GF_New},
+	{NULL, NULL}
+};
+
+Character* CharMap_GetCharacterByName(const char *name)
+{
+	if (name == NULL)
+		return NULL;
+
+	for (const CharMapEntry *e = char_map; e->name != NULL; e++)
+	{
+		if (strcmp(name, e->name) == 0)
+			return e->ctor(FIXED_DEC(60,1), FIXED_DEC(100,1));
+	}
+	return NULL;
+}
+
+u8 CharMap_GetAnimationByName(const char *name, const char *prefix)
+{
+	(void)prefix;
+	if (name == NULL)
+		return CharAnim_Idle;
+
+	if (strcmp(name, "idle") == 0)        return CharAnim_Idle;
+	if (strcmp(name, "left") == 0)        return CharAnim_Left;
+	if (strcmp(name, "down") == 0)        return CharAnim_Down;
+	if (strcmp(name, "up") == 0)          return CharAnim_Up;
+	if (strcmp(name, "right") == 0)       return CharAnim_Right;
+	if (strcmp(name, "singLEFT") == 0)    return CharAnim_Left;
+	if (strcmp(name, "singDOWN") == 0)    return CharAnim_Down;
+	if (strcmp(name, "singUP") == 0)      return CharAnim_Up;
+	if (strcmp(name, "singRIGHT") == 0)   return CharAnim_Right;
+	if (strcmp(name, "singleft") == 0)    return CharAnim_Left;
+	if (strcmp(name, "singdown") == 0)    return CharAnim_Down;
+	if (strcmp(name, "singup") == 0)      return CharAnim_Up;
+	if (strcmp(name, "singright") == 0)   return CharAnim_Right;
+	if (strcmp(name, "leftalt") == 0)     return CharAnim_LeftAlt;
+	if (strcmp(name, "downalt") == 0)     return CharAnim_DownAlt;
+	if (strcmp(name, "upalt") == 0)       return CharAnim_UpAlt;
+	if (strcmp(name, "rightalt") == 0)    return CharAnim_RightAlt;
+	if (strcmp(name, "singLEFTalt") == 0) return CharAnim_LeftAlt;
+	if (strcmp(name, "singDOWNalt") == 0) return CharAnim_DownAlt;
+	if (strcmp(name, "singUPalt") == 0)   return CharAnim_UpAlt;
+	if (strcmp(name, "singRIGHTalt") == 0)return CharAnim_RightAlt;
+
+	return CharAnim_Idle;
+}
+
+// --- Stage background mapping (string name -> constructor) ---
+
+typedef StageBack* (*BackCtor)(void);
+
+typedef struct { const char *name; BackCtor ctor; } BackMapEntry;
+
+static const BackMapEntry back_map[] =
+{
+	{"week1",    Back_Week1_New},
+	{"week2",    Back_Week2_New},
+	{"week3",    Back_Week3_New},
+	{"dummy",    Back_Dummy_New},
+	{"bvoid",    Back_BVoid_New},
+	{"trio",     Back_Trio_New},
+	{"kitchen",  Back_Kitchen_New},
+	{NULL, NULL}
+};
+
+StageBack* StageBackMap_GetByName(const char *name)
+{
+	if (name == NULL)
+		return NULL;
+
+	for (const BackMapEntry *e = back_map; e->name != NULL; e++)
+	{
+		if (strcmp(name, e->name) == 0)
+			return e->ctor();
+	}
+	return NULL;
+}
+
+// --- Hot-swap character (single-character swap without changing stage) ---
+
+static void Stage_FocusCharacter(Character *ch); // forward declaration
+
+void Stage_HotSwapCharacter(u8 slot, Character *new_char)
+{
+	if (new_char == NULL)
+		return;
+
+	// Free old character and assign new one
+	switch (slot)
+	{
+		case 0: // player (bf/pchar1)
+			Character_Free(stage.player);
+			stage.player = new_char;
+			break;
+		case 1: // opponent (dad/ochar1)
+			Character_Free(stage.opponent);
+			stage.opponent = new_char;
+			break;
+		case 2: // girlfriend (gchar)
+			Character_Free(stage.gf);
+			stage.gf = new_char;
+			break;
+		case 3: // opponent2 (ochar2)
+			Character_Free(stage.opponent2);
+			stage.opponent2 = new_char;
+			break;
+		case 4: // player2 (pchar2)
+			Character_Free(stage.player2);
+			stage.player2 = new_char;
+			break;
+		default:
+			Character_Free(new_char);
+			return;
+	}
+
+	// Update player_state character pointers based on play mode
+	if (stage.prefs.mode == StageMode_Swap)
+	{
+		stage.player_state[0].character = stage.opponent;
+		stage.player_state[1].character = stage.player;
+	}
+	else
+	{
+		stage.player_state[0].character = stage.player;
+		stage.player_state[1].character = stage.opponent;
+	}
+
+	// Ensure fallback pointers
+	if (stage.player_state[0].character == NULL)
+		stage.player_state[0].character = stage.player;
+	if (stage.player_state[1].character == NULL)
+		stage.player_state[1].character = stage.opponent;
+
+	// Recalculate camera target
+	if (stage.cur_section != NULL)
+	{
+		if (stage.cur_section->flag & SECTION_FLAG_OPPFOCUS)
+		{
+			if (stage.opponent != NULL)
+				Stage_FocusCharacter(stage.opponent);
+			else if (stage.player != NULL)
+				Stage_FocusCharacter(stage.player);
+		}
+		else
+		{
+			if (stage.player != NULL)
+				Stage_FocusCharacter(stage.player);
+			else if (stage.opponent != NULL)
+				Stage_FocusCharacter(stage.opponent);
+		}
+	}
+
+	// Suppress false misses for a few frames after the swap
+	stage.swap_grace_frames = 6;
+}
+
 static u8 Stage_NoteCount(void)
 {
 	return stage.keys * 2;
@@ -466,14 +647,14 @@ static fixed_t bg_note_offset_y[2] = {0, 0};
 static u8 cur_note_draw_player = 0;
 
 //Stage note functions
-static u16 Stage_GetNoteType(Note* note)
+static u32 Stage_GetNoteType(Note* note)
 {
-	u16 note_xor = 0;
-	u16 note_type = note->type;
+	u32 note_xor = 0;
+	u32 note_type = note->type;
 	
-	static u16 note_types[] = {NOTE_FLAG_SUSTAIN, NOTE_FLAG_SUSTAIN_END, NOTE_FLAG_ALT_ANIM, NOTE_FLAG_MINE, NOTE_FLAG_DANGER, NOTE_FLAG_STATIC, NOTE_FLAG_PHANTOM, NOTE_FLAG_POLICE, NOTE_FLAG_MAGIC, NOTE_FLAG_HIT, NOTE_FLAG_SLAM, NOTE_FLAG_HALF};
+	static u32 note_types[] = {NOTE_FLAG_SUSTAIN, NOTE_FLAG_SUSTAIN_END, NOTE_FLAG_ALT_ANIM, NOTE_FLAG_MINE, NOTE_FLAG_DANGER, NOTE_FLAG_STATIC, NOTE_FLAG_PHANTOM, NOTE_FLAG_POLICE, NOTE_FLAG_MAGIC, NOTE_FLAG_HIT, NOTE_FLAG_SLAM, NOTE_FLAG_HALF, NOTE_FLAG_ASBUD, NOTE_FLAG_YOSHI, NOTE_FLAG_GFSING, NOTE_FLAG_GFDUO, NOTE_FLAG_NOANIM};
 	
-	for (u16 i = 0; i < COUNT_OF(note_types); i++)
+	for (u32 i = 0; i < COUNT_OF(note_types); i++)
 	{
 		if (note_type & note_types[i])
 			note_xor |= note_types[i];
@@ -556,7 +737,11 @@ static void Stage_FocusCharacter(Character *ch)
 static void Stage_ScrollCamera(void)
 {
 	if (stage.prefs.debug)
+	{
+		#ifdef ENABLE_DEBUG
 		Debug_ScrollCamera();
+		#endif
+	}
 	else if (stage.freecam)
 	{
 		if (pad_state.held & PAD_LEFT)
@@ -1763,8 +1948,16 @@ void Stage_BlendTexCol(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fix
 }
 
 //Stage HUD functions
+static void Stage_DrawHealthBounce(s16 health, u16 health_i[2][4], s8 ox);
 static void Stage_DrawHealth(s16 health, u16 health_i[2][4], s8 ox) 
 {
+	// Dispatch to bounce version if enabled
+	if (stage.prefs.icon_bounce)
+	{
+		Stage_DrawHealthBounce(health, health_i, ox);
+		return;
+	}
+
     // Check if we should use 'dying' frame
 	s8 dying;
 	if (ox < 0)
@@ -1802,6 +1995,68 @@ static void Stage_DrawHealth(s16 health, u16 health_i[2][4], s8 ox)
         Stage_DrawTexCol(&stage.tex_hud1, &src, &dst, FIXED_MUL(stage.bump, stage.sbump), stage.camera.hudangle, 0, 0, 255);
     else
         Stage_DrawTex(&stage.tex_hud1, &src, &dst, FIXED_MUL(stage.bump, stage.sbump), stage.camera.hudangle);
+}
+
+static void Stage_DrawHealthBounce(s16 health, u16 health_i[2][4], s8 ox)
+{
+    // Determine which icon slot (0=player, 1=opponent)
+    u8 slot = (ox > 0) ? 0 : 1;
+
+    // Check if we should use 'dying' frame
+    s8 dying;
+    if (ox < 0)
+        dying = (health >= 18000);
+    else
+        dying = (health <= 2000);
+
+    // Get current icon scale from tweens (1.0 = no bounce)
+    fixed_t icon_sx = Tween_GetValue(&stage.icon_bounce[slot].scale_x);
+    fixed_t icon_sy = Tween_GetValue(&stage.icon_bounce[slot].scale_y);
+    fixed_t icon_angle = stage.icon_bounce[slot].angle;
+
+    // Get src rect
+    RECT src = {
+        health_i[dying][0],
+        health_i[dying][1],
+        health_i[dying][2],
+        health_i[dying][3]
+    };
+
+    // Calculate x from health (same as default)
+    fixed_t hx = (128 << FIXED_SHIFT) * (10000 - health) / 10000;
+
+    // Scaled icon size (base * 1.5x from Lua's 150px base, then bounce scale)
+    fixed_t base_w = src.w << FIXED_SHIFT;
+    fixed_t base_h = src.h << FIXED_SHIFT;
+    fixed_t scaled_w = FIXED_MUL(base_w, FIXED_MUL(icon_sx, FIXED_DEC(1,1)));
+    fixed_t scaled_h = FIXED_MUL(base_h, FIXED_MUL(icon_sy, FIXED_DEC(1,1)));
+
+    // Same x/y positioning as default, just use scaled w/h
+    RECT_FIXED dst = {
+        hx + ox * FIXED_DEC(16,1) - FIXED_DEC(16,1),
+        FIXED_DEC(70,1),
+        scaled_w,
+        scaled_h
+    };
+    if (stage.prefs.downscroll)
+        dst.y = -dst.y - FIXED_DEC(44,1);
+
+    if (stage.prefs.mode == StageMode_Swap)
+    {
+        dst.x += dst.w;
+        dst.w = -dst.w;
+    }
+
+    dst.x += stage.noteshakex;
+    dst.y += stage.noteshakey;
+
+    // Convert icon_angle (fixed_t degrees) to PSX u8 angle (0-255 = 0-360°)
+    u8 psx_icon_angle = (u8)((icon_angle >> FIXED_SHIFT) * 256 / 360);
+
+    if (stage.bluemode)
+        Stage_DrawTexAll(&stage.tex_hud1, &src, &dst, FIXED_MUL(stage.bump, stage.sbump), stage.camera.hudangle, psx_icon_angle, 0, 0, 255, 255, false, false, false);
+    else
+        Stage_DrawTexAll(&stage.tex_hud1, &src, &dst, FIXED_MUL(stage.bump, stage.sbump), stage.camera.hudangle, psx_icon_angle, 0x80, 0x80, 0x80, 255, false, false, false);
 }
 
 static void Stage_DrawOrangeHealth(s16 health, u16 health_i[2][4], s8 ox) 
@@ -3676,6 +3931,11 @@ static u8 g_pendingSwapFlags = 0;                 // STAGE_LOAD_* bitfield
 static boolean g_pendingSwapKeepStageId = false;
 static boolean g_pendingSwapRestartMusic = false;
 
+// Hot-swap queue: deferred single-character swaps from chart events
+static struct { u8 slot; Character *new_char; } g_pendingCharSwap = { 0xFF, NULL };
+// Hot-swap queue: deferred stage background swap from chart events
+static StageBack* g_pendingBackSwap = NULL;
+
 static void Stage_FreeMidSwapObjects(void)
 {
 	ObjectList_Free(&stage.objlist_splash);
@@ -3884,6 +4144,31 @@ void Stage_RequestNextLoadSwap(void)
 	Stage_RequestSwapTo(stage.stage_def->next_stage, stage.stage_def->next_load);
 }
 
+void Stage_QueueCharacterSwap(u8 slot, Character *new_char)
+{
+	if (new_char == NULL || slot > 4)
+		return;
+	// If there's already a pending swap, free the new character
+	if (g_pendingCharSwap.new_char != NULL)
+		Character_Free(new_char);
+	else
+	{
+		g_pendingCharSwap.slot = slot;
+		g_pendingCharSwap.new_char = new_char;
+	}
+}
+
+void Stage_QueueBackSwap(StageBack *new_back)
+{
+	if (new_back == NULL)
+		return;
+	// If there's already a pending back swap, free the new one
+	if (g_pendingBackSwap != NULL)
+		new_back->free(new_back);
+	else
+		g_pendingBackSwap = new_back;
+}
+
 void Stage_SetBGNoteOffset(u8 player_index, fixed_t x, fixed_t y)
 {
 	if (player_index > 1)
@@ -4061,6 +4346,15 @@ void Stage_Load(StageId id, StageDiff difficulty, boolean story)
 	
 	stage.bump = FIXED_UNIT;
 	stage.sbump = FIXED_UNIT;
+	
+	//Initialize icon bounce tweens to identity
+	for (u8 i = 0; i < 2; i++)
+	{
+		Tween_InitWithValue(&stage.icon_bounce[i].scale_x, FIXED_UNIT, FIXED_UNIT, 1, EASING_QUAD_OUT, 0);
+		Tween_InitWithValue(&stage.icon_bounce[i].scale_y, FIXED_UNIT, FIXED_UNIT, 1, EASING_QUAD_OUT, 0);
+		Tween_InitWithValue(&stage.icon_bounce[i].angle_tween, 0, 0, 1, EASING_QUAD_OUT, 0);
+		stage.icon_bounce[i].angle = 0;
+	}
 	
 	//Initialize stage according to mode
 	stage.note_swap = (stage.prefs.mode == StageMode_Swap) ? 4 : 0;
@@ -4317,6 +4611,27 @@ void Stage_Tick(void)
 		}
 	}
 	
+    // Process deferred character swap from chart events
+    if (g_pendingCharSwap.new_char != NULL && !stage.movie_is_playing)
+    {
+        IO_BeginAssetBatch();
+        Stage_HotSwapCharacter(g_pendingCharSwap.slot, g_pendingCharSwap.new_char);
+        IO_EndAssetBatch(true);
+        g_pendingCharSwap.new_char = NULL;
+        g_pendingCharSwap.slot = 0xFF;
+    }
+
+    // Process deferred stage background swap from chart events
+    if (g_pendingBackSwap != NULL && !stage.movie_is_playing)
+    {
+        IO_BeginAssetBatch();
+        if (stage.back != NULL)
+            stage.back->free(stage.back);
+        stage.back = g_pendingBackSwap;
+        IO_EndAssetBatch(true);
+        g_pendingBackSwap = NULL;
+    }
+
     // Apply pending mid-game swap at a safe point each frame.
     // Defer while STR is playing so movie decode/XA state cannot be interrupted mid-cutscene.
     if (g_pendingSwapTarget != StageId_Max && !stage.movie_is_playing)
@@ -4382,7 +4697,11 @@ void Stage_Tick(void)
 				}
 				
 				if (stage.prefs.debug)
+				{
+					#ifdef ENABLE_DEBUG
 					Debug_Tick();
+					#endif
+				}
 				
 				{
 					// char debug_text[32];
@@ -4550,7 +4869,11 @@ void Stage_Tick(void)
 				}
 				
 				if (stage.prefs.debug)
+				{
+					#ifdef ENABLE_DEBUG
 					Debug_Tick();
+					#endif
+				}
 				
 				{
 					// char debug_text[32];
@@ -5213,6 +5536,55 @@ void Stage_Tick(void)
 				//Bump health every 4 steps
 				if ((stage.song_step & 0x3) == 0)
 					stage.sbump = FIXED_DEC(103,100);
+
+				//Icon bounce on beat (every gf_speed steps)
+				if (stage.prefs.icon_bounce && (stage.song_step % stage.gf_speed) == 0)
+				{
+					// Duration: crochet / 1300 * gfSpeed (Lua: crochet is beat duration in ms)
+					// PSX: compute in real seconds via timer-compatible fixed point
+					// crochet_sec = 60 / bpm, duration = crochet_sec * gfSpeed / 1300
+					u16 bpm = stage.cur_section->flag & SECTION_FLAG_BPM_MASK;
+					fixed_t bounce_dur = FIXED_DIV(
+						FIXED_MUL(FIXED_DEC(60,1), (fixed_t)(stage.gf_speed << FIXED_SHIFT)),
+						FIXED_MUL((fixed_t)bpm << FIXED_SHIFT, FIXED_DEC(1300,1))
+					);
+					if (bounce_dur < 1)
+						bounce_dur = 1;
+
+					// Alternate every other beat
+					if ((stage.song_step / stage.gf_speed) & 1)
+					{
+						// Even beat: P1 squish vertical, P2 stretch vertical
+						Tween_InitWithValue(&stage.icon_bounce[0].scale_x, FIXED_DEC(110,100), FIXED_UNIT, bounce_dur, EASING_QUAD_OUT, 0);
+						Tween_InitWithValue(&stage.icon_bounce[0].scale_y, FIXED_DEC(80,100),  FIXED_UNIT, bounce_dur, EASING_QUAD_OUT, 0);
+						Tween_InitWithValue(&stage.icon_bounce[1].scale_x, FIXED_DEC(110,100), FIXED_UNIT, bounce_dur, EASING_QUAD_OUT, 0);
+						Tween_InitWithValue(&stage.icon_bounce[1].scale_y, FIXED_DEC(130,100), FIXED_UNIT, bounce_dur, EASING_QUAD_OUT, 0);
+						Tween_InitWithValue(&stage.icon_bounce[0].angle_tween, FIXED_DEC(-15,1), 0, bounce_dur, EASING_QUAD_OUT, 0);
+						Tween_InitWithValue(&stage.icon_bounce[1].angle_tween, FIXED_DEC(15,1),  0, bounce_dur, EASING_QUAD_OUT, 0);
+					}
+					else
+					{
+						// Odd beat: P1 stretch vertical, P2 squish vertical
+						Tween_InitWithValue(&stage.icon_bounce[0].scale_x, FIXED_DEC(110,100), FIXED_UNIT, bounce_dur, EASING_QUAD_OUT, 0);
+						Tween_InitWithValue(&stage.icon_bounce[0].scale_y, FIXED_DEC(130,100), FIXED_UNIT, bounce_dur, EASING_QUAD_OUT, 0);
+						Tween_InitWithValue(&stage.icon_bounce[1].scale_x, FIXED_DEC(110,100), FIXED_UNIT, bounce_dur, EASING_QUAD_OUT, 0);
+						Tween_InitWithValue(&stage.icon_bounce[1].scale_y, FIXED_DEC(80,100),  FIXED_UNIT, bounce_dur, EASING_QUAD_OUT, 0);
+						Tween_InitWithValue(&stage.icon_bounce[0].angle_tween, FIXED_DEC(15,1),  0, bounce_dur, EASING_QUAD_OUT, 0);
+						Tween_InitWithValue(&stage.icon_bounce[1].angle_tween, FIXED_DEC(-15,1), 0, bounce_dur, EASING_QUAD_OUT, 0);
+					}
+				}
+			}
+
+			//Tick icon bounce tweens
+			if (stage.prefs.icon_bounce)
+			{
+				for (u8 i = 0; i < 2; i++)
+				{
+					Tween_Tick(&stage.icon_bounce[i].scale_x);
+					Tween_Tick(&stage.icon_bounce[i].scale_y);
+					Tween_Tick(&stage.icon_bounce[i].angle_tween);
+					stage.icon_bounce[i].angle = Tween_GetValue(&stage.icon_bounce[i].angle_tween);
+				}
 			}
 			
 			//Scroll camera
@@ -5525,6 +5897,13 @@ void Stage_Tick(void)
 			//Reset stage state
 			stage.flag = 0;
 			stage.bump = stage.sbump = FIXED_UNIT;
+			for (u8 i = 0; i < 2; i++)
+			{
+				Tween_InitWithValue(&stage.icon_bounce[i].scale_x, FIXED_UNIT, FIXED_UNIT, 1, EASING_QUAD_OUT, 0);
+				Tween_InitWithValue(&stage.icon_bounce[i].scale_y, FIXED_UNIT, FIXED_UNIT, 1, EASING_QUAD_OUT, 0);
+				Tween_InitWithValue(&stage.icon_bounce[i].angle_tween, 0, 0, 1, EASING_QUAD_OUT, 0);
+				stage.icon_bounce[i].angle = 0;
+			}
 			
 			//Change background colour to black
 			Gfx_SetClear(0, 0, 0);

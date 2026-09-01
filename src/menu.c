@@ -1311,6 +1311,7 @@ void Menu_Tick(void)
 				{OptType_Boolean, "DOWNSCROLL", &stage.prefs.downscroll, {.spec_boolean = {0}}},
 				{OptType_Boolean, "BOTPLAY", &stage.prefs.botplay, {.spec_boolean = {0}}},
 				{OptType_Boolean, "SHOW SONG TIME", &stage.prefs.songtimer, {.spec_boolean = {0}}},
+				{OptType_Boolean, "ICON BOUNCE", &stage.prefs.icon_bounce, {.spec_boolean = {0}}},
 				{OptType_Boolean, "DEBUG MODE", &stage.prefs.debug, {.spec_boolean = {0}}},
 			};
 

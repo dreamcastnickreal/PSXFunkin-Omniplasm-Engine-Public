@@ -8,6 +8,7 @@
 
 #include "../mem.h"
 #include "../archive.h"
+#include "../debug.h"
 
 //Week 2 background structure
 typedef struct
@@ -39,7 +40,9 @@ void Back_Week2_DrawBG(StageBack *back)
 		FIXED_DEC(120,1)
 	};
 
+	#ifdef ENABLE_DEBUG
 	Debug_StageMoveDebug(&window_dst, 4, fx, fy);
+	#endif
 	Stage_DrawTex(&this->tex_back1, &window_src, &window_dst, stage.camera.bzoom, stage.camera.angle);
 	
 	//Draw window light
@@ -51,7 +54,9 @@ void Back_Week2_DrawBG(StageBack *back)
 		FIXED_DEC(148,1)
 	};
 
-	Debug_StageMoveDebug(&windowl_dst, 5, fx, fy);	
+	#ifdef ENABLE_DEBUG
+	Debug_StageMoveDebug(&windowl_dst, 5, fx, fy);
+	#endif
 	Stage_DrawTex(&this->tex_back1, &windowl_src, &windowl_dst, stage.camera.bzoom, stage.camera.angle);
 	
 	//Draw background
@@ -63,7 +68,9 @@ void Back_Week2_DrawBG(StageBack *back)
 		FIXED_DEC(267,1)
 	};
 	
+	#ifdef ENABLE_DEBUG
 	Debug_StageMoveDebug(&back_dst, 6, fx, fy);
+	#endif
 	Stage_DrawTex(&this->tex_back0, &back_src, &back_dst, stage.camera.bzoom, stage.camera.angle);
 }
 

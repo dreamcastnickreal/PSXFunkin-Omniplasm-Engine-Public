@@ -9,6 +9,7 @@
 #include "../archive.h"
 #include "../mem.h"
 #include "../stage.h"
+#include "../debug.h"
 #include "../random.h"
 #include "../timer.h"
 #include "../animation.h"
@@ -305,7 +306,9 @@ void Back_Kitchen_DrawFG(StageBack *back)
 		FIXED_DEC(17,1)
 	};
 	
+	#ifdef ENABLE_DEBUG
 	Debug_StageMoveDebug(&gracetext_dst, 9, fx, fy);
+	#endif
 	if (stage.song_step >= 2080 && stage.song_step <= 2084)
 	{
 		Stage_DrawTex(&this->tex_back1, &gracetext_src, &gracetext_dst, stage.camera.bzoom, stage.camera.angle);
@@ -322,7 +325,9 @@ void Back_Kitchen_DrawFG(StageBack *back)
 		FIXED_DEC(14,1)
 	};
 	
+	#ifdef ENABLE_DEBUG
 	Debug_StageMoveDebug(&soundtext_dst, 9, fx, fy);
+	#endif
 	if (stage.song_step >= 2208 && stage.song_step <= 2224)
 	{
 		// Update src.x and dst.w based on song_step

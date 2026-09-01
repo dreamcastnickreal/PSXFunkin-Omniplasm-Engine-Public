@@ -48,4 +48,23 @@ void Tween_Tick(Tween* tween);
 
 fixed_t Tween_GetValue(Tween* tween); //Retrieve the current value of the tween
 
+// Enhanced tween functions for All Stars
+void Tween_SetEase(Tween* tween, Eases ease);
+void Tween_SetDuration(Tween* tween, fixed_t duration);
+void Tween_Reset(Tween* tween);
+void Tween_Stop(Tween* tween);
+boolean Tween_IsComplete(Tween* tween);
+fixed_t Tween_GetProgress(Tween* tween); // Returns progress from 0 to 1
+
+// Advanced easing functions
+fixed_t Tween_EaseInCubic(fixed_t t);
+fixed_t Tween_EaseOutCubic(fixed_t t);
+fixed_t Tween_EaseInOutCubic(fixed_t t);
+fixed_t Tween_EaseInQuart(fixed_t t);
+fixed_t Tween_EaseOutQuart(fixed_t t);
+fixed_t Tween_EaseInOutQuart(fixed_t t);
+fixed_t Tween_EaseInBounce(fixed_t t);
+fixed_t Tween_EaseOutBounce(fixed_t t);
+fixed_t Tween_EaseInOutBounce(fixed_t t);
+
 #endif

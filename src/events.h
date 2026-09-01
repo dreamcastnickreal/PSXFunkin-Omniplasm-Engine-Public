@@ -22,8 +22,17 @@
 #define EVENTS_FLAG_MULTSV    (1 << 8) // Multiplier SV (freeze note_scroll)
 #define EVENTS_FLAG_MAXIMA    (1 << 9) // Maxima event (for Voltex)
 #define EVENTS_FLAG_SHAKE     (1 << 10) // Screen Shake
+#define EVENTS_FLAG_TRIGGER   (1 << 11) // Universal Event Trigger (All Stars)
+#define EVENTS_FLAG_PLAYANIM  (1 << 12) // Play Animation
+#define EVENTS_FLAG_CHAR      (1 << 13) // Change Character
+#define EVENTS_FLAG_STAGE     (1 << 14) // Change Stage
+#define EVENTS_FLAG_SUBTITLE  (1 << 15) // Add Subtitle
+#define EVENTS_FLAG_CAMZOOMCHAIN (1 << 16) // Camera Zoom Chain
+#define EVENTS_FLAG_SHAKECHAIN (1 << 17) // Screen Shake Chain
+#define EVENTS_FLAG_SHOWSONG  (1 << 18) // Show Song
+#define EVENTS_FLAG_HIDEHUD   (1 << 19) // Hide HUD (Ocultar HUD)
 
-#define EVENTS_FLAG_PLAYED    (1 << 15) // Event has been already played
+#define EVENTS_FLAG_PLAYED    (1 << 31) // Event has been already played
 
 #define CHART_POS_END 0xFFFFFFFFFFFFFFFFULL
 #define LEGACY_CHART_POS_END 0xFFFFFFFFULL

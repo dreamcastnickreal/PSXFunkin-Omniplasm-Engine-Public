@@ -1,0 +1,36 @@
+PSXAVENC ?= tools/psxavenc/psxavenc
+
+# Conservative real-hardware profile. Keep the stream inside a 1x drive's
+# sustained bandwidth and leave enough CD/MDEC time for gameplay overlays.
+# Sources are stretched to the PS1 frame exactly, matching the engine's
+# original full-screen movie presentation.
+STR_CD_SPEED ?= 1
+STR_FPS ?= 30
+STR_SIZE ?= 320x240
+STR_AUDIO_RATE ?= 18900
+STR_AUDIO_BITS ?= 4
+STR_AUDIO_CHANNELS ?= 1
+STR_XA_FILE ?= 1
+STR_XA_CHANNEL ?= 0
+STR_FORMAT ?= v3
+
+MOVIE_MP4S := $(wildcard iso/movie/*.mp4) \
+	$(wildcard iso/movie/*/*.mp4)
+MOVIE_STRS := $(patsubst %.mp4,%.str,$(MOVIE_MP4S))
+
+.PHONY: all clean rebuild
+all: $(MOVIE_STRS)
+
+# Encode every movie source with the same compressed, PS1-compatible profile.
+iso/movie/%.str: iso/movie/%.mp4
+	$(PSXAVENC) -t str -x $(STR_CD_SPEED) -r $(STR_FPS) -s $(STR_SIZE) -I \
+		-f $(STR_AUDIO_RATE) -b $(STR_AUDIO_BITS) -c $(STR_AUDIO_CHANNELS) \
+		-F $(STR_XA_FILE) -C $(STR_XA_CHANNEL) -v $(STR_FORMAT) $< $@
+
+# Explicit opt-in target for regenerating every STR even when timestamps match.
+rebuild:
+	$(MAKE) -B -f Makefile.str all
+
+clean:
+	@echo "Cleaning .str files:"
+	find iso -type f \( -name "*.str" \) -print -delete

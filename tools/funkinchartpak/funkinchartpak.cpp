@@ -24,7 +24,7 @@ using json = nlohmann::json;
 struct Section
 {
     uint64_t end;
-    uint16_t flag = 0;
+    uint32_t flag = 0;
 };
 
 #define NOTE_FLAG_SUSTAIN     (1 << 4) //Note is a sustain note
@@ -39,11 +39,21 @@ struct Section
 #define NOTE_FLAG_HIT         (1 << 13) //Note has been hit
 #define NOTE_FLAG_SLAM        (1 << 14) //Note is a slam
 #define NOTE_FLAG_HALF        (1 << 15) //Note is a half slam
+#define NOTE_FLAG_ASBUD       (1 << 16) //Note makes all characters (lg, w4r, y0sh) sing together
+#define NOTE_FLAG_YOSHI       (1 << 17) //Note makes y0sh sing solo
+#define NOTE_FLAG_GFSING      (1 << 18) //Note makes w4r sing solo, also works with mmgf  
+#define NOTE_FLAG_GFDUO       (1 << 19) //Note makes gf duet sing with player/opponent
+#define NOTE_FLAG_NOANIM      (1 << 20) //Note doesn't play sing animation
+#define NOTE_FLAG_ASBUD       (1 << 16) //Note triggers w4r (bud note)
+#define NOTE_FLAG_YOSHI       (1 << 17) //Note triggers y0sh (yoshi note)  
+#define NOTE_FLAG_GFSING      (1 << 18) //Note makes gf sing
+#define NOTE_FLAG_GFDUO       (1 << 19) //Note makes gf duet sing
+#define NOTE_FLAG_NOANIM      (1 << 20) //Note doesn't play sing animation
 
 struct Note
 {
     uint64_t pos; // 1/12 steps
-    uint16_t type;
+    uint32_t type;
     uint16_t is_opponent;
 };
 
@@ -58,7 +68,16 @@ struct Note
 #define EVENTS_FLAG_MULTSV (1 << 8)
 #define EVENTS_FLAG_MAXIMA (1 << 9)
 #define EVENTS_FLAG_SHAKE (1 << 10)
-#define EVENTS_FLAG_PLAYED (1 << 15)
+#define EVENTS_FLAG_TRIGGER (1 << 11)
+#define EVENTS_FLAG_PLAYANIM (1 << 12)
+#define EVENTS_FLAG_CHAR (1 << 13)
+#define EVENTS_FLAG_STAGE (1 << 14)
+#define EVENTS_FLAG_SUBTITLE (1 << 15)
+#define EVENTS_FLAG_CAMZOOMCHAIN (1 << 16)
+#define EVENTS_FLAG_SHAKECHAIN (1 << 17)
+#define EVENTS_FLAG_SHOWSONG (1 << 18)
+#define EVENTS_FLAG_HIDEHUD (1 << 19)
+#define EVENTS_FLAG_PLAYED (1 << 31)
 
 typedef int32_t fixed_t;
 #define FIXED_SHIFT (10)
@@ -161,6 +180,33 @@ void Events_Read(json& i, Event& event_src, std::vector<Event>& event_target)
 
 	if (event_name == "Screen Shake")
 		event_src.event |= EVENTS_FLAG_SHAKE;
+
+	if (event_name == "Triggers Universal" || event_name == "Universal Event" || event_name == "All Stars Trigger")
+		event_src.event |= EVENTS_FLAG_TRIGGER;
+
+	if (event_name == "Play Animation" || event_name == "Character Animation")
+		event_src.event |= EVENTS_FLAG_PLAYANIM;
+
+	if (event_name == "Change Character" || event_name == "Character Change")
+		event_src.event |= EVENTS_FLAG_CHAR;
+
+	if (event_name == "Change Stage" || event_name == "Stage Change")
+		event_src.event |= EVENTS_FLAG_STAGE;
+
+	if (event_name == "Add Subtitle")
+		event_src.event |= EVENTS_FLAG_SUBTITLE;
+
+	if (event_name == "Camera Zoom Chain")
+		event_src.event |= EVENTS_FLAG_CAMZOOMCHAIN;
+
+	if (event_name == "Screen Shake Chain")
+		event_src.event |= EVENTS_FLAG_SHAKECHAIN;
+
+	if (event_name == "Show Song")
+		event_src.event |= EVENTS_FLAG_SHOWSONG;
+
+	if (event_name == "Ocultar HUD" || event_name == "Hide HUD")
+		event_src.event |= EVENTS_FLAG_HIDEHUD;
 	
 	if (event_src.event & EVENTS_FLAG_VARIANT)
 	{
@@ -327,6 +373,205 @@ void Events_Read(json& i, Event& event_src, std::vector<Event>& event_target)
 			return;
 		}
 
+		if (event_src.event & EVENTS_FLAG_TRIGGER)
+		{
+			// Universal Event Trigger (All Stars)
+			// value1: act switch (0-4), value2: trigger value
+			try {
+				event_src.value1 = static_cast<uint32_t>(std::stoul(value1));
+			} catch (...) {
+				event_src.value1 = 0;
+			}
+			try {
+				event_src.value2 = static_cast<uint32_t>(std::stoul(value2));
+			} catch (...) {
+				event_src.value2 = 0;
+			}
+			std::cout << "Found event!: " << event_name << " " << value1 << "," << value2 << '\n';
+			event_target.push_back(event_src);
+			return;
+		}
+
+		if (event_src.event & EVENTS_FLAG_PLAYANIM)
+		{
+			// Play Animation Event
+			// value1: character target (0=bf, 1=dad, 2=gf), value2: animation index
+			try {
+				event_src.value1 = static_cast<uint32_t>(std::stoul(value1));
+			} catch (...) {
+				event_src.value1 = 0;
+			}
+			try {
+				event_src.value2 = static_cast<uint32_t>(std::stoul(value2));
+			} catch (...) {
+				event_src.value2 = 0;
+			}
+			std::cout << "Found event!: " << event_name << " " << value1 << "," << value2 << '\n';
+			event_target.push_back(event_src);
+			return;
+		}
+
+		if (event_src.event & EVENTS_FLAG_CHAR)
+		{
+			// Change Character Event
+			// value1: character slot, value2: character ID
+			try {
+				event_src.value1 = static_cast<uint32_t>(std::stoul(value1));
+			} catch (...) {
+				event_src.value1 = 0;
+			}
+			try {
+				event_src.value2 = static_cast<uint32_t>(std::stoul(value2));
+			} catch (...) {
+				event_src.value2 = 0;
+			}
+			std::cout << "Found event!: " << event_name << " " << value1 << "," << value2 << '\n';
+			event_target.push_back(event_src);
+			return;
+		}
+
+		if (event_src.event & EVENTS_FLAG_STAGE)
+		{
+			// Change Stage Event
+			// value1: stage ID, value2: transition flags
+			try {
+				event_src.value1 = static_cast<uint32_t>(std::stoul(value1));
+			} catch (...) {
+				event_src.value1 = 0;
+			}
+			try {
+				event_src.value2 = static_cast<uint32_t>(std::stoul(value2));
+			} catch (...) {
+				event_src.value2 = 0;
+			}
+			std::cout << "Found event!: " << event_name << " " << value1 << "," << value2 << '\n';
+			event_target.push_back(event_src);
+			return;
+		}
+
+		if (event_src.event & EVENTS_FLAG_SUBTITLE)
+		{
+			// Add Subtitle Event - similar to lyrics but with color support
+			std::string subtitle_text = value1;
+			std::string color_hex = value2;
+			
+			event_src.lyric_text = subtitle_text;
+			event_src.value1 = 0; // subtitle text stored separately
+			
+			// Parse hex color (0xFFRRGGBB format)
+			if (!color_hex.empty() && color_hex.size() >= 8 && color_hex.substr(0, 2) == "0x")
+			{
+				try {
+					uint32_t hex_color = std::stoul(color_hex, nullptr, 16);
+					uint32_t r = (hex_color >> 16) & 0xFF;
+					uint32_t g = (hex_color >> 8) & 0xFF;
+					uint32_t b = hex_color & 0xFF;
+					// Convert to 0-128 range for PSX
+					r = (r * 128) / 255;
+					g = (g * 128) / 255;
+					b = (b * 128) / 255;
+					event_src.value2 = 0xFF000000 | (r << 16) | (g << 8) | b;
+				} catch (...) {
+					event_src.value2 = 0xFF808080; // Default gray
+				}
+			}
+			else
+			{
+				event_src.value2 = 0xFF808080; // Default gray
+			}
+			
+			std::cout << "Found event!: " << event_name << " \"" << subtitle_text << "\" " << color_hex << '\n';
+			event_target.push_back(event_src);
+			return;
+		}
+
+		if (event_src.event & EVENTS_FLAG_CAMZOOMCHAIN)
+		{
+			// Camera Zoom Chain Event
+			// value1: "intensity1, intensity2" for camera and hud zoom
+			// value2: "count, interval" for number of zooms and timing
+			auto parseZoomChain = [](const std::string &val) -> uint32_t {
+				if (val.empty()) return 0;
+				auto comma = val.find(',');
+				if (comma == std::string::npos) return 0;
+				double val1 = std::stod(val.substr(0, comma));
+				double val2 = std::stod(val.substr(comma + 1));
+				uint32_t param1 = static_cast<uint32_t>(val1 * FIXED_UNIT);
+				uint32_t param2 = static_cast<uint32_t>(val2 * FIXED_UNIT);
+				if (param1 > 0xFFFF) param1 = 0xFFFF;
+				if (param2 > 0xFFFF) param2 = 0xFFFF;
+				return (param1 << 16) | param2;
+			};
+			event_src.value1 = parseZoomChain(value1);
+			event_src.value2 = parseZoomChain(value2);
+			std::cout << "Found event!: " << event_name << " " << value1 << "," << value2 << '\n';
+			event_target.push_back(event_src);
+			return;
+		}
+
+		if (event_src.event & EVENTS_FLAG_SHAKECHAIN)
+		{
+			// Screen Shake Chain Event
+			// value1: "duration_sec,intensity" for game camera chain
+			// value2: "count,interval_sec" for number of shakes and timing
+			auto parseShakeChain = [](const std::string &val) -> uint32_t {
+				if (val.empty()) return 0;
+				auto comma = val.find(',');
+				if (comma == std::string::npos) return 0;
+				double val1 = std::stod(val.substr(0, comma));
+				double val2 = std::stod(val.substr(comma + 1));
+				uint32_t param1, param2;
+				
+				// For duration,intensity format
+				if (val1 < 10.0) { // Likely duration in seconds
+					param1 = static_cast<uint32_t>(val1 * 60.0 + 0.5); // Convert to frames
+					param2 = static_cast<uint32_t>(val2 * FIXED_UNIT); // Intensity
+				} else { // For count,interval format  
+					param1 = static_cast<uint32_t>(val1); // Count
+					param2 = static_cast<uint32_t>(val2 * 60.0 + 0.5); // Interval in frames
+				}
+				
+				if (param1 > 0xFFFF) param1 = 0xFFFF;
+				if (param2 > 0xFFFF) param2 = 0xFFFF;
+				return (param1 << 16) | param2;
+			};
+			event_src.value1 = parseShakeChain(value1);
+			event_src.value2 = parseShakeChain(value2);
+			std::cout << "Found event!: " << event_name << " " << value1 << "," << value2 << '\n';
+			event_target.push_back(event_src);
+			return;
+		}
+
+		if (event_src.event & EVENTS_FLAG_SHOWSONG)
+		{
+			// Show Song Event
+			// value1: show/hide flag (0=hide, 1=show)
+			try {
+				event_src.value1 = static_cast<uint32_t>(std::stoul(value1));
+			} catch (...) {
+				event_src.value1 = 0;
+			}
+			event_src.value2 = 0;
+			std::cout << "Found event!: " << event_name << " " << value1 << '\n';
+			event_target.push_back(event_src);
+			return;
+		}
+
+		if (event_src.event & EVENTS_FLAG_HIDEHUD)
+		{
+			// Hide HUD Event (Ocultar HUD)
+			// value1: hide/show flag (0=show, 1=hide)
+			try {
+				event_src.value1 = static_cast<uint32_t>(std::stoul(value1));
+			} catch (...) {
+				event_src.value1 = 0;
+			}
+			event_src.value2 = 0;
+			std::cout << "Found event!: " << event_name << " " << value1 << '\n';
+			event_target.push_back(event_src);
+			return;
+		}
+
 		//fixed values by 1024
 		try {
 			event_src.value1 = static_cast<uint32_t>(std::stof(value1) * FIXED_UNIT);
@@ -480,7 +725,7 @@ int main(int argc, char *argv[])
 			
             int sustain = static_cast<int>(PosRound(j[2], step_crochet)) - 1;
             new_note.pos = (step_base * 12) + PosRound(((uint32_t)j[0] - milli_base) * 12.0, step_crochet);
-            new_note.type = static_cast<uint16_t>(j[1]) % max_keys;
+            new_note.type = static_cast<uint32_t>(j[1]) % max_keys;
 
             // Remap FX notes to the FX lane (lane 4 in 7K voltex)
             if (j[3] == "FX")
@@ -529,6 +774,21 @@ int main(int argc, char *argv[])
 
             if (j[3] == "Normal Slam")
                 new_note.type |= NOTE_FLAG_SLAM;
+
+            if (j[3] == "Bud Note" || j[3] == "AS Bud" || j[3] == "AS Bud Note" || j[3] == "asbud")
+                new_note.type |= NOTE_FLAG_ASBUD;
+
+            if (j[3] == "Yoshi Note" || j[3] == "yoshi")
+                new_note.type |= NOTE_FLAG_YOSHI;
+
+            if (j[3] == "GF Sing" || j[3] == "gfsing")
+                new_note.type |= NOTE_FLAG_GFSING;
+
+            if (j[3] == "GF Duo" || j[3] == "GF Duet" || j[3] == "gfduo")
+                new_note.type |= NOTE_FLAG_GFDUO;
+
+            if (j[3] == "No Anim" || j[3] == "No Animation" || j[3] == "noanim")
+                new_note.type |= NOTE_FLAG_NOANIM;
 			
             notes.push_back(new_note);
             if (!new_note.is_opponent)
@@ -607,29 +867,29 @@ int main(int argc, char *argv[])
     }
 
     // Write headers (u32 speed_fixed, u16 keys, u8 lanes, u32 note offset, u32 magic)
-    // For the new u64-capable format, sections are 10 bytes, notes are 12 bytes and events are 32 bytes.
+    // For the new u64-capable format, sections are 12 bytes, notes are 14 bytes and events are 32 bytes.
     WriteDWord(out, static_cast<fixed_t>(speed * FIXED_UNIT));
     WriteWord(out, keys);
     out.put(lanes);
-    WriteDWord(out, 15 + static_cast<uint32_t>(sections.size()) * 10);
+    WriteDWord(out, 15 + static_cast<uint32_t>(sections.size()) * 12);
     WriteDWord(out, CHART_FORMAT_MAGIC);
 
-    // Write sections (u64 end, u16 flag)
+    // Write sections (u64 end, u32 flag)
     for (auto &i : sections)
     {
         WriteQWord(out, i.end);
-        WriteWord(out, i.flag);
+        WriteDWord(out, i.flag);
     }
 
-    // Write notes (u64 pos, u16 type, u16 is_opponent)
+    // Write notes (u64 pos, u32 type, u16 is_opponent)
     for (auto &i : notes)
     {
         WriteQWord(out, i.pos);
-        WriteWord(out, i.type);
+        WriteDWord(out, i.type);
         WriteWord(out, static_cast<uint16_t>(i.is_opponent ? 1 : 0));
     }
 
-    uint64_t lyric_offset = 15 + static_cast<uint64_t>(sections.size()) * 10 + static_cast<uint64_t>(notes.size()) * 12 + static_cast<uint64_t>(events.size()) * 32;
+    uint64_t lyric_offset = 15 + static_cast<uint64_t>(sections.size()) * 12 + static_cast<uint64_t>(notes.size()) * 14 + static_cast<uint64_t>(events.size()) * 32;
 
     // Write events (u64 pos, u64 event, u64 value1, u64 value2)
     for (auto &e : events)
