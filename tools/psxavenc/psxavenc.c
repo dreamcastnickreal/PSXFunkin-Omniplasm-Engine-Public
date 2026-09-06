@@ -99,7 +99,7 @@ void print_help(void) {
 		"                       16x16-320x256 in 16-pixel increments, default 320x240\n"
 		"    -I               Force stretching to given size without preserving aspect ratio\n"
 		"    -r num[/den]     str: Set frame rate to specified integer or fraction\n"
-		"                       1-30, default 30\n"
+		"                       1-30, default 15\n"
 		"    -x speed         str: Set the CD-ROM speed the file is meant to played at\n"
 		"                       1 or 2, default 2\n"
 		"    -T               str: Place XA-ADPCM sectors after video sectors\n"
@@ -380,7 +380,7 @@ int main(int argc, char **argv) {
 	// with another player and/or in an emulator.
 	settings.video_width = 320;
 	settings.video_height = 240;
-	settings.video_fps_num = 30;
+	settings.video_fps_num = 15;
 	settings.video_fps_den = 1;
 	settings.ignore_aspect_ratio = false;
 	settings.trailing_audio = false;

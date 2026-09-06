@@ -16,6 +16,15 @@
 #include <stdlib.h>
 
 //Kitchen background structure
+#define FIREPART_MAX 16
+typedef struct {
+	boolean active;
+	RECT_FIXED dst;
+	fixed_t vy;
+	u8 life;
+	u8 maxLife;
+} FirePart;
+
 typedef struct
 {
 	//Stage background base structure
@@ -28,6 +37,9 @@ typedef struct
 	//Textures
 	Gfx_Tex tex_back0;
 	Gfx_Tex tex_back1;
+	Gfx_Tex tex_bg0;
+	Gfx_Tex tex_bg1;
+	Gfx_Tex tex_bg2;
 	Gfx_Tex tex_cut0;
 	
 	Gfx_Tex tex_handa;
@@ -46,6 +58,8 @@ typedef struct
     fixed_t handc_y;
 	
 	fixed_t fade, fadespd;
+	fixed_t fruit_angle;
+	FirePart fireparts[FIREPART_MAX];
 	
 } Back_Kitchen;
 
@@ -212,6 +226,8 @@ void Back_Kitchen_DrawHUD(StageBack *back)
 
         // Choose a new random fruit and its starting x, y position
         random_fruit = rand() % 4; // 4 fruits in total
+        this->fruit_angle = FIXED_DEC(RandomRange(-360,360),1);
+        this->fruit_angle = FIXED_DEC(RandomRange(-360,360),1);
         fixed_t start_x = FIXED_DEC(-100 - (rand() % 157), 1); // Random x in range -100 to -256
         fixed_t start_y = FIXED_DEC(-100 - (rand() % 157), 1); // Random y in range -100 to -256
 
@@ -219,16 +235,16 @@ void Back_Kitchen_DrawHUD(StageBack *back)
         switch (random_fruit)
         {
             case 0:
-                src.x = 128; src.y = 128; src.w = 64; src.h = 64;
+                src.x = 0; src.y = 0; src.w = 128; src.h = 128;
                 break;
             case 1:
-                src.x = 192; src.y = 128; src.w = 64; src.h = 64;
+                src.x = 128; src.y = 0; src.w = 128; src.h = 128;
                 break;
             case 2:
-                src.x = 128; src.y = 192; src.w = 64; src.h = 64;
+                src.x = 0; src.y = 128; src.w = 128; src.h = 128;
                 break;
             case 3:
-                src.x = 192; src.y = 192; src.w = 64; src.h = 64;
+                src.x = 128; src.y = 128; src.w = 128; src.h = 128;
                 break;
         }
 
@@ -240,6 +256,18 @@ void Back_Kitchen_DrawHUD(StageBack *back)
         fruit_active = true;
     }
 
+    // Watermark HUD element - bottom right corner
+    if (stage.song_step >= -48)
+    {
+        RECT wm_src;
+        if (stage.song_step < 784)
+            wm_src = (RECT){0,128,170,13};
+        else
+            wm_src = (RECT){0,141,210,13};
+        RECT wm_dst = {SCREEN_WIDTH - wm_src.w - 4, SCREEN_HEIGHT - wm_src.h - 4, wm_src.w, wm_src.h};
+        Gfx_BlendTex(&this->tex_cut0, &wm_src, &wm_dst, 0);
+    }
+
     // If fruit is active, move it and draw it
     if (fruit_active)
     {
@@ -247,7 +275,16 @@ void Back_Kitchen_DrawHUD(StageBack *back)
         dst.x += FIXED_DEC(2, 1); // Speed along x-axis
         dst.y += FIXED_DEC(1, 1); // Speed along y-axis
 
-        Stage_DrawTex(&this->tex_back0, &src, &dst, stage.camera.bzoom, stage.camera.angle);
+        // rotation for flying fruit
+        {
+            int deg = this->fruit_angle >> FIXED_SHIFT;
+            deg %= 360;
+            if (deg < 0) deg += 360;
+            u8 rot = (u8)(deg * 256 / 360);
+            Stage_DrawTexRotateCol(&this->tex_back0, &src, &dst, rot, 0, 0, 128, 128, 128, stage.camera.bzoom, stage.camera.angle);
+            // decay angle back to 0
+            this->fruit_angle = FIXED_MUL(this->fruit_angle, FIXED_DEC(98,100));
+        }
 
         // Deactivate fruit after the next 128 steps
         if ((stage.song_step - last_fruit_step) >= 128)
@@ -421,7 +458,7 @@ void Back_Kitchen_DrawFG(StageBack *back)
 	{
 		Stage_DrawTex(&this->tex_back1, &back_src, &back_dst, stage.camera.bzoom, stage.camera.angle);
 	}
-		if (stage.song_step >= 2364 && stage.song_step <= 5500)
+	if (stage.song_step >= 2364)
 	{
 		Stage_DrawTex(&this->tex_back1, &back_src, &back_dst, stage.camera.bzoom, stage.camera.angle);
 	}
@@ -437,9 +474,9 @@ void Back_Kitchen_DrawFG(StageBack *back)
 		FIXED_DEC(300,1)
 	};
 	
-	if (stage.song_step >= 1816 && stage.song_step <= 5500)
+	if (stage.song_step >= 1816)
 	{
-		Stage_BlendTex(&this->tex_cut0, &fire_src, &fire_dst, stage.camera.bzoom, stage.camera.angle, 0);
+		Stage_BlendTexV2(&this->tex_cut0, &fire_src, &fire_dst, stage.camera.bzoom, 0, 192);
 	}
 }
 
@@ -454,7 +491,7 @@ void Back_Kitchen_DrawBG(StageBack *back)
 	fx = stage.camera.x;
 	fy = stage.camera.y;
 	
-	RECT back1_src = {0, 0, 128, 128};
+	RECT back1_src = {0, 0, 256, 256};
 	RECT_FIXED back1_dst = {
 		FIXED_DEC(-275,1) - fx,
 		FIXED_DEC(-200,1) - fy,
@@ -464,13 +501,13 @@ void Back_Kitchen_DrawBG(StageBack *back)
 	
 	if (stage.song_step >= -48 && stage.song_step <= 784)
 	{
-		Stage_DrawTex(&this->tex_back0, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle);
+		Stage_DrawTex(&this->tex_bg0, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle);
 	}
 	
 	fx = stage.camera.x;
 	fy = stage.camera.y;
 	
-	RECT back2_src = {128, 0, 128, 128};
+	RECT back2_src = {0, 0, 256, 256};
 	RECT_FIXED back2_dst = {
 		FIXED_DEC(-275,1) - fx,
 		FIXED_DEC(-200,1) - fy,
@@ -480,13 +517,13 @@ void Back_Kitchen_DrawBG(StageBack *back)
 	
 	if (stage.song_step >= 784 && stage.song_step <= 1824)
 	{
-		Stage_DrawTex(&this->tex_back0, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle);
+		Stage_DrawTex(&this->tex_bg1, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle);
 	}
 	
 	fx = stage.camera.x;
 	fy = stage.camera.y;
 	
-	RECT back3_src = {0, 128, 128, 128};
+	RECT back3_src = {0, 0, 256, 256};
 	RECT_FIXED back3_dst = {
 		FIXED_DEC(-275,1) - fx,
 		FIXED_DEC(-200,1) - fy,
@@ -494,15 +531,62 @@ void Back_Kitchen_DrawBG(StageBack *back)
 		FIXED_DEC(367,1)
 	};
 	
-	if (stage.song_step >= 1824 && stage.song_step <= 5500)
+	if (stage.song_step >= 1824)
 	{
-		Stage_DrawTex(&this->tex_back0, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle);
+		Stage_DrawTex(&this->tex_bg2, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle);
 	}
 }
 
 void Back_Kitchen_DrawMD(StageBack *back)
 {
     Back_Kitchen *this = (Back_Kitchen*)back;
+
+    // Firepart MD element - rises from bottom to top, 8-16 steps fade, from 1814 to end
+    if (stage.song_step >= 1814)
+    {
+        // spawn new fireparts randomly
+        if ((stage.flag & STAGE_FLAG_JUST_STEP) && (rand() % 2 == 0))
+        {
+            for (int i = 0; i < FIREPART_MAX; i++)
+            {
+                if (!this->fireparts[i].active)
+                {
+                    this->fireparts[i].active = true;
+                    this->fireparts[i].life = 8 + (rand() % 9); // 8-16 steps
+                    this->fireparts[i].maxLife = this->fireparts[i].life;
+                    this->fireparts[i].vy = FIXED_DEC(8 + (rand() % 17), 1); // varying speeds 8-24
+                    // random spawn x within back bounds (-275 to 278)
+                    fixed_t rx = FIXED_DEC(-275 + (rand() % 553),1);
+                    // bottom y = -200+367 = 167
+                    this->fireparts[i].dst.x = rx;
+                    this->fireparts[i].dst.y = FIXED_DEC(167,1);
+                    this->fireparts[i].dst.w = FIXED_DEC(19,1);
+                    this->fireparts[i].dst.h = FIXED_DEC(20,1);
+                    break;
+                }
+            }
+        }
+        // update and draw
+        for (int i = 0; i < FIREPART_MAX; i++)
+        {
+            FirePart *fp = &this->fireparts[i];
+            if (!fp->active) continue;
+            if (stage.flag & STAGE_FLAG_JUST_STEP)
+            {
+                fp->dst.y -= fp->vy;
+                if (fp->life > 0) fp->life--;
+                if (fp->life == 0 || fp->dst.y < FIXED_DEC(-200,1))
+                    fp->active = false;
+            }
+            if (fp->active)
+            {
+                RECT src = {128,0,19,20};
+                RECT_FIXED dst = {fp->dst.x - stage.camera.x, fp->dst.y - stage.camera.y, fp->dst.w, fp->dst.h};
+                u8 opacity = (fp->maxLife > 0) ? (u8)(fp->life * 255 / fp->maxLife) : 0;
+                Stage_BlendTexV2(&this->tex_cut0, &src, &dst, stage.camera.bzoom, 1, opacity);
+            }
+        }
+    }
 
     fixed_t fx, fy;
     fixed_t target_y_handb = FIXED_DEC(-56, 1);
@@ -586,6 +670,9 @@ StageBack *Back_Kitchen_New(void)
 	IO_Data arc_back = IO_Read("\\KITCHEN\\BACK.ARC;1");
 	Gfx_LoadTex(&this->tex_back0, Archive_Find(arc_back, "back0.tim"), 0);
 	Gfx_LoadTex(&this->tex_back1, Archive_Find(arc_back, "back1.tim"), 0);
+	Gfx_LoadTex(&this->tex_bg0, Archive_Find(arc_back, "bg0.tim"), 0);
+	Gfx_LoadTex(&this->tex_bg1, Archive_Find(arc_back, "bg1.tim"), 0);
+	Gfx_LoadTex(&this->tex_bg2, Archive_Find(arc_back, "bg2.tim"), 0);
 	Gfx_LoadTex(&this->tex_cut0, Archive_Find(arc_back, "cut0.tim"), 0);
 	Mem_Free(arc_back);
 	
@@ -607,11 +694,13 @@ StageBack *Back_Kitchen_New(void)
 	Animatable_SetAnim(&this->handc_animatable, 0);
 	
 	this->handa_frame = this->handa_tex_id = 0xFF; //Force art load
-	this->handb_frame = this->handb_tex_id = 0xFE; //Force art load
-	this->handc_frame = this->handc_tex_id = 0xFD; //Force art load
+	this->handb_frame = this->handb_tex_id = 0xFF; //Force art load
+	this->handc_frame = this->handc_tex_id = 0xFF; //Force art load
 	this->handa_y = FIXED_DEC(256, 1);
 	this->handb_y = FIXED_DEC(256, 1);
 	this->handc_y = FIXED_DEC(256, 1);
+	this->fruit_angle = 0;
+	for (int i = 0; i < FIREPART_MAX; i++) this->fireparts[i].active = false;
 	
 	return (StageBack*)this;
 }

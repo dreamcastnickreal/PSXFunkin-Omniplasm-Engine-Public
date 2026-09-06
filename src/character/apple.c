@@ -262,20 +262,20 @@ void Char_Apple_Tick(Character *character)
 		//Camera stuff
 		if ((stage.flag & STAGE_FLAG_JUST_STEP) && stage.song_step >= 0)
 		{
-			this->character.focus_x = FIXED_DEC(-125, 1);
-			this->character.focus_y = FIXED_DEC(-100, 1);
+			this->character.focus_x = FIXED_DEC(-65, 1);
+			this->character.focus_y = FIXED_DEC(-40, 1);
 			this->character.focus_zoom = FIXED_DEC(125,100);
 		}
 		if ((stage.flag & STAGE_FLAG_JUST_STEP) && stage.song_step >= 1040)
 		{
-			this->character.focus_x = FIXED_DEC(-180, 1);
-			this->character.focus_y = FIXED_DEC(-60, 1);
+			this->character.focus_x = FIXED_DEC(-120, 1);
+			this->character.focus_y = FIXED_DEC(0, 1);
 			this->character.focus_zoom = FIXED_DEC(100,100);
 		}
 		if ((stage.flag & STAGE_FLAG_JUST_STEP) && stage.song_step >= 1816)
 		{
-			this->character.focus_x = FIXED_DEC(-150, 1);
-			this->character.focus_y = FIXED_DEC(-100, 1);
+			this->character.focus_x = FIXED_DEC(-90, 1);
+			this->character.focus_y = FIXED_DEC(10, 1);
 			this->character.focus_zoom = FIXED_DEC(96,100);
 		}
 	}
@@ -446,8 +446,8 @@ void Char_Apple_SetAnim(Character *character, u8 anim)
 		case PlayerAnim_Dead0:
 			//Begin reading dead.arc and adjust focus
 			this->arc_dead = IO_AsyncReadFile(&this->file_dead_arc);
-			character->focus_x = FIXED_DEC(0,1);
-			character->focus_y = FIXED_DEC(-40,1);
+			character->focus_x = FIXED_DEC(80,1);
+			character->focus_y = FIXED_DEC(80,1);
 			character->focus_zoom = FIXED_DEC(125,100);
 			break;
 		case PlayerAnim_Dead2:
@@ -486,7 +486,7 @@ void Char_Apple_Free(Character *character)
 	Mem_Free(this->arc_dead);
 }
 
-Character *Char_Apple_New(fixed_t x, fixed_t y)
+Character *Char_Apple_New(fixed_t x, fixed_t y, fixed_t scale)
 {
 	//Allocate boyfriend object
 	Char_Apple *this = Mem_Alloc(sizeof(Char_Apple));
@@ -516,7 +516,7 @@ Character *Char_Apple_New(fixed_t x, fixed_t y)
 	this->character.focus_y = FIXED_DEC(-100,1);
 	this->character.focus_zoom = FIXED_DEC(125,100);
 	
-	this->character.size = FIXED_DEC(50,100);
+	this->character.size = FIXED_MUL(FIXED_DEC(50,100),scale);
 	
 	//Load art
 	this->arc_main = IO_Read("\\PCHAR\\APPLE.ARC;1");

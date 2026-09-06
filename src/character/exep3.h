@@ -10,6 +10,6 @@
 #include "../character.h"
 
 //Dad character functions
-Character *Char_ExeP3_New(fixed_t x, fixed_t y);
+Character *Char_ExeP3_New(fixed_t x, fixed_t y, fixed_t scale);
 
 #endif

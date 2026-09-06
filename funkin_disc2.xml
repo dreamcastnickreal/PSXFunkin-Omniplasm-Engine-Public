@@ -105,6 +105,10 @@
 				<file name = "4.7e.cht" type = "data" source = "iso/chart/unbeatable.json.cht"/>
 				<file name = "4.7n.cht" type = "data" source = "iso/chart/unbeatable.json.cht"/>
 				<file name = "4.7h.cht" type = "data" source = "iso/chart/unbeatable.json.cht"/>
+				<!-- All Stars charts -->
+				<file name = "4.8e.cht" type = "data" source = "iso/chart/all-stars.json.cht"/>
+				<file name = "4.8n.cht" type = "data" source = "iso/chart/all-stars.json.cht"/>
+				<file name = "4.8h.cht" type = "data" source = "iso/chart/all-stars.json.cht"/>
 			</dir>
 			
 			<!-- Player Character assets -->
@@ -124,6 +128,9 @@
 
 				<!-- Triple Trouble assets -->
 				<file name = "exep3.arc" type = "data" source = "iso/characters/exep3/main.arc"/>
+				
+				<!-- All Stars assets -->
+				<file name = "ultram.arc" type = "data" source = "iso/characters/ultram/main.arc"/>
 				
 				<!-- Menu Characters assets -->
 				<file name = "menuo.arc" type = "data" source = "iso/characters/menuo/main.arc"/>

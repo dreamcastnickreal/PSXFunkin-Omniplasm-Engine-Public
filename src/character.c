@@ -274,8 +274,8 @@ static void Character_GhostDrawStored(Character *this)
 		src.y = ghost->frame.src[1];
 		src.w = ghost->frame.src[2];
 		src.h = ghost->frame.src[3];
-		dst.x = this->x - stage.camera.x - FIXED_DEC(ghost->frame.off[0],1);
-		dst.y = this->y - stage.camera.y - FIXED_DEC(ghost->frame.off[1],1);
+		dst.x = this->x - stage.camera.x - FIXED_MUL(FIXED_DEC(ghost->frame.off[0],1),this->size);
+		dst.y = this->y - stage.camera.y - FIXED_MUL(FIXED_DEC(ghost->frame.off[1],1),this->size);
 		dst.w = FIXED_MUL(src.w << FIXED_SHIFT, this->size);
 		dst.h = FIXED_MUL(src.h << FIXED_SHIFT, this->size);
 		/* Additive blending lets opacity zero contribute nothing, producing a
@@ -479,8 +479,8 @@ static void Character_GhostDrawAndCapture(Character *this, Gfx_Tex *tex,
 void Character_DrawParallax(Character *this, Gfx_Tex *tex, const CharFrame *cframe, fixed_t parallax)
 {
 	//Draw character
-	fixed_t x = this->x - FIXED_MUL(stage.camera.x, parallax) - FIXED_DEC(cframe->off[0],1);
-	fixed_t y = this->y - FIXED_MUL(stage.camera.y, parallax) - FIXED_DEC(cframe->off[1],1);
+	fixed_t x = this->x - FIXED_MUL(stage.camera.x, parallax) - FIXED_MUL(FIXED_DEC(cframe->off[0],1),this->size);
+	fixed_t y = this->y - FIXED_MUL(stage.camera.y, parallax) - FIXED_MUL(FIXED_DEC(cframe->off[1],1),this->size);
 
 	RECT src = {cframe->src[0], cframe->src[1], cframe->src[2], cframe->src[3]};
 	RECT_FIXED dst = {x, y, src.w << FIXED_SHIFT, src.h << FIXED_SHIFT};
@@ -497,8 +497,8 @@ void Character_DrawParallax(Character *this, Gfx_Tex *tex, const CharFrame *cfra
 void Character_DrawParallaxFlipped(Character *this, Gfx_Tex *tex, const CharFrame *cframe, fixed_t parallax)
 {
 	//Draw character
-	fixed_t x = this->x - FIXED_MUL(stage.camera.x, parallax) + FIXED_DEC(cframe->off[0],1) - FIXED_DEC(cframe->src[2],1);
-	fixed_t y = this->y - FIXED_MUL(stage.camera.y, parallax) - FIXED_DEC(cframe->off[1],1);
+	fixed_t x = this->x - FIXED_MUL(stage.camera.x, parallax) + FIXED_MUL(FIXED_DEC(cframe->off[0],1),this->size) - FIXED_MUL(FIXED_DEC(cframe->src[2],1),this->size);
+	fixed_t y = this->y - FIXED_MUL(stage.camera.y, parallax) - FIXED_MUL(FIXED_DEC(cframe->off[1],1),this->size);
 
 	RECT src = {cframe->src[0], cframe->src[1], cframe->src[2], cframe->src[3]};
 	RECT_FIXED dst = {x, y, src.w << FIXED_SHIFT, src.h << FIXED_SHIFT};
@@ -531,8 +531,8 @@ void Character_Draw(Character *this, Gfx_Tex *tex, const CharFrame *cframe)
 void Character_DrawParallaxCol(Character *this, Gfx_Tex *tex, const CharFrame *cframe, fixed_t parallax, u8 r, u8 g, u8 b)
 {
 	//Draw character
-	fixed_t x = this->x - FIXED_MUL(stage.camera.x, parallax) - FIXED_DEC(cframe->off[0],1);
-	fixed_t y = this->y - FIXED_MUL(stage.camera.y, parallax) - FIXED_DEC(cframe->off[1],1);
+	fixed_t x = this->x - FIXED_MUL(stage.camera.x, parallax) - FIXED_MUL(FIXED_DEC(cframe->off[0],1),this->size);
+	fixed_t y = this->y - FIXED_MUL(stage.camera.y, parallax) - FIXED_MUL(FIXED_DEC(cframe->off[1],1),this->size);
 
 	RECT src = {cframe->src[0], cframe->src[1], cframe->src[2], cframe->src[3]};
 	RECT_FIXED dst = {x, y, src.w << FIXED_SHIFT, src.h << FIXED_SHIFT};
@@ -552,8 +552,8 @@ void Character_DrawFlipped(Character *this, Gfx_Tex *tex, const CharFrame *cfram
 
 void Character_DrawParallaxBlendCol(Character *this, Gfx_Tex *tex, const CharFrame *cframe, fixed_t parallax, u8 r, u8 g, u8 b, u8 mode)
 {
-	fixed_t x = this->x - FIXED_MUL(stage.camera.x, parallax) - FIXED_DEC(cframe->off[0],1);
-	fixed_t y = this->y - FIXED_MUL(stage.camera.y, parallax) - FIXED_DEC(cframe->off[1],1);
+	fixed_t x = this->x - FIXED_MUL(stage.camera.x, parallax) - FIXED_MUL(FIXED_DEC(cframe->off[0],1),this->size);
+	fixed_t y = this->y - FIXED_MUL(stage.camera.y, parallax) - FIXED_MUL(FIXED_DEC(cframe->off[1],1),this->size);
 
 	RECT src = {
 		cframe->src[0],
@@ -580,8 +580,8 @@ void Character_DrawBlendCol(Character *this, Gfx_Tex *tex, const CharFrame *cfra
 void Character_DrawParallaxBlendCol_Reflection(Character *this, Gfx_Tex *tex, const CharFrame *cframe, fixed_t parallax, u8 r, u8 g, u8 b, u8 mode)
 {
 	// original position
-	fixed_t x = this->x - FIXED_MUL(stage.camera.x, parallax) - FIXED_DEC(cframe->off[0],1);
-	fixed_t y = this->y - FIXED_MUL(stage.camera.y, parallax) - FIXED_DEC(cframe->off[1],1);
+	fixed_t x = this->x - FIXED_MUL(stage.camera.x, parallax) - FIXED_MUL(FIXED_DEC(cframe->off[0],1),this->size);
+	fixed_t y = this->y - FIXED_MUL(stage.camera.y, parallax) - FIXED_MUL(FIXED_DEC(cframe->off[1],1),this->size);
 
 	RECT src = {
 		cframe->src[0],

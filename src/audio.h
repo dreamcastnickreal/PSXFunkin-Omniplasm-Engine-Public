@@ -85,6 +85,7 @@ typedef enum
 	XA_TripleTrouble, //Triple Trouble
 	//MOD1D.XA
 	XA_Unbeatable, //Unbeatable
+	XA_AllStars, //All Stars
 	
 	XA_TrackMax2,
 } XA_Track2;

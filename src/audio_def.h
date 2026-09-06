@@ -55,6 +55,7 @@ static const XA_TrackDef2 xa_tracks_disc2[] = {
 	{XA_MOD1C, XA_LENGTH(50700)}, //XA_TripleTrouble
 	//MOD1D.XA
 	{XA_MOD1D, XA_LENGTH(63600)}, //XA_Unbeatable
+	{XA_MOD1D, XA_LENGTH(51900)}, //XA_AllStars
 };
 
 static const XA_TrackDef3 xa_tracks_disc3[] = {
@@ -157,6 +158,7 @@ static const XA_Mp3_2 xa_mp3s2[] = {
 	{"triple-trouble", true}, //XA_TripleTrouble
 	//MOD1D.XA
 	{"unbeatable", true}, //XA_Unbeatable
+	{"all-stars", true}, //XA_AllStars
 	
 	{NULL, false}
 };

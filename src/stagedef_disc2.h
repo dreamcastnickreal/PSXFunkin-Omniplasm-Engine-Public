@@ -5,11 +5,11 @@
 #endif
 	{ //StageId_4_1 (Where Are You)
 		//Characters
-		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1)},
+		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1), FIXED_DEC(1,1)},
 		{NULL},
-		{Char_Dad_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1)},
+		{Char_Dad_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1), FIXED_DEC(1,1)},
 		{NULL},
-		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1)},
+		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1), FIXED_DEC(1,1)},
 		
 		//Stage background
 		Back_Dummy_New,
@@ -28,11 +28,11 @@
 	},
 	{ //StageId_4_2 (Eruption)
 		//Characters
-		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1)},
+		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1), FIXED_DEC(1,1)},
 		{NULL},
-		{Char_Dad_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1)},
+		{Char_Dad_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1), FIXED_DEC(1,1)},
 		{NULL},
-		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1)},
+		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1), FIXED_DEC(1,1)},
 		
 		//Stage background
 		Back_Dummy_New,
@@ -51,11 +51,11 @@
 	},
 	{ //StageId_4_3 (Kaio-Ken)
 		//Characters
-		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1)},
+		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1), FIXED_DEC(1,1)},
 		{NULL},
-		{Char_Dad_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1)},
+		{Char_Dad_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1), FIXED_DEC(1,1)},
 		{NULL},
-		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1)},
+		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1), FIXED_DEC(1,1)},
 		
 		//Stage background
 		Back_Dummy_New,
@@ -74,11 +74,11 @@
 	},
 	{ //StageId_4_4 (Ferocious)
 		//Characters
-		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1)},
+		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1), FIXED_DEC(1,1)},
 		{NULL},
-		{Char_Dad_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1)},
+		{Char_Dad_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1), FIXED_DEC(1,1)},
 		{NULL},
-		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1)},
+		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1), FIXED_DEC(1,1)},
 		
 		//Stage background
 		Back_Dummy_New,
@@ -97,11 +97,11 @@
 	},
 	{ //StageId_4_5 (Monochrome)
 		//Characters
-		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1)},
+		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1), FIXED_DEC(1,1)},
 		{NULL},
-		{Char_Dad_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1)},
+		{Char_Dad_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1), FIXED_DEC(1,1)},
 		{NULL},
-		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1)},
+		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1), FIXED_DEC(1,1)},
 		
 		//Stage background
 		Back_Dummy_New,
@@ -120,9 +120,9 @@
 	},
 	{ //StageId_4_6 (Triple Trouble)
 		//Characters
-		{Char_BF_New,     FIXED_DEC(60,1),   FIXED_DEC(100,1)},
+		{Char_BF_New,     FIXED_DEC(60,1),   FIXED_DEC(100,1), FIXED_DEC(1,1)},
 		{NULL},
-		{Char_ExeP3_New, FIXED_DEC(-120,1),   FIXED_DEC(100,1)},
+		{Char_ExeP3_New, FIXED_DEC(-120,1),   FIXED_DEC(100,1), FIXED_DEC(1,1)},
 		{NULL},
 		{NULL},
 		
@@ -143,11 +143,11 @@
 	},
 	{ //StageId_4_7 (Unbeatable)
 		//Characters
-		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1)},
+		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1), FIXED_DEC(1,1)},
 		{NULL},
-		{Char_Dad_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1)},
+		{Char_Dad_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1), FIXED_DEC(1,1)},
 		{NULL},
-		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1)},
+		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1), FIXED_DEC(1,1)},
 		
 		//Stage background
 		Back_Dummy_New,
@@ -163,4 +163,27 @@
 		false,
 		
 		StageId_4_7, 0
+	},
+	{ //StageId_4_8 (All Stars)
+		//Characters
+		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1), FIXED_DEC(1,1)},
+		{NULL},
+		{Char_UltraM_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1), FIXED_DEC(1,1)},
+		{NULL},
+		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1), FIXED_DEC(1,1)},
+		
+		//Stage background
+		Back_Dummy_New,
+		
+		//Camera Offset (X, Y, Scale)
+		FIXED_DEC(0,1), FIXED_DEC(0,1), FIXED_DEC(1,1),
+		
+		//Song info
+		{FIXED_DEC(29,10),FIXED_DEC(29,10),FIXED_DEC(29,10)},
+		4, 8,
+		XA_AllStars, 2,
+		false,
+		false,
+		
+		StageId_4_8, 0
 	},

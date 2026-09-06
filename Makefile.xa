@@ -47,7 +47,7 @@ iso/music/mod1b.xa: iso/music/kaioken/Inst.xa iso/music/kaioken/Vocals.xa iso/mu
 
 iso/music/mod1c.xa: iso/music/monochrome/Inst.xa iso/music/monochrome/Vocals.xa iso/music/triple-trouble/Inst.xa iso/music/triple-trouble/Vocals.xa
 
-iso/music/mod1d.xa: iso/music/unbeatable/Inst.xa iso/music/unbeatable/Vocals.xa
+iso/music/mod1d.xa: iso/music/unbeatable/Inst.xa iso/music/unbeatable/Vocals.xa iso/music/all-stars/Inst.xa iso/music/all-stars/Vocals.xa
 
 iso/music/aethos1.xa: iso/music/aethos/Inst.xa iso/music/aethos/Voices.xa iso/music/rotten-smoothie/Inst.xa iso/music/rotten-smoothie/Voices.xa
 

@@ -109,7 +109,7 @@ void Char_MenuP_Free(Character *character)
 	Mem_Free(this->arc_main);
 }
 
-Character *Char_MenuP_New(fixed_t x, fixed_t y)
+Character *Char_MenuP_New(fixed_t x, fixed_t y, fixed_t scale)
 {
 	//Allocate boyfriend object
 	Char_MenuP *this = Mem_Alloc(sizeof(Char_MenuP));
@@ -139,7 +139,7 @@ Character *Char_MenuP_New(fixed_t x, fixed_t y)
 	this->character.focus_y = (stage.stage_id == StageId_1_4) ? FIXED_DEC(-85,1) : FIXED_DEC(-65,1);
 	this->character.focus_zoom = FIXED_DEC(100,100);
 	
-	this->character.size = FIXED_DEC(100,100);
+	this->character.size = FIXED_MUL(FIXED_DEC(100,100),scale);
 	
 	//Load art
 	this->arc_main = IO_Read("\\PCHAR\\MENUP.ARC;1");

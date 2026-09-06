@@ -194,6 +194,9 @@ static void Events_Check(ChartEvent* event)
 		}
 		case EVENTS_FLAG_CHAR:
 		{
+			// Only All Stars (4_8) may use Change Character
+			if (stage.stage_id != StageId_4_8)
+				break;
 			// Change Character Event
 			// value1: character slot (0=bf/pchar1, 1=dad/ochar1, 2=gf/gchar, 3=ochar2, 4=pchar2)
 			// value2: pointer to character name string
@@ -214,6 +217,9 @@ static void Events_Check(ChartEvent* event)
 		}
 		case EVENTS_FLAG_STAGE:
 		{
+			// Only All Stars (4_8) may use Change Stage
+			if (stage.stage_id != StageId_4_8)
+				break;
 			// Change Stage Background Event
 			// value1: StageId (small int) OR pointer to stageback name string
 			// value2: transition flags (STAGE_LOAD_* bitmask)

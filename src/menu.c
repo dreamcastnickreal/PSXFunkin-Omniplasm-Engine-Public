@@ -345,10 +345,10 @@ void Menu_Load(MenuPage page)
 	FontData_Load(&menu.font_arial, Font_Arial, NULL);
 	DiscSwap_SetScreenAssets(&menu.tex_back, &menu.tex_disc, &menu.font_bold, &menu.font_arial);
 	
-	menu.gf = Char_GF_New(FIXED_DEC(62,1), FIXED_DEC(-12,1));
-	menu.mbf = Char_MenuP_New(FIXED_DEC(11,1), FIXED_DEC(40,1));
-    menu.mgf = Char_MenuGF_New(FIXED_DEC(91,1), FIXED_DEC(13,1));
-    menu.mdad = Char_MenuO_New(FIXED_DEC(-78,1), FIXED_DEC(116,1));
+	menu.gf = Char_GF_New(FIXED_DEC(62,1), FIXED_DEC(-12,1), FIXED_DEC(1,1));
+	menu.mbf = Char_MenuP_New(FIXED_DEC(11,1), FIXED_DEC(40,1), FIXED_DEC(1,1));
+    menu.mgf = Char_MenuGF_New(FIXED_DEC(91,1), FIXED_DEC(13,1), FIXED_DEC(1,1));
+    menu.mdad = Char_MenuO_New(FIXED_DEC(-78,1), FIXED_DEC(116,1), FIXED_DEC(1,1));
 	stage.camera.x = stage.camera.y = FIXED_DEC(0,1);
 	stage.camera.bzoom = FIXED_UNIT;
 	stage.gf_speed = 4;
@@ -1031,6 +1031,7 @@ void Menu_Tick(void)
 				{StageId_4_5, 0xFF000000, "MONOCHROME", 22},
 				{StageId_4_6, 0xFF290675, "TRIPLE TROUBLE", 21},
 				{StageId_4_7, 0xFFACDEFF, "UNBEATABLE", 24},
+				{StageId_4_8, 0xFFD02537, "ALL STARS", 23},
 				{StageId_5_1, 0xFFFFCC33, "AETHOS", 25},
 				{StageId_5_2, 0xFFA57D4D, "ROTTEN SMOOTHIE", 26},
 				{StageId_5_3, 0xFF9E3A3A, "TWIDDLEFINGER", 27},
@@ -1446,7 +1447,7 @@ void Menu_Tick(void)
 			{
 				required_disc = 1;
 			}
-			else if (menu.page_param.stage.id <= StageId_4_7)
+			else if (menu.page_param.stage.id <= StageId_4_8)
 			{
 				required_disc = 2;
 			}

@@ -117,7 +117,7 @@ void Char_Pico_Free(Character *character)
 	Mem_Free(this->arc_main);
 }
 
-Character *Char_Pico_New(fixed_t x, fixed_t y)
+Character *Char_Pico_New(fixed_t x, fixed_t y, fixed_t scale)
 {
 	//Allocate pico object
 	Char_Pico *this = Mem_Alloc(sizeof(Char_Pico));
@@ -148,7 +148,7 @@ Character *Char_Pico_New(fixed_t x, fixed_t y)
 	this->character.focus_y = FIXED_DEC(-65,1);
 	this->character.focus_zoom = FIXED_DEC(100,100);
 	
-	this->character.size = FIXED_DEC(100,100);
+	this->character.size = FIXED_MUL(FIXED_DEC(100,100),scale);
 	
 	//Load art
 	this->arc_main = IO_Read("\\OCHAR\\PICO.ARC;1");

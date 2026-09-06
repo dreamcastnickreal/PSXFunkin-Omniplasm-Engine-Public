@@ -121,15 +121,6 @@ iso/characters/menuo/main.arc: iso/characters/menuo/dad.tim iso/characters/menuo
 # Menu Girlfriend
 iso/characters/menugf/main.arc: iso/characters/menugf/gf0.tim iso/characters/menugf/gf1.tim
 
-# Krab
-iso/characters/krab/main.arc: iso/characters/krab/down0.tim iso/characters/krab/down1.tim iso/characters/krab/down2.tim iso/characters/krab/down3.tim iso/characters/krab/idle0.tim iso/characters/krab/idle1.tim iso/characters/krab/left0.tim iso/characters/krab/left1.tim iso/characters/krab/left2.tim iso/characters/krab/left3.tim iso/characters/krab/right0.tim iso/characters/krab/right1.tim iso/characters/krab/right2.tim iso/characters/krab/right3.tim iso/characters/krab/up0.tim iso/characters/krab/up1.tim iso/characters/krab/up2.tim iso/characters/krab/up3.tim iso/characters/krab/vdown0.tim iso/characters/krab/vdown1.tim iso/characters/krab/vdown2.tim iso/characters/krab/vdown3.tim iso/characters/krab/vdown4.tim iso/characters/krab/vleft0.tim iso/characters/krab/vleft1.tim iso/characters/krab/vleft2.tim iso/characters/krab/vleft3.tim iso/characters/krab/vleft4.tim iso/characters/krab/vright0.tim iso/characters/krab/vright1.tim iso/characters/krab/vright2.tim iso/characters/krab/vright3.tim iso/characters/krab/vright4.tim iso/characters/krab/vup0.tim iso/characters/krab/vup1.tim iso/characters/krab/vup2.tim iso/characters/krab/vup3.tim iso/characters/krab/vup4.tim iso/characters/krab/vidle0.tim iso/characters/krab/vidle1.tim iso/characters/krab/dead0.tim
-
-# Squid
-iso/characters/squid/main.arc: iso/characters/squid/down0.tim iso/characters/squid/down1.tim iso/characters/squid/down2.tim iso/characters/squid/get0.tim iso/characters/squid/get1.tim iso/characters/squid/get2.tim iso/characters/squid/get3.tim iso/characters/squid/get4.tim iso/characters/squid/cidle0.tim iso/characters/squid/cidle1.tim iso/characters/squid/idle0.tim iso/characters/squid/idle1.tim iso/characters/squid/left0.tim iso/characters/squid/left1.tim iso/characters/squid/left2.tim iso/characters/squid/left3.tim iso/characters/squid/left4.tim iso/characters/squid/return0.tim iso/characters/squid/return1.tim iso/characters/squid/return2.tim iso/characters/squid/right0.tim iso/characters/squid/right1.tim iso/characters/squid/right2.tim iso/characters/squid/right3.tim iso/characters/squid/up0.tim iso/characters/squid/up1.tim iso/characters/squid/up2.tim iso/characters/squid/up3.tim iso/characters/squid/up4.tim
-
-# Sheldon
-iso/characters/sheldon/main.arc: iso/characters/sheldon/idle0.tim
-
 # Week 1
 iso/stages/week1/back.arc: iso/stages/week1/back0.tim iso/stages/week1/back1.tim
 
@@ -143,7 +134,7 @@ iso/stages/week3/back.arc: iso/stages/week3/back0.tim iso/stages/week3/back1.tim
 iso/stages/trio/back.arc: iso/stages/trio/back0.tim iso/stages/trio/back1.tim iso/stages/trio/back2.tim iso/stages/trio/back3.tim iso/stages/trio/back4.tim iso/stages/trio/back5.tim iso/stages/trio/back6.tim iso/stages/trio/back7.tim iso/stages/trio/back8.tim iso/stages/trio/back9.tim iso/stages/trio/back10.tim 
 
 # Kitchen
-iso/stages/kitchen/back.arc: iso/stages/kitchen/back0.tim iso/stages/kitchen/back1.tim iso/stages/kitchen/cut0.tim
+iso/stages/kitchen/back.arc: iso/stages/kitchen/back0.tim iso/stages/kitchen/back1.tim iso/stages/kitchen/bg0.tim iso/stages/kitchen/bg1.tim iso/stages/kitchen/bg2.tim iso/stages/kitchen/cut0.tim
 iso/stages/kitchen/handa.arc: iso/stages/kitchen/handa.tim 
 iso/stages/kitchen/handb.arc: iso/stages/kitchen/handb.tim
 iso/stages/kitchen/handc.arc: iso/stages/kitchen/handc.tim

@@ -61,10 +61,11 @@ SRCS = src/main.c \
        src/io.c \
        src/gfx.c \
        src/audio.c \
-       src/pad.c \
-       src/timer.c \
-       src/tween.c \
-       src/stage/dummy.c \
+        src/pad.c \
+        src/timer.c \
+        src/tween.c \
+        src/note_def.c \
+        src/stage/dummy.c \
        src/stage/bvoid.c \
        src/stage/week1.c \
        src/stage/week2.c \
@@ -81,6 +82,7 @@ SRCS = src/main.c \
        src/character/monster.c \
        src/character/gf.c \
        src/character/exep3.c \
+       src/character/ultram.c \
        src/character/apple.c \
        src/character/orange.c \
        src/character/jerry.c \
@@ -119,10 +121,11 @@ EVERYWHERE_LIST = \
        src/io.c \
        src/gfx.c \
        src/audio.c \
-       src/pad.c \
-       src/timer.c \
-       src/tween.c \
-       src/animation.c \
+        src/pad.c \
+        src/timer.c \
+        src/tween.c \
+        src/note_def.c \
+        src/animation.c \
        src/character.c \
        src/object.c \
        src/object/combo.c \
@@ -164,6 +167,7 @@ DISC2_INCLUDE = \
        src/character/menup.c \
        src/character/menugf.c \
        src/character/exep3.c \
+       src/character/ultram.c \
        src/stage/trio.c
 
 # Disc3 extras (used on disc3)

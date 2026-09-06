@@ -5,11 +5,11 @@
 #endif
 	{ //StageId_5_1 (Aethos)
 		//Characters
-		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1)},
+		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1), FIXED_DEC(1,1)},
 		{NULL},
-		{Char_Jerry_New, FIXED_DEC(0,1),  FIXED_DEC(160,1)},
+		{Char_Jerry_New, FIXED_DEC(0,1),  FIXED_DEC(160,1), FIXED_DEC(1,1)},
 		{NULL},
-		{Char_Logan_New, FIXED_DEC(0,1),  FIXED_DEC(50,1)},
+		{Char_Logan_New, FIXED_DEC(0,1),  FIXED_DEC(50,1), FIXED_DEC(1,1)},
 		
 		//Stage background
 		Back_Week1_New,
@@ -30,9 +30,9 @@
 	},
 	{ //StageId_5_2 (Rotten Smoothie)
 		//Characters
-		{Char_Apple_New,    FIXED_DEC(254,1),  FIXED_DEC(26,1)},
+		{Char_Apple_New,    FIXED_DEC(170,1),  FIXED_DEC(-50,1), FIXED_DEC(1,1)},
 		{NULL},
-		{Char_Orange_New, FIXED_DEC(16,1),  FIXED_DEC(16,1)},
+		{Char_Orange_New, FIXED_DEC(-60,1),  FIXED_DEC(-60,1), FIXED_DEC(1,1)},
 		{NULL},
 		{NULL},
 		
@@ -55,11 +55,11 @@
 	},
 	{ //StageId_5_3 (Twiddlefinger)
 		//Characters
-		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1)},
+		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1), FIXED_DEC(1,1)},
 		{NULL},
-		{Char_Dad_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1)},
+		{Char_Dad_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1), FIXED_DEC(1,1)},
 		{NULL},
-		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1)},
+		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1), FIXED_DEC(1,1)},
 		
 		//Stage background
 		Back_Week1_New,
@@ -80,11 +80,11 @@
 	},
 	{ //StageId_5_4 (Crimson Awakening)
 		//Characters
-		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1)},
+		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1), FIXED_DEC(1,1)},
 		{NULL},
-		{Char_Dad_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1)},
+		{Char_Dad_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1), FIXED_DEC(1,1)},
 		{NULL},
-		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1)},
+		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1), FIXED_DEC(1,1)},
 		
 		//Stage background
 		Back_Week1_New,
@@ -105,11 +105,11 @@
 	},
 	{ //StageId_5_5 (Well Done)
 		//Characters
-		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1)},
+		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1), FIXED_DEC(1,1)},
 		{NULL},
-		{Char_Dad_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1)},
+		{Char_Dad_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1), FIXED_DEC(1,1)},
 		{NULL},
-		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1)},
+		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1), FIXED_DEC(1,1)},
 		
 		//Stage background
 		Back_Week1_New,
@@ -130,11 +130,11 @@
 	},
 	{ //StageId_5_6 (Hate Boner)
 		//Characters
-		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1)},
+		{Char_BF_New,    FIXED_DEC(60,1),  FIXED_DEC(100,1), FIXED_DEC(1,1)},
 		{NULL},
-		{Char_Dad_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1)},
+		{Char_Dad_New, FIXED_DEC(-120,1),  FIXED_DEC(100,1), FIXED_DEC(1,1)},
 		{NULL},
-		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1)},
+		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1), FIXED_DEC(1,1)},
 		
 		//Stage background
 		Back_Week1_New,

@@ -10,6 +10,6 @@
 #include "../character.h"
 
 //Monster character functions
-Character *Char_Monster_New(fixed_t x, fixed_t y);
+Character *Char_Monster_New(fixed_t x, fixed_t y, fixed_t scale);
 
 #endif

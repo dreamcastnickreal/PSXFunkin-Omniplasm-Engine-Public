@@ -399,8 +399,10 @@ void close_av_data(settings_t *settings)
 
 	av_frame_free(&(av->frame));
 	swr_free(&(av->resampler));
-	avcodec_close(av->audio_codec_context);
 	avcodec_free_context(&(av->audio_codec_context));
+	avcodec_free_context(&(av->video_codec_context));
+	if (av->scaler != NULL)
+		sws_freeContext(av->scaler);
 	avformat_free_context(av->format);
 
 	if(settings->audio_samples != NULL) {

@@ -10,6 +10,6 @@
 #include "../character.h"
 
 //MenuGF character functions
-Character *Char_MenuGF_New(fixed_t x, fixed_t y);
+Character *Char_MenuGF_New(fixed_t x, fixed_t y, fixed_t scale);
 
 #endif

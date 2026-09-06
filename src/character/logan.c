@@ -114,7 +114,7 @@ void Char_Logan_Free(Character *character)
 	Mem_Free(this->arc_scene);
 }
 
-Character *Char_Logan_New(fixed_t x, fixed_t y)
+Character *Char_Logan_New(fixed_t x, fixed_t y, fixed_t scale)
 {
 	//Allocate logan object
 	Char_Logan *this = Mem_Alloc(sizeof(Char_Logan));
@@ -145,7 +145,7 @@ Character *Char_Logan_New(fixed_t x, fixed_t y)
 	this->character.focus_y = FIXED_DEC(-40,1);
 	this->character.focus_zoom = FIXED_DEC(200,100);
 	
-	this->character.size = FIXED_DEC(100,100);
+	this->character.size = FIXED_MUL(FIXED_DEC(100,100),scale);
 	
 		//Load art
 		this->arc_main = IO_Read("\\GCHAR\\LOGAN.ARC;1");

@@ -49,7 +49,9 @@ int opponentNotesEnabled = 1;
 // Add these helper functions (near Stage_NoteCount or similar utility functions)
 static boolean Stage_ShouldDrawPlayerNotes(void)
 {
-    // In 2P mode, always show player notes
+    // Rotten middle respects hiding even in 2P
+    if (stage.stage_id == StageId_5_2 && stage.song_step >= 1312 && stage.song_step <= 1824)
+        return playerNotesEnabled != 0;
     if (stage.prefs.mode == StageMode_2P)
         return true;
     return playerNotesEnabled != 0;
@@ -57,7 +59,8 @@ static boolean Stage_ShouldDrawPlayerNotes(void)
 
 static boolean Stage_ShouldDrawOpponentNotes(void)
 {
-    // In 2P mode, always show opponent notes
+    if (stage.stage_id == StageId_5_2 && stage.song_step >= 1312 && stage.song_step <= 1824)
+        return opponentNotesEnabled != 0;
     if (stage.prefs.mode == StageMode_2P)
         return true;
     return opponentNotesEnabled != 0;
@@ -68,250 +71,7 @@ static boolean Stage_UsesCustomNoteDraw(void)
 	return stage.stage_id == StageId_Max;
 }
 
-//4K
-int note_x4k_normal[8] = {
-	// BF - normal
-	FIXED_DEC(26,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(60,1)  + FIXED_DEC(SCREEN_WIDEADD,4),//+34
-	FIXED_DEC(94,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(128,1) + FIXED_DEC(SCREEN_WIDEADD,4),
-	// Opponent - normal
-	FIXED_DEC(-128,1) - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-94,1)  - FIXED_DEC(SCREEN_WIDEADD,4),//+34
-	FIXED_DEC(-60,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-26,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-};
-
-int note_x4k_flipped[8] = {
-	// BF - flipped (on left side, like 5k)
-	FIXED_DEC(-128,1) - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-94,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-60,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-26,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	// Opponent - flipped (on right side, like 5k)
-	FIXED_DEC(26,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(60,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(94,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(128,1) + FIXED_DEC(SCREEN_WIDEADD,4),
-};
-
-
-
-static u16 note_key4k[] = {INPUT_LEFT, INPUT_DOWN, INPUT_UP, INPUT_RIGHT};
-
-static u8 note_anims4k[4][3] = {
-	{CharAnim_Left,  CharAnim_LeftAlt,  PlayerAnim_LeftMiss},
-	{CharAnim_Down,  CharAnim_DownAlt,  PlayerAnim_DownMiss},
-	{CharAnim_Up,    CharAnim_UpAlt,    PlayerAnim_UpMiss},
-	{CharAnim_Right, CharAnim_RightAlt, PlayerAnim_RightMiss},
-};
-
-int note_x5k_normal[10] = {
-	// BF - normal
-	FIXED_DEC(16-10,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(50-10,1)  + FIXED_DEC(SCREEN_WIDEADD,4),//+34
-	FIXED_DEC(84-10,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(118-10,1) + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(150-10,1) + FIXED_DEC(SCREEN_WIDEADD,4),
-	// Opponent - normal
-	FIXED_DEC(-128-10,1) - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-94-10,1)  - FIXED_DEC(SCREEN_WIDEADD,4),//+34
-	FIXED_DEC(-512,1)    - FIXED_DEC(SCREEN_WIDEADD,4),// special case
-	FIXED_DEC(-60-10,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-26-10,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-};
-
-int note_x5k_flipped[10] = {
-	//BF
-	 FIXED_DEC(-150 + 10,1) - FIXED_DEC(SCREEN_WIDEADD,4),
-	 FIXED_DEC(-118 + 10,1) - FIXED_DEC(SCREEN_WIDEADD,4),//+34
-	 FIXED_DEC(-84 + 10,1) - FIXED_DEC(SCREEN_WIDEADD,4),
-	 FIXED_DEC(-50 + 10,1) - FIXED_DEC(SCREEN_WIDEADD,4),
-	 FIXED_DEC(-16 + 10,1) - FIXED_DEC(SCREEN_WIDEADD,4),
-	//Opponent
-	 FIXED_DEC(26 + 10,1) + FIXED_DEC(SCREEN_WIDEADD,4),
-	 FIXED_DEC(60 + 10,1)  + FIXED_DEC(SCREEN_WIDEADD,4),//+34
-	 FIXED_DEC(512,1) + FIXED_DEC(SCREEN_WIDEADD,4),//+34
-	 FIXED_DEC(94 + 10,1) + FIXED_DEC(SCREEN_WIDEADD,4),
-	 FIXED_DEC(128 + 10,1) + FIXED_DEC(SCREEN_WIDEADD,4),
-};
-
-
-
-static u16 note_key5k[] = {INPUT_LEFT5K, INPUT_DOWN5K, INPUT_MIDDLE, INPUT_UP5K, INPUT_RIGHT5K};
-
-static u8 note_anims5k[5][3] = {
-	{CharAnim_Left,  CharAnim_LeftAlt,  PlayerAnim_LeftMiss},
-	{CharAnim_Down,  CharAnim_DownAlt,  PlayerAnim_DownMiss},
-	{CharAnim_Up,    CharAnim_UpAlt,    PlayerAnim_UpMiss},
-	{CharAnim_Up,    CharAnim_UpAlt,    PlayerAnim_UpMiss},
-	{CharAnim_Right, CharAnim_RightAlt, PlayerAnim_RightMiss},
-};
-
-//6K
-int note_x6k_normal[12] = {
-	// BF - normal
-	FIXED_DEC(26,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(50,1)  + FIXED_DEC(SCREEN_WIDEADD,4),//+24
-	FIXED_DEC(74,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(98,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(122,1) + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(146,1) + FIXED_DEC(SCREEN_WIDEADD,4),
-	// Opponent - normal
-	FIXED_DEC(-146,1) - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-122,1) - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-98,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-74,1)  - FIXED_DEC(SCREEN_WIDEADD,4),//+24
-	FIXED_DEC(-50,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-26,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-};
-
-int note_x6k_flipped[12] = {
-	// BF - flipped (on left side, like 5k)
-	FIXED_DEC(-146,1) - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-122,1) - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-98,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-74,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-50,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-26,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	// Opponent - flipped (on right side, like 5k)
-	FIXED_DEC(26,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(50,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(74,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(98,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(122,1) + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(146,1) + FIXED_DEC(SCREEN_WIDEADD,4),
-};
-
-
-
-static u16 note_key6k[] = {PAD_LEFT, PAD_UP, PAD_RIGHT, PAD_SQUARE, PAD_CROSS, PAD_CIRCLE};
-
-static u8 note_anims6k[6][3] = {
-	{CharAnim_Left,  CharAnim_LeftAlt,  PlayerAnim_LeftMiss},
-	{CharAnim_Up,    CharAnim_UpAlt,    PlayerAnim_UpMiss},
-	{CharAnim_Right, CharAnim_RightAlt, PlayerAnim_RightMiss},
-	{CharAnim_Left,  CharAnim_LeftAlt,  PlayerAnim_LeftMiss},
-	{CharAnim_Down,  CharAnim_DownAlt,  PlayerAnim_DownMiss},
-	{CharAnim_Right, CharAnim_RightAlt, PlayerAnim_RightMiss},
-};
-
-//7K
-int note_x7k_normal[14] = {
-	// BF - normal
-	FIXED_DEC(26,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(46,1)  + FIXED_DEC(SCREEN_WIDEADD,4),//+20
-	FIXED_DEC(66,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(86,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(106,1) + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(126,1) + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(146,1) + FIXED_DEC(SCREEN_WIDEADD,4),
-	// Opponent - normal
-	FIXED_DEC(-146,1) - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-126,1) - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-106,1) - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-86,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-66,1)  - FIXED_DEC(SCREEN_WIDEADD,4),//+20
-	FIXED_DEC(-46,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-26,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-};
-
-int note_x7k_flipped[14] = {
-	// BF - flipped (on left side, like 5k)
-	FIXED_DEC(-146,1) - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-126,1) - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-106,1) - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-86,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-66,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-46,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-26,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	// Opponent - flipped (on right side, like 5k)
-	FIXED_DEC(26,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(46,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(66,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(86,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(106,1) + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(126,1) + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(146,1) + FIXED_DEC(SCREEN_WIDEADD,4),
-};
-
-
-
-static u16 note_key7k[] = {PAD_LEFT, PAD_UP, PAD_RIGHT, INPUT_MIDDLE, PAD_SQUARE, PAD_CROSS, PAD_CIRCLE};
-
-static u8 note_anims7k[7][3] = {
-	{CharAnim_Left,  CharAnim_LeftAlt,  PlayerAnim_LeftMiss},
-	{CharAnim_Up,    CharAnim_UpAlt,    PlayerAnim_UpMiss},
-	{CharAnim_Right, CharAnim_RightAlt, PlayerAnim_RightMiss},
-	{CharAnim_Up,    CharAnim_UpAlt,    PlayerAnim_UpMiss},
-	{CharAnim_Left,  CharAnim_LeftAlt,  PlayerAnim_LeftMiss},
-	{CharAnim_Down,  CharAnim_DownAlt,  PlayerAnim_DownMiss},
-	{CharAnim_Right, CharAnim_RightAlt, PlayerAnim_RightMiss},
-};
-
-//9K
-int note_x9k_normal[18] = {
-	// BF - normal
-	FIXED_DEC(13,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(30,1)  + FIXED_DEC(SCREEN_WIDEADD,4),//+17
-	FIXED_DEC(47,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(64,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(81,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(98,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(115,1) + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(132,1) + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(149,1) + FIXED_DEC(SCREEN_WIDEADD,4),
-	// Opponent - normal
-	FIXED_DEC(-149,1) - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-132,1) - FIXED_DEC(SCREEN_WIDEADD,4),//+17
-	FIXED_DEC(-115,1) - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-98,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-81,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-64,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-47,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-30,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-13,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-};
-
-int note_x9k_flipped[18] = {
-	// BF - flipped (on left side, like 5k)
-	FIXED_DEC(-149,1) - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-132,1) - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-115,1) - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-98,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-81,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-64,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-47,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-30,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(-13,1)  - FIXED_DEC(SCREEN_WIDEADD,4),
-	// Opponent - flipped (on right side, like 5k)
-	FIXED_DEC(13,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(30,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(47,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(64,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(81,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(98,1)  + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(115,1) + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(132,1) + FIXED_DEC(SCREEN_WIDEADD,4),
-	FIXED_DEC(149,1) + FIXED_DEC(SCREEN_WIDEADD,4),
-};
-
-
-
-static u16 note_key9k[] = {PAD_LEFT, PAD_DOWN, PAD_UP, PAD_RIGHT, INPUT_MIDDLE, PAD_SQUARE, PAD_CROSS, PAD_TRIANGLE, PAD_CIRCLE};
-
-static u8 note_anims9k[9][3] = {
-	{CharAnim_Left,  CharAnim_LeftAlt,  PlayerAnim_LeftMiss},
-	{CharAnim_Down,  CharAnim_DownAlt,  PlayerAnim_DownMiss},
-	{CharAnim_Up,    CharAnim_UpAlt,    PlayerAnim_UpMiss},
-	{CharAnim_Right, CharAnim_RightAlt, PlayerAnim_RightMiss},
-	{CharAnim_Up,    CharAnim_UpAlt,    PlayerAnim_UpMiss},
-	{CharAnim_Left,  CharAnim_LeftAlt,  PlayerAnim_LeftMiss},
-	{CharAnim_Down,  CharAnim_DownAlt,  PlayerAnim_DownMiss},
-	{CharAnim_Up,    CharAnim_UpAlt,    PlayerAnim_UpMiss},
-	{CharAnim_Right, CharAnim_RightAlt, PlayerAnim_RightMiss},
-};
-
+#include "note_def.h"
 //Note pointers for the keys
 static u16* note_key;
 static u8 (*note_anims)[3];
@@ -323,11 +83,12 @@ int bgx = 256;
 static u32 Sounds[7];
 
 #define STAGE_DEF_FIRST StageId_1_1
-#define STAGE_DEF_COUNT 23
+#define STAGE_DEF_COUNT 24
 #include "character/bf.h"
 #include "character/apple.h"
 #include "character/dad.h"
 #include "character/exep3.h"
+#include "character/ultram.h"
 #include "character/gf.h"
 #include "character/jerry.h"
 #include "character/logan.h"
@@ -361,7 +122,7 @@ static const StageDef *Stage_GetDef(StageId id)
 #include "character_mapping.h"
 #include <string.h>
 
-typedef Character* (*CharCtor)(fixed_t x, fixed_t y);
+typedef Character* (*CharCtor)(fixed_t x, fixed_t y, fixed_t scale);
 
 typedef struct { const char *name; CharCtor ctor; } CharMapEntry;
 
@@ -378,6 +139,8 @@ static const CharMapEntry char_map[] =
 	{"logan",     Char_Logan_New},
 	{"apple",     Char_Apple_New},
 	{"orange",    Char_Orange_New},
+	{"ultram",    Char_UltraM_New},
+	{"ultra",     Char_UltraM_New},
 	{"gf",        Char_GF_New},
 	{"girlfriend",Char_GF_New},
 	{NULL, NULL}
@@ -391,7 +154,7 @@ Character* CharMap_GetCharacterByName(const char *name)
 	for (const CharMapEntry *e = char_map; e->name != NULL; e++)
 	{
 		if (strcmp(name, e->name) == 0)
-			return e->ctor(FIXED_DEC(60,1), FIXED_DEC(100,1));
+			return e->ctor(FIXED_DEC(60,1), FIXED_DEC(100,1), FIXED_DEC(1,1));
 	}
 	return NULL;
 }
@@ -3117,7 +2880,7 @@ static void Stage_TimerGetLength(void)
 	{
 		currentDisc = 1;
 	}
-	if (stage.stage_id >= StageId_4_1 && stage.stage_id <= StageId_4_7)
+	if (stage.stage_id >= StageId_4_1 && stage.stage_id <= StageId_4_8)
 	{
 		currentDisc = 2;
 	}
@@ -3339,7 +3102,7 @@ static void Stage_LoadPlayer(void)
 	//Load player character
 	Character_Free(stage.player);
 	if (stage.stage_def->pchar.new != NULL) {
-		stage.player = stage.stage_def->pchar.new(stage.stage_def->pchar.x, stage.stage_def->pchar.y);
+		stage.player = stage.stage_def->pchar.new(stage.stage_def->pchar.x, stage.stage_def->pchar.y, stage.stage_def->pchar.scale);
 	}
 	else
 		stage.player = NULL;
@@ -3350,7 +3113,7 @@ static void Stage_LoadPlayer2(void)
 	//Load player character
 	Character_Free(stage.player2);
 	if (stage.stage_def->pchar2.new != NULL) {
-		stage.player2 = stage.stage_def->pchar2.new(stage.stage_def->pchar2.x, stage.stage_def->pchar2.y);
+		stage.player2 = stage.stage_def->pchar2.new(stage.stage_def->pchar2.x, stage.stage_def->pchar2.y, stage.stage_def->pchar2.scale);
 	}
 	else
 		stage.player2 = NULL;
@@ -3361,7 +3124,7 @@ static void Stage_LoadOpponent(void)
 	//Load opponent character
 	Character_Free(stage.opponent);
 	if (stage.stage_def->ochar.new != NULL) {
-		stage.opponent = stage.stage_def->ochar.new(stage.stage_def->ochar.x, stage.stage_def->ochar.y);
+		stage.opponent = stage.stage_def->ochar.new(stage.stage_def->ochar.x, stage.stage_def->ochar.y, stage.stage_def->ochar.scale);
 	}
 	else
 		stage.opponent = NULL;
@@ -3372,7 +3135,7 @@ static void Stage_LoadOpponent2(void)
 	//Load opponent character
 	Character_Free(stage.opponent2);
 	if (stage.stage_def->ochar2.new != NULL) {
-		stage.opponent2 = stage.stage_def->ochar2.new(stage.stage_def->ochar2.x, stage.stage_def->ochar2.y);
+		stage.opponent2 = stage.stage_def->ochar2.new(stage.stage_def->ochar2.x, stage.stage_def->ochar2.y, stage.stage_def->ochar2.scale);
 	}
 	else
 		stage.opponent2 = NULL;
@@ -3383,7 +3146,7 @@ static void Stage_LoadGirlfriend(void)
 	//Load girlfriend character
 	Character_Free(stage.gf);
 	if (stage.stage_def->gchar.new != NULL)
-		stage.gf = stage.stage_def->gchar.new(stage.stage_def->gchar.x, stage.stage_def->gchar.y);
+		stage.gf = stage.stage_def->gchar.new(stage.stage_def->gchar.x, stage.stage_def->gchar.y, stage.stage_def->gchar.scale);
 	else
 		stage.gf = NULL;
 }
@@ -3418,42 +3181,22 @@ static void Stage_LoadChart(void)
    	// with 64-bit section/note/event values and a 15-byte header.
    	fixed_t speed_fixed = (fixed_t)((u32)chart_byte[0] | ((u32)chart_byte[1] << 8) | ((u32)chart_byte[2] << 16) | ((u32)chart_byte[3] << 24));
    	u16 keys = (u16)(chart_byte[4] | (chart_byte[5] << 8));
-   	u8 lanes, header_size;
-   	u32 note_off;
-   	boolean use_u64_chart = false;
-	if (chart_size >= 15 && chart_byte[11] == 0x31 && chart_byte[12] == 0x56 && chart_byte[13] == 0x43 && chart_byte[14] == 0x55)
-   	{
-  		// New format with 64-bit section/note/event values and a magic marker
-  		use_u64_chart = true;
-  		lanes = chart_byte[6];
-		note_off = (u32)chart_byte[7] | ((u32)chart_byte[8] << 8) | ((u32)chart_byte[9] << 16) | ((u32)chart_byte[10] << 24);
-  		header_size = 15;
-  		if (note_off < header_size || note_off > chart_size)
-  			note_off = header_size;
-   	} else if (chart_byte[6] >= 1 && chart_byte[6] <= 2 && chart_size >= 11)
-  	{
-  		// New format with lanes byte
-  		lanes = chart_byte[6];
-  		note_off = (u32)chart_byte[7] | ((u32)chart_byte[8] << 8) | ((u32)chart_byte[9] << 16) | ((u32)chart_byte[10] << 24);
-  		header_size = 11;
-  		if (note_off < header_size || note_off > chart_size)
-  			note_off = header_size;
-  	} else {
-  		// Old format, no lanes byte
-  		lanes = 2;
-  		note_off = (u32)chart_byte[6] | ((u32)chart_byte[7] << 8) | ((u32)chart_byte[8] << 16) | ((u32)chart_byte[9] << 24);
-  		header_size = 10;
-  		if (note_off < header_size || note_off > chart_size)
-  			note_off = header_size;
-  	}
-  	u8 *section_p = chart_byte + header_size;
- 	u8 *note_p = chart_byte + note_off;
-	u8 *event_p = chart_byte + chart_size; // events immediately follow notes in file
-	u8 *chart_end = chart_byte + chart_size;
-	size_t field_size = use_u64_chart ? 8 : 4;
-	size_t section_size = use_u64_chart ? 10 : 6;
-	size_t note_size = use_u64_chart ? 12 : 8;
-	size_t event_size = use_u64_chart ? 32 : 16;
+    	u8 lanes, header_size;
+    	u32 note_off;
+    	boolean use_u64_chart = true; // force u64 chart for all songs
+ 	lanes = chart_byte[6];
+ 	note_off = (u32)chart_byte[7] | ((u32)chart_byte[8] << 8) | ((u32)chart_byte[9] << 16) | ((u32)chart_byte[10] << 24);
+ 	header_size = 15;
+ 	if (note_off < header_size || note_off > chart_size)
+ 		note_off = header_size;
+   	u8 *section_p = chart_byte + header_size;
+  	u8 *note_p = chart_byte + note_off;
+ 	u8 *event_p = chart_byte + chart_size; // events immediately follow notes in file
+ 	u8 *chart_end = chart_byte + chart_size;
+ 	size_t field_size = 8;
+ 	size_t section_size = 12;
+ 	size_t note_size = 14;
+ 	size_t event_size = 32;
 
 	// Count sections and notes
 	size_t sections = (note_off - header_size) / section_size;
@@ -3517,25 +3260,36 @@ static void Stage_LoadChart(void)
  		for (size_t j = 0; j < (use_u64_chart ? 8 : 4); j++)
  			end_val |= ((u64)sp[j]) << (j * 8);
  		nsection_p->end = end_val;
- 		nsection_p->flag = (u16)(sp[(use_u64_chart ? 8 : 4)] | (sp[(use_u64_chart ? 9 : 5)] << 8));
+ 		if (use_u64_chart)
+ 			nsection_p->flag = (u32)(sp[8] | (sp[9] << 8) | (sp[10] << 16) | (sp[11] << 24));
+ 		else
+ 			nsection_p->flag = (u16)(sp[4] | (sp[5] << 8));
  	 }
  
  	// Copy notes
  	 Note *nnote_p = stage.notes = (Note*)(nchart + notes_off);
-	for (size_t i = 0; i < notes; i++, nnote_p++)
-	{
-		u8 *np = note_p + i * note_size;
-		if ((np + note_size) <= chart_end)
-		{
-			u64 pos_val = 0;
-			for (size_t j = 0; j < (use_u64_chart ? 8 : 4); j++)
-				pos_val |= ((u64)np[j]) << (j * 8);
-			nnote_p->pos = pos_val;
-			if (nnote_p->pos == (use_u64_chart ? CHART_POS_END : LEGACY_CHART_POS_END))
-				nnote_p->pos = CHART_POS_END;
-			nnote_p->type = (u16)(np[(use_u64_chart ? 8 : 4)] | (np[(use_u64_chart ? 9 : 5)] << 8));
-			nnote_p->is_opponent = (u16)(np[(use_u64_chart ? 10 : 6)] | (np[(use_u64_chart ? 11 : 7)] << 8));
-		}
+ 	for (size_t i = 0; i < notes; i++, nnote_p++)
+ 	{
+ 		u8 *np = note_p + i * note_size;
+ 		if ((np + note_size) <= chart_end)
+ 		{
+ 			u64 pos_val = 0;
+ 			for (size_t j = 0; j < (use_u64_chart ? 8 : 4); j++)
+ 				pos_val |= ((u64)np[j]) << (j * 8);
+ 			nnote_p->pos = pos_val;
+ 			if (nnote_p->pos == (use_u64_chart ? CHART_POS_END : LEGACY_CHART_POS_END))
+ 				nnote_p->pos = CHART_POS_END;
+ 			if (use_u64_chart)
+ 			{
+ 				nnote_p->type = (u32)(np[8] | (np[9] << 8) | (np[10] << 16) | (np[11] << 24));
+ 				nnote_p->is_opponent = (u16)(np[12] | (np[13] << 8));
+ 			}
+ 			else
+ 			{
+ 				nnote_p->type = (u16)(np[4] | (np[5] << 8));
+ 				nnote_p->is_opponent = (u16)(np[6] | (np[7] << 8));
+ 			}
+ 		}
 		else
 		{
 			nnote_p->pos = CHART_POS_END;
@@ -3800,7 +3554,7 @@ static void Stage_LoadMusic(void)
 	{
 		Audio_SeekXA_TrackDisc1(stage.stage_def->music_track, stage.audio_start_pos);
 	}
-	if (stage.stage_id >= StageId_4_1 && stage.stage_id <= StageId_4_7)
+	if (stage.stage_id >= StageId_4_1 && stage.stage_id <= StageId_4_8)
 	{
 		Audio_SeekXA_TrackDisc2(stage.stage_def->music_track, stage.audio_start_pos);
 	}
@@ -3838,13 +3592,32 @@ static void Stage_ConfigureNoteLayout(void)
 {
 	switch (stage.keys)
 	{
-		case 5: stage.note.x = (stage.stage_id == StageId_4_6 && stage.song_step >= 1296 && stage.song_step <= 2320) ? note_x5k_flipped : note_x5k_normal; note_anims = note_anims5k; note_key = note_key5k; stage.note.size = 32; break;
+		case 5: stage.note.x = note_x5k_normal; note_anims = note_anims5k; note_key = note_key5k; stage.note.size = 32; break;
 		case 6: stage.note.x = note_x6k_normal; note_anims = note_anims6k; note_key = note_key6k; stage.note.size = 24; break;
 		case 7: stage.note.x = note_x7k_normal; note_anims = note_anims7k; note_key = note_key7k; stage.note.size = 24; break;
 		case 9: stage.note.x = note_x9k_normal; note_anims = note_anims9k; note_key = note_key9k; stage.note.size = 16; break;
 		case 4:
 		default: stage.note.x = note_x4k_normal; note_anims = note_anims4k; note_key = note_key4k; stage.note.size = 32; break;
 	}
+	// Rotten Smoothie middle section - 1312 to 1824: centered BF, hidden opponent
+	if (stage.stage_id == StageId_5_2 && stage.prefs.mode != StageMode_2P && stage.song_step >= 1312 && stage.song_step <= 1824)
+	{
+		switch (stage.keys)
+		{
+			case 4: stage.note.x = note_x4k_rotten_smoothie_middle; break;
+			case 5: stage.note.x = note_x5k_rotten_smoothie_middle; break;
+			case 6: stage.note.x = note_x6k_rotten_smoothie_middle; break;
+			case 7: stage.note.x = note_x7k_rotten_smoothie_middle; break;
+			case 9: stage.note.x = note_x9k_rotten_smoothie_middle; break;
+			default: break;
+		}
+		opponentNotesEnabled = 0;
+	}
+	else
+	{
+		opponentNotesEnabled = 1;
+	}
+
 	for (int i = 0; i < stage.keys; i++)
 	{
 		stage.note.y[i] = FIXED_DEC(32 - SCREEN_HEIGHT2, 1);
@@ -4211,7 +3984,7 @@ void Stage_Load(StageId id, StageDiff difficulty, boolean story)
 
 	// Persist music/flow state for this song
 	if (id >= StageId_1_1 && id <= StageId_3_3) stage.music_disc_active = 1; else
-	if (id >= StageId_4_1 && id <= StageId_4_7) stage.music_disc_active = 2; else
+	if (id >= StageId_4_1 && id <= StageId_4_8) stage.music_disc_active = 2; else
 	if (id >= StageId_5_1 && id <= StageId_5_6) stage.music_disc_active = 3;
 	stage.music_track_active = stage.stage_def->music_track;
 	stage.music_channel_active = stage.stage_def->music_channel;
@@ -4236,7 +4009,7 @@ void Stage_Load(StageId id, StageDiff difficulty, boolean story)
 		stage.startscreen = 512;
 		Gfx_LoadTex(&stage.tex_strscr, IO_Read("\\STAGE\\PHASE3.TIM;1"), GFX_LOADTEX_FREE);
 	}
-	if (stage.stage_id >= StageId_1_1 && stage.stage_id <= StageId_4_7)
+	if (stage.stage_id >= StageId_1_1 && stage.stage_id <= StageId_4_8)
 	{
 		Gfx_LoadTex(&stage.tex_hud0, IO_Read("\\STAGE\\HUD0.TIM;1"), GFX_LOADTEX_FREE);
 		Gfx_LoadTex(&stage.tex_hud1, IO_Read("\\STAGE\\GRID0.TIM;1"), GFX_LOADTEX_FREE);
@@ -4350,8 +4123,8 @@ void Stage_Load(StageId id, StageDiff difficulty, boolean story)
 	//Initialize icon bounce tweens to identity
 	for (u8 i = 0; i < 2; i++)
 	{
-		Tween_InitWithValue(&stage.icon_bounce[i].scale_x, FIXED_UNIT, FIXED_UNIT, 1, EASING_QUAD_OUT, 0);
-		Tween_InitWithValue(&stage.icon_bounce[i].scale_y, FIXED_UNIT, FIXED_UNIT, 1, EASING_QUAD_OUT, 0);
+		Tween_InitWithValue(&stage.icon_bounce[i].scale_x, FIXED_DEC(1,1), FIXED_DEC(1,1), 1, EASING_QUAD_OUT, 0);
+		Tween_InitWithValue(&stage.icon_bounce[i].scale_y, FIXED_DEC(1,1), FIXED_DEC(1,1), 1, EASING_QUAD_OUT, 0);
 		Tween_InitWithValue(&stage.icon_bounce[i].angle_tween, 0, 0, 1, EASING_QUAD_OUT, 0);
 		stage.icon_bounce[i].angle = 0;
 	}
@@ -4643,6 +4416,82 @@ void Stage_Tick(void)
         g_pendingSwapRestartMusic = false;
     }
 
+    // Per-frame note layout (instant, works mid-cutscene) - must be before any early returns
+    if (gameloop == GameLoop_Stage && stage.state == StageState_Play)
+    {
+        if (stage.stage_id == StageId_5_2 && stage.prefs.mode == StageMode_2P)
+        {
+            // 2P: force normal, no middle
+            if (opponentNotesEnabled == 0 || stage.note.x == note_x4k_rotten_smoothie_middle || stage.note.x == note_x5k_rotten_smoothie_middle || stage.note.x == note_x6k_rotten_smoothie_middle || stage.note.x == note_x7k_rotten_smoothie_middle || stage.note.x == note_x9k_rotten_smoothie_middle)
+            {
+                Stage_ConfigureNoteLayout();
+                Stage_SnapNoteVisualOffsets();
+                opponentNotesEnabled = 1;
+            }
+        }
+        else if (stage.stage_id == StageId_5_2 && stage.prefs.mode != StageMode_2P)
+        {
+            boolean in_middle = (stage.song_step >= 1312 && stage.song_step <= 1824);
+            if (in_middle)
+            {
+                switch (stage.keys)
+                {
+                    case 4: if (stage.note.x != note_x4k_rotten_smoothie_middle) {stage.note.x = note_x4k_rotten_smoothie_middle; Stage_SnapNoteVisualOffsets();} break;
+                    case 5: if (stage.note.x != note_x5k_rotten_smoothie_middle) {stage.note.x = note_x5k_rotten_smoothie_middle; Stage_SnapNoteVisualOffsets();} break;
+                    case 6: if (stage.note.x != note_x6k_rotten_smoothie_middle) {stage.note.x = note_x6k_rotten_smoothie_middle; Stage_SnapNoteVisualOffsets();} break;
+                    case 7: if (stage.note.x != note_x7k_rotten_smoothie_middle) {stage.note.x = note_x7k_rotten_smoothie_middle; Stage_SnapNoteVisualOffsets();} break;
+                    case 9: if (stage.note.x != note_x9k_rotten_smoothie_middle) {stage.note.x = note_x9k_rotten_smoothie_middle; Stage_SnapNoteVisualOffsets();} break;
+                    default: break;
+                }
+                opponentNotesEnabled = 0;
+            }
+            else
+            {
+                if (opponentNotesEnabled == 0)
+                {
+                    Stage_ConfigureNoteLayout();
+                    Stage_SnapNoteVisualOffsets();
+                    opponentNotesEnabled = 1;
+                }
+            }
+        }
+        else if (stage.stage_id == StageId_4_6)
+        {
+            boolean in_flipped = (stage.song_step >= 1296 && stage.song_step <= 2320);
+            if (in_flipped)
+            {
+                switch (stage.keys)
+                {
+                    case 4: if (stage.note.x != note_x4k_flipped) {stage.note.x = note_x4k_flipped; Stage_SnapNoteVisualOffsets();} break;
+                    case 5: if (stage.note.x != note_x5k_flipped) {stage.note.x = note_x5k_flipped; Stage_SnapNoteVisualOffsets();} break;
+                    case 6: if (stage.note.x != note_x6k_flipped) {stage.note.x = note_x6k_flipped; Stage_SnapNoteVisualOffsets();} break;
+                    case 7: if (stage.note.x != note_x7k_flipped) {stage.note.x = note_x7k_flipped; Stage_SnapNoteVisualOffsets();} break;
+                    case 9: if (stage.note.x != note_x9k_flipped) {stage.note.x = note_x9k_flipped; Stage_SnapNoteVisualOffsets();} break;
+                    default: break;
+                }
+            }
+            else
+            {
+                boolean need_restore = false;
+                switch (stage.keys)
+                {
+                    case 4: if (stage.note.x != note_x4k_normal) need_restore = true; break;
+                    case 5: if (stage.note.x != note_x5k_normal) need_restore = true; break;
+                    case 6: if (stage.note.x != note_x6k_normal) need_restore = true; break;
+                    case 7: if (stage.note.x != note_x7k_normal) need_restore = true; break;
+                    case 9: if (stage.note.x != note_x9k_normal) need_restore = true; break;
+                    default: break;
+                }
+                if (need_restore)
+                {
+                    Stage_ConfigureNoteLayout();
+                    Stage_SnapNoteVisualOffsets();
+                }
+            }
+            if (opponentNotesEnabled == 0) opponentNotesEnabled = 1;
+        }
+    }
+
     switch (stage.state)
 	{
 		case StageState_Play:
@@ -4651,7 +4500,7 @@ void Stage_Tick(void)
 			{
 				currentDisc = 1;
 			}
-			if (stage.stage_id >= StageId_4_1 && stage.stage_id <= StageId_4_7)
+			if (stage.stage_id >= StageId_4_1 && stage.stage_id <= StageId_4_8)
 			{
 				currentDisc = 2;
 			}
@@ -5051,36 +4900,50 @@ void Stage_Tick(void)
 				{
 					hudEnabled = 0;
 					noteEnabled = 1;
+					opponentNotesEnabled = 1;
+					playerNotesEnabled = 1;
 				}
 				else if (stage.song_step >= 1304 && stage.song_step <= 1559)
 				{
 					hudEnabled = 0;
 					noteEnabled = 0;
+					opponentNotesEnabled = 1;
+					playerNotesEnabled = 1;
 				}
 				else if (stage.song_step >= 1560 && stage.song_step <= 1824)
 				{
 					hudEnabled = 0;
 					noteEnabled = 1;
+					opponentNotesEnabled = 0;
+					playerNotesEnabled = 1;
 				}
 				else if (stage.song_step >= 2080 && stage.song_step <= 2084)
 				{
 					hudEnabled = 0;
 					noteEnabled = 0;
+					opponentNotesEnabled = 1;
+					playerNotesEnabled = 1;
 				}
 				else if (stage.song_step >= 2208 && stage.song_step <= 2224)
 				{
 					hudEnabled = 0;
 					noteEnabled = 0;
+					opponentNotesEnabled = 1;
+					playerNotesEnabled = 1;
 				}
 				else if (stage.song_step >= 2364 && stage.song_step <= 5500)
 				{
 					hudEnabled = 0;
 					noteEnabled = 0;
+					opponentNotesEnabled = 1;
+					playerNotesEnabled = 1;
 				}
 				else
 				{
 					hudEnabled = 1;
 					noteEnabled = 1;
+					opponentNotesEnabled = 1;
+					playerNotesEnabled = 1;
 				}
 			}
 			else if (stage.stage_id == StageId_Max)
@@ -5486,6 +5349,9 @@ void Stage_Tick(void)
 				case StageId_4_7:
 					stage.intro = true;						
 				break;
+				case StageId_4_8:
+					stage.intro = true;						
+				break;
 				case StageId_5_1:
 					stage.intro = false;
 				break;
@@ -5537,17 +5403,21 @@ void Stage_Tick(void)
 				if ((stage.song_step & 0x3) == 0)
 					stage.sbump = FIXED_DEC(103,100);
 
-				//Icon bounce on beat (every gf_speed steps)
+				//Icon bounce on beat (every gf_speed steps) - fixed to scale/rotate at any duration
 				if (stage.prefs.icon_bounce && (stage.song_step % stage.gf_speed) == 0)
 				{
-					// Duration: crochet / 1300 * gfSpeed (Lua: crochet is beat duration in ms)
-					// PSX: compute in real seconds via timer-compatible fixed point
-					// crochet_sec = 60 / bpm, duration = crochet_sec * gfSpeed / 1300
+					// Use step_crochet based duration so it works at any BPM/duration
+					// bounce lasts ~0.15 sec, visible at any BPM
+					fixed_t bounce_dur = FIXED_DEC(15,100);
+					// fallback to beat-based if we have valid bpm
 					u16 bpm = stage.cur_section->flag & SECTION_FLAG_BPM_MASK;
-					fixed_t bounce_dur = FIXED_DIV(
-						FIXED_MUL(FIXED_DEC(60,1), (fixed_t)(stage.gf_speed << FIXED_SHIFT)),
-						FIXED_MUL((fixed_t)bpm << FIXED_SHIFT, FIXED_DEC(1300,1))
-					);
+					if (bpm >= 30 && bpm <= 300)
+					{
+						fixed_t beat_sec = FIXED_DIV(FIXED_DEC(60,1), (fixed_t)bpm << FIXED_SHIFT);
+						bounce_dur = FIXED_MUL(beat_sec, FIXED_DEC(3,10)); // 0.3 * beat
+						if (bounce_dur < FIXED_DEC(8,100)) bounce_dur = FIXED_DEC(8,100);
+						if (bounce_dur > FIXED_DEC(25,100)) bounce_dur = FIXED_DEC(25,100);
+					}
 					if (bounce_dur < 1)
 						bounce_dur = 1;
 
@@ -5555,20 +5425,20 @@ void Stage_Tick(void)
 					if ((stage.song_step / stage.gf_speed) & 1)
 					{
 						// Even beat: P1 squish vertical, P2 stretch vertical
-						Tween_InitWithValue(&stage.icon_bounce[0].scale_x, FIXED_DEC(110,100), FIXED_UNIT, bounce_dur, EASING_QUAD_OUT, 0);
-						Tween_InitWithValue(&stage.icon_bounce[0].scale_y, FIXED_DEC(80,100),  FIXED_UNIT, bounce_dur, EASING_QUAD_OUT, 0);
-						Tween_InitWithValue(&stage.icon_bounce[1].scale_x, FIXED_DEC(110,100), FIXED_UNIT, bounce_dur, EASING_QUAD_OUT, 0);
-						Tween_InitWithValue(&stage.icon_bounce[1].scale_y, FIXED_DEC(130,100), FIXED_UNIT, bounce_dur, EASING_QUAD_OUT, 0);
+						Tween_InitWithValue(&stage.icon_bounce[0].scale_x, FIXED_DEC(110,100), FIXED_DEC(1,1), bounce_dur, EASING_QUAD_OUT, 0);
+						Tween_InitWithValue(&stage.icon_bounce[0].scale_y, FIXED_DEC(80,100),  FIXED_DEC(1,1), bounce_dur, EASING_QUAD_OUT, 0);
+						Tween_InitWithValue(&stage.icon_bounce[1].scale_x, FIXED_DEC(110,100), FIXED_DEC(1,1), bounce_dur, EASING_QUAD_OUT, 0);
+						Tween_InitWithValue(&stage.icon_bounce[1].scale_y, FIXED_DEC(130,100), FIXED_DEC(1,1), bounce_dur, EASING_QUAD_OUT, 0);
 						Tween_InitWithValue(&stage.icon_bounce[0].angle_tween, FIXED_DEC(-15,1), 0, bounce_dur, EASING_QUAD_OUT, 0);
 						Tween_InitWithValue(&stage.icon_bounce[1].angle_tween, FIXED_DEC(15,1),  0, bounce_dur, EASING_QUAD_OUT, 0);
 					}
 					else
 					{
 						// Odd beat: P1 stretch vertical, P2 squish vertical
-						Tween_InitWithValue(&stage.icon_bounce[0].scale_x, FIXED_DEC(110,100), FIXED_UNIT, bounce_dur, EASING_QUAD_OUT, 0);
-						Tween_InitWithValue(&stage.icon_bounce[0].scale_y, FIXED_DEC(130,100), FIXED_UNIT, bounce_dur, EASING_QUAD_OUT, 0);
-						Tween_InitWithValue(&stage.icon_bounce[1].scale_x, FIXED_DEC(110,100), FIXED_UNIT, bounce_dur, EASING_QUAD_OUT, 0);
-						Tween_InitWithValue(&stage.icon_bounce[1].scale_y, FIXED_DEC(80,100),  FIXED_UNIT, bounce_dur, EASING_QUAD_OUT, 0);
+						Tween_InitWithValue(&stage.icon_bounce[0].scale_x, FIXED_DEC(110,100), FIXED_DEC(1,1), bounce_dur, EASING_QUAD_OUT, 0);
+						Tween_InitWithValue(&stage.icon_bounce[0].scale_y, FIXED_DEC(130,100), FIXED_DEC(1,1), bounce_dur, EASING_QUAD_OUT, 0);
+						Tween_InitWithValue(&stage.icon_bounce[1].scale_x, FIXED_DEC(110,100), FIXED_DEC(1,1), bounce_dur, EASING_QUAD_OUT, 0);
+						Tween_InitWithValue(&stage.icon_bounce[1].scale_y, FIXED_DEC(80,100),  FIXED_DEC(1,1), bounce_dur, EASING_QUAD_OUT, 0);
 						Tween_InitWithValue(&stage.icon_bounce[0].angle_tween, FIXED_DEC(15,1),  0, bounce_dur, EASING_QUAD_OUT, 0);
 						Tween_InitWithValue(&stage.icon_bounce[1].angle_tween, FIXED_DEC(-15,1), 0, bounce_dur, EASING_QUAD_OUT, 0);
 					}
@@ -5587,6 +5457,8 @@ void Stage_Tick(void)
 				}
 			}
 			
+
+
 			//Scroll camera
 			if (stage.cur_section->flag & SECTION_FLAG_OPPFOCUS)
 				Stage_FocusCharacter(stage.opponent);
@@ -5726,7 +5598,7 @@ void Stage_Tick(void)
 					if (stage.player_state[0].health > 20000)
 						stage.player_state[0].health = 20000;
 
-					if (stage.stage_id >= StageId_1_1 && stage.stage_id <= StageId_4_7)
+					if (stage.stage_id >= StageId_1_1 && stage.stage_id <= StageId_4_8)
 					{
 						if (stage.player != NULL)
 							Stage_DrawHealth(stage.player_state[0].health, stage.player->health_i, 1);
@@ -5899,8 +5771,8 @@ void Stage_Tick(void)
 			stage.bump = stage.sbump = FIXED_UNIT;
 			for (u8 i = 0; i < 2; i++)
 			{
-				Tween_InitWithValue(&stage.icon_bounce[i].scale_x, FIXED_UNIT, FIXED_UNIT, 1, EASING_QUAD_OUT, 0);
-				Tween_InitWithValue(&stage.icon_bounce[i].scale_y, FIXED_UNIT, FIXED_UNIT, 1, EASING_QUAD_OUT, 0);
+				Tween_InitWithValue(&stage.icon_bounce[i].scale_x, FIXED_DEC(1,1), FIXED_DEC(1,1), 1, EASING_QUAD_OUT, 0);
+				Tween_InitWithValue(&stage.icon_bounce[i].scale_y, FIXED_DEC(1,1), FIXED_DEC(1,1), 1, EASING_QUAD_OUT, 0);
 				Tween_InitWithValue(&stage.icon_bounce[i].angle_tween, 0, 0, 1, EASING_QUAD_OUT, 0);
 				stage.icon_bounce[i].angle = 0;
 			}
@@ -5946,7 +5818,7 @@ void Stage_Tick(void)
 				{
 					currentDisc = 1;
 				}
-				if (stage.stage_id >= StageId_4_1 && stage.stage_id <= StageId_4_7)
+				if (stage.stage_id >= StageId_4_1 && stage.stage_id <= StageId_4_8)
 				{
 					currentDisc = 2;
 				}

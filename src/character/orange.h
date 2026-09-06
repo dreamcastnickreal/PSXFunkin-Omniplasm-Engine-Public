@@ -10,6 +10,6 @@
 #include "../character.h"
 
 //Orange character functions
-Character *Char_Orange_New(fixed_t x, fixed_t y);
+Character *Char_Orange_New(fixed_t x, fixed_t y, fixed_t scale);
 
 #endif

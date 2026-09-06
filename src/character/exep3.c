@@ -487,7 +487,7 @@ void Char_ExeP3_Free(Character *character)
 	Mem_Free(this->arc_main);
 }
 
-Character *Char_ExeP3_New(fixed_t x, fixed_t y)
+Character *Char_ExeP3_New(fixed_t x, fixed_t y, fixed_t scale)
 {
 	//Allocate exep3 object
 	Char_ExeP3 *this = Mem_Alloc(sizeof(Char_ExeP3));
@@ -543,7 +543,7 @@ Character *Char_ExeP3_New(fixed_t x, fixed_t y)
 	this->character.focus_y = FIXED_DEC(-85,1);
 	this->character.focus_zoom = FIXED_DEC(100,100);
 	
-	this->character.size = FIXED_DEC(100,100);
+	this->character.size = FIXED_MUL(FIXED_DEC(100,100),scale);
 	
 	//Load art
 	this->arc_main = IO_Read("\\OCHAR\\EXEP3.ARC;1");

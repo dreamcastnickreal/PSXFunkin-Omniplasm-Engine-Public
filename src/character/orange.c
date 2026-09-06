@@ -199,20 +199,20 @@ void Char_Orange_Tick(Character *character)
 		//Camera stuff
 		if ((stage.flag & STAGE_FLAG_JUST_STEP) && stage.song_step >= 0)
 		{
-			this->character.focus_x = FIXED_DEC(-100, 1);
-			this->character.focus_y = FIXED_DEC(-100, 1);
+			this->character.focus_x = FIXED_DEC(-20, 1);
+			this->character.focus_y = FIXED_DEC(-20, 1);
 			this->character.focus_zoom = FIXED_DEC(125,100);
 		}
 		if ((stage.flag & STAGE_FLAG_JUST_STEP) && stage.song_step >= 1040)
 		{
-			this->character.focus_x = FIXED_DEC(-40, 1);
-			this->character.focus_y = FIXED_DEC(-60, 1);
+			this->character.focus_x = FIXED_DEC(30, 1);
+			this->character.focus_y = FIXED_DEC(0, 1);
 			this->character.focus_zoom = FIXED_DEC(100,100);
 		}
 		if ((stage.flag & STAGE_FLAG_JUST_STEP) && stage.song_step >= 1816)
 		{
-			this->character.focus_x = FIXED_DEC(-80, 1);
-			this->character.focus_y = FIXED_DEC(-85, 1);
+			this->character.focus_x = FIXED_DEC(45, 1);
+			this->character.focus_y = FIXED_DEC(10, 1);
 			this->character.focus_zoom = FIXED_DEC(96,100);
 		}
 	}
@@ -257,7 +257,7 @@ void Char_Orange_Free(Character *character)
 	Mem_Free(this->arc_main);
 }
 
-Character *Char_Orange_New(fixed_t x, fixed_t y)
+Character *Char_Orange_New(fixed_t x, fixed_t y, fixed_t scale)
 {
 	//Allocate orange object
 	Char_Orange *this = Mem_Alloc(sizeof(Char_Orange));
@@ -284,11 +284,11 @@ Character *Char_Orange_New(fixed_t x, fixed_t y)
 	//health bar color
 	this->character.health_bar = 0xFFAD63D6;
 	
-	this->character.focus_x = FIXED_DEC(-100,1);
-	this->character.focus_y = FIXED_DEC(-100,1);
+	this->character.focus_x = FIXED_DEC(-80,1);
+	this->character.focus_y = FIXED_DEC(-80,1);
 	this->character.focus_zoom = FIXED_DEC(125,100);
 	
-	this->character.size = FIXED_DEC(50,100);
+	this->character.size = FIXED_MUL(FIXED_DEC(50,100),scale);
 	
 	//Load art
 	this->arc_main = IO_Read("\\OCHAR\\ORANGE.ARC;1");

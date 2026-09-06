@@ -70,6 +70,7 @@ typedef enum
 	StageId_4_5, //Monochrome
 	StageId_4_6, //Triple Trouble
 	StageId_4_7, //Unbeatable
+	StageId_4_8, //All Stars
 	
 	StageId_5_1, //Aethos
 	StageId_5_2, //Rotten Smoothie
@@ -127,7 +128,7 @@ typedef struct
 	struct
 	{
 		Character* (*new)();
-		fixed_t x, y;
+		fixed_t x, y, scale;
 	} pchar, pchar2, ochar, ochar2, gchar;
 	
 	//Stage background

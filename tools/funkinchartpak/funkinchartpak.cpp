@@ -775,19 +775,19 @@ int main(int argc, char *argv[])
             if (j[3] == "Normal Slam")
                 new_note.type |= NOTE_FLAG_SLAM;
 
-            if (j[3] == "Bud Note" || j[3] == "AS Bud" || j[3] == "AS Bud Note" || j[3] == "asbud")
+            if (j[3] == "AS Bud Note")
                 new_note.type |= NOTE_FLAG_ASBUD;
 
-            if (j[3] == "Yoshi Note" || j[3] == "yoshi")
+            if (j[3] == "Yoshi Note")
                 new_note.type |= NOTE_FLAG_YOSHI;
 
-            if (j[3] == "GF Sing" || j[3] == "gfsing")
+            if (j[3] == "GF Sing")
                 new_note.type |= NOTE_FLAG_GFSING;
 
-            if (j[3] == "GF Duo" || j[3] == "GF Duet" || j[3] == "gfduo")
+            if (j[3] == "GF Duet")
                 new_note.type |= NOTE_FLAG_GFDUO;
 
-            if (j[3] == "No Anim" || j[3] == "No Animation" || j[3] == "noanim")
+            if (j[3] == "No Animation")
                 new_note.type |= NOTE_FLAG_NOANIM;
 			
             notes.push_back(new_note);
