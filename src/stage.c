@@ -407,6 +407,9 @@ static boolean stage_draw_clipped;
 int drain = 0;
 static fixed_t bg_note_offset_x[2] = {0, 0};
 static fixed_t bg_note_offset_y[2] = {0, 0};
+static fixed_t universal_back_x = FIXED_DEC(50,1);
+static fixed_t universal_back_y = FIXED_DEC(32,1);
+static int universal_note_x_buf[18];
 static u8 cur_note_draw_player = 0;
 
 //Stage note functions
@@ -1968,19 +1971,9 @@ static void Stage_DrawNote(const RECT *src, RECT_FIXED *dst, boolean hud, Gfx_Te
     }
     
 	if (hud)
-	{
-		if (stage.bluemode)
-			Stage_DrawTexCol(texture, src, &sdst, zoom, stage.camera.hudangle, 0, 0, 255);
-		else
-			Stage_DrawTex(texture, src, &sdst, zoom, stage.camera.hudangle);
-	}
+		Stage_DrawTex(texture, src, &sdst, zoom, stage.camera.hudangle);
 	else
-	{
-		if (stage.bluemode)
-			Stage_BlendTexCol(texture, src, &sdst, zoom, stage.camera.hudangle, 0, 0, 255, 0);
-		else
-			Stage_BlendTex(texture, src, &sdst, zoom, stage.camera.hudangle, 0);
-	}
+		Stage_BlendTex(texture, src, &sdst, zoom, stage.camera.hudangle, 0);
 }
 
 static void Stage_DrawPhantomNote(const RECT *src, RECT_FIXED *dst, boolean hud, Gfx_Tex *texture)
@@ -2013,9 +2006,7 @@ static void Stage_DrawPhantomNote(const RECT *src, RECT_FIXED *dst, boolean hud,
         sdst.y -= stage.camera.y;
     }
     
-	if (stage.bluemode)
-		Stage_BlendTexCol(texture, src, &sdst, zoom, stage.camera.hudangle, 0, 0, 255, 0);
-	else if (hud)
+	if (hud)
 		Stage_BlendTex(texture, src, &sdst, zoom, stage.camera.hudangle, 0);
 	else
 		Stage_BlendTex(texture, src, &sdst, zoom, stage.camera.hudangle, 0);
@@ -2040,6 +2031,10 @@ void Stage_DrawSplash(const RECT *src, RECT_FIXED *dst, boolean hud)
     {
         sdst.x -= stage.camera.x;
         sdst.y -= stage.camera.y;
+        // Universal for foreground splash (hud==false)
+        sdst.x += universal_back_x;
+        if (stage.prefs.downscroll)
+            sdst.y -= universal_back_y;
     }
     
 	if (hud)
@@ -2474,12 +2469,12 @@ static void Stage_DrawNotes(boolean back)
 					}
 					note_dst.y = Stage_NoteVisualY(note_index) + y - FIXED_DEC(stage.note.size / 2,1);
 					note_dst.y += offset;
-				}
-				else
-				{
-					note_dst.y = y - FIXED_DEC(stage.note.size / 2,1);
-					note_dst.y += offset;
-				}
+                }
+                else
+                {
+                    note_dst.y = y - FIXED_DEC(stage.note.size / 2,1);
+                    note_dst.y += offset;
+                }
 				note_dst.w = note_src.w << FIXED_SHIFT;
 				note_dst.h = note_src.h << FIXED_SHIFT;
 				
@@ -2541,12 +2536,12 @@ static void Stage_DrawNotes(boolean back)
 					}
 					note_dst.y = Stage_NoteVisualY(note_index) + y - FIXED_DEC(stage.note.size / 2,1);
 					note_dst.y += offset;
-				}
-				else
-				{
-					note_dst.y = y - FIXED_DEC(stage.note.size / 2,1);
-					note_dst.y += offset;
-				}			
+                }
+                else
+                {
+                    note_dst.y = y - FIXED_DEC(stage.note.size / 2,1);
+                    note_dst.y += offset;
+                }			
 				note_dst.w = note_src.w << FIXED_SHIFT;
 				note_dst.h = note_src.h << FIXED_SHIFT;
 
@@ -2608,12 +2603,12 @@ static void Stage_DrawNotes(boolean back)
 					}
 					note_dst.y = Stage_NoteVisualY(note_index) + y - FIXED_DEC(stage.note.size / 2,1);
 					note_dst.y += offset;
-				}
-				else
-				{
-					note_dst.y = y - FIXED_DEC(stage.note.size / 2,1);
-					note_dst.y += offset;
-				}			
+                }
+                else
+                {
+                    note_dst.y = y - FIXED_DEC(stage.note.size / 2,1);
+                    note_dst.y += offset;
+                }			
 				note_dst.w = note_src.w << FIXED_SHIFT;
 				note_dst.h = note_src.h << FIXED_SHIFT;
 
@@ -2675,12 +2670,12 @@ static void Stage_DrawNotes(boolean back)
 					}
 					note_dst.y = Stage_NoteVisualY(note_index) + y - FIXED_DEC(stage.note.size / 2,1);
 					note_dst.y += offset;
-				}
-				else
-				{
-					note_dst.y = y - FIXED_DEC(stage.note.size / 2,1);
-					note_dst.y += offset;
-				}			
+                }
+                else
+                {
+                    note_dst.y = y - FIXED_DEC(stage.note.size / 2,1);
+                    note_dst.y += offset;
+                }			
 				note_dst.w = note_src.w << FIXED_SHIFT;
 				note_dst.h = note_src.h << FIXED_SHIFT;
 
@@ -2742,12 +2737,12 @@ static void Stage_DrawNotes(boolean back)
 					}
 					note_dst.y = Stage_NoteVisualY(note_index) + y - FIXED_DEC(stage.note.size / 2,1);
 					note_dst.y += offset;
-				}
-				else
-				{
-					note_dst.y = y - FIXED_DEC(stage.note.size / 2,1);
-					note_dst.y += offset;
-				}			
+                }
+                else
+                {
+                    note_dst.y = y - FIXED_DEC(stage.note.size / 2,1);
+                    note_dst.y += offset;
+                }			
 				note_dst.w = note_src.w << FIXED_SHIFT;
 				note_dst.h = note_src.h << FIXED_SHIFT;
 
@@ -2809,12 +2804,12 @@ static void Stage_DrawNotes(boolean back)
 					}
 					note_dst.y = Stage_NoteVisualY(note_index) + y - FIXED_DEC(stage.note.size / 2,1);
 					note_dst.y += offset;
-				}
-				else
-				{
-					note_dst.y = y - FIXED_DEC(stage.note.size / 2,1);
-					note_dst.y += offset;
-				}			
+                }
+                else
+                {
+                    note_dst.y = y - FIXED_DEC(stage.note.size / 2,1);
+                    note_dst.y += offset;
+                }			
 				note_dst.w = note_src.w << FIXED_SHIFT;
 				note_dst.h = note_src.h << FIXED_SHIFT;
 
@@ -2845,12 +2840,12 @@ static void Stage_DrawNotes(boolean back)
 					}
 					note_dst.y = Stage_NoteVisualY(note_index) + y - FIXED_DEC(stage.note.size / 2,1);
 					note_dst.y += offset;
-				}
-				else
-				{
-					note_dst.y = y - FIXED_DEC(stage.note.size / 2,1);
-					note_dst.y += offset;
-				}
+                }
+                else
+                {
+                    note_dst.y = y - FIXED_DEC(stage.note.size / 2,1);
+                    note_dst.y += offset;
+                }
 				note_dst.w = note_src.w << FIXED_SHIFT;
 				note_dst.h = note_src.h << FIXED_SHIFT;
 
@@ -3630,6 +3625,24 @@ static void Stage_ConfigureNoteLayout(void)
 		else
 			stage.note.y[i + stage.keys] = FIXED_DEC(32 - SCREEN_HEIGHT2, 1);
 	}
+	// Apply universal back offset to stage.note positions - only when player hud==false, only notex/notey
+	for (int i = 0; i < stage.keys * 2; i++) {
+		int p = (i < stage.keys) ? 0 : 1;
+		if (!stage.player_state[p].hud) {
+			universal_note_x_buf[i] = stage.note.x[i] + universal_back_x;
+		} else {
+			universal_note_x_buf[i] = stage.note.x[i];
+		}
+	}
+	stage.note.x = universal_note_x_buf;
+	for (int i = 0; i < stage.keys * 2; i++) {
+		int p = (i < stage.keys) ? 0 : 1;
+		if (!stage.player_state[p].hud) {
+			if (stage.prefs.downscroll)
+				stage.note.y[i] -= universal_back_y;
+		}
+	}
+	Stage_SnapNoteVisualOffsets();
 }
 
 static void Stage_LoadState(void)
@@ -3951,6 +3964,12 @@ void Stage_SetBGNoteOffset(u8 player_index, fixed_t x, fixed_t y)
 	bg_note_offset_y[player_index] = y;
 }
 
+void Stage_SetUniversalBackOffset(fixed_t x, fixed_t y)
+{
+	universal_back_x = x;
+	universal_back_y = y;
+}
+
 static void Stage_LoadNoteTextures(void)
 {
 	char note_text[32];
@@ -3994,6 +4013,28 @@ void Stage_Load(StageId id, StageDiff difficulty, boolean story)
 	if (stage.stage_id == StageId_5_2)
 	{
 		IO_FindFile(&stage.str_grace_lba, "\\STR\\GRACE.STR;1");
+		// Grace does not need a miss STR
+		stage.has_alt_miss = false;
+		stage.alt_miss_active = false;
+		stage.alt_miss_start_step = 0;
+	} else {
+		stage.has_alt_miss = false;
+		stage.alt_miss_active = false;
+	}
+	if (stage.stage_id == StageId_4_8)
+	{
+		// Mid-song LBAs for All Stars - asintro and act4 readily available
+		if (IO_ExistFile("\\STR\\ASINTRO.STR;1")) {
+			IO_FindFile(&stage.str_asintro_lba, "\\STR\\ASINTRO.STR;1");
+			stage.has_asintro = true;
+		} else stage.has_asintro = false;
+		if (IO_ExistFile("\\STR\\ACT4.STR;1")) {
+			IO_FindFile(&stage.str_act4_lba, "\\STR\\ACT4.STR;1");
+			stage.has_act4 = true;
+		} else stage.has_act4 = false;
+	} else {
+		stage.has_asintro = false;
+		stage.has_act4 = false;
 	}
 
     // Check movies
@@ -4434,14 +4475,29 @@ void Stage_Tick(void)
             boolean in_middle = (stage.song_step >= 1312 && stage.song_step <= 1824);
             if (in_middle)
             {
+                boolean need_switch = false;
                 switch (stage.keys)
                 {
-                    case 4: if (stage.note.x != note_x4k_rotten_smoothie_middle) {stage.note.x = note_x4k_rotten_smoothie_middle; Stage_SnapNoteVisualOffsets();} break;
-                    case 5: if (stage.note.x != note_x5k_rotten_smoothie_middle) {stage.note.x = note_x5k_rotten_smoothie_middle; Stage_SnapNoteVisualOffsets();} break;
-                    case 6: if (stage.note.x != note_x6k_rotten_smoothie_middle) {stage.note.x = note_x6k_rotten_smoothie_middle; Stage_SnapNoteVisualOffsets();} break;
-                    case 7: if (stage.note.x != note_x7k_rotten_smoothie_middle) {stage.note.x = note_x7k_rotten_smoothie_middle; Stage_SnapNoteVisualOffsets();} break;
-                    case 9: if (stage.note.x != note_x9k_rotten_smoothie_middle) {stage.note.x = note_x9k_rotten_smoothie_middle; Stage_SnapNoteVisualOffsets();} break;
+                    case 4: if (stage.note.x != note_x4k_rotten_smoothie_middle && stage.note.x != universal_note_x_buf) need_switch = true; break;
+                    case 5: if (stage.note.x != note_x5k_rotten_smoothie_middle && stage.note.x != universal_note_x_buf) need_switch = true; break;
+                    case 6: if (stage.note.x != note_x6k_rotten_smoothie_middle && stage.note.x != universal_note_x_buf) need_switch = true; break;
+                    case 7: if (stage.note.x != note_x7k_rotten_smoothie_middle && stage.note.x != universal_note_x_buf) need_switch = true; break;
+                    case 9: if (stage.note.x != note_x9k_rotten_smoothie_middle && stage.note.x != universal_note_x_buf) need_switch = true; break;
                     default: break;
+                }
+                if (need_switch) {
+                    switch (stage.keys)
+                    {
+                        case 4: stage.note.x = note_x4k_rotten_smoothie_middle; break;
+                        case 5: stage.note.x = note_x5k_rotten_smoothie_middle; break;
+                        case 6: stage.note.x = note_x6k_rotten_smoothie_middle; break;
+                        case 7: stage.note.x = note_x7k_rotten_smoothie_middle; break;
+                        case 9: stage.note.x = note_x9k_rotten_smoothie_middle; break;
+                        default: break;
+                    }
+                    for (int i = 0; i < stage.keys * 2; i++) { int p = (i < stage.keys) ? 0 : 1; if (!stage.player_state[p].hud) universal_note_x_buf[i] = stage.note.x[i] + universal_back_x; else universal_note_x_buf[i] = stage.note.x[i]; }
+                    stage.note.x = universal_note_x_buf;
+                    Stage_SnapNoteVisualOffsets();
                 }
                 opponentNotesEnabled = 0;
             }
@@ -4460,14 +4516,29 @@ void Stage_Tick(void)
             boolean in_flipped = (stage.song_step >= 1296 && stage.song_step <= 2320);
             if (in_flipped)
             {
+                boolean need_flip = false;
                 switch (stage.keys)
                 {
-                    case 4: if (stage.note.x != note_x4k_flipped) {stage.note.x = note_x4k_flipped; Stage_SnapNoteVisualOffsets();} break;
-                    case 5: if (stage.note.x != note_x5k_flipped) {stage.note.x = note_x5k_flipped; Stage_SnapNoteVisualOffsets();} break;
-                    case 6: if (stage.note.x != note_x6k_flipped) {stage.note.x = note_x6k_flipped; Stage_SnapNoteVisualOffsets();} break;
-                    case 7: if (stage.note.x != note_x7k_flipped) {stage.note.x = note_x7k_flipped; Stage_SnapNoteVisualOffsets();} break;
-                    case 9: if (stage.note.x != note_x9k_flipped) {stage.note.x = note_x9k_flipped; Stage_SnapNoteVisualOffsets();} break;
+                    case 4: if (stage.note.x != note_x4k_flipped && stage.note.x != universal_note_x_buf) need_flip = true; break;
+                    case 5: if (stage.note.x != note_x5k_flipped && stage.note.x != universal_note_x_buf) need_flip = true; break;
+                    case 6: if (stage.note.x != note_x6k_flipped && stage.note.x != universal_note_x_buf) need_flip = true; break;
+                    case 7: if (stage.note.x != note_x7k_flipped && stage.note.x != universal_note_x_buf) need_flip = true; break;
+                    case 9: if (stage.note.x != note_x9k_flipped && stage.note.x != universal_note_x_buf) need_flip = true; break;
                     default: break;
+                }
+                if (need_flip) {
+                    switch (stage.keys)
+                    {
+                        case 4: stage.note.x = note_x4k_flipped; break;
+                        case 5: stage.note.x = note_x5k_flipped; break;
+                        case 6: stage.note.x = note_x6k_flipped; break;
+                        case 7: stage.note.x = note_x7k_flipped; break;
+                        case 9: stage.note.x = note_x9k_flipped; break;
+                        default: break;
+                    }
+                    for (int i = 0; i < stage.keys * 2; i++) { int p = (i < stage.keys) ? 0 : 1; if (!stage.player_state[p].hud) universal_note_x_buf[i] = stage.note.x[i] + universal_back_x; else universal_note_x_buf[i] = stage.note.x[i]; }
+                    stage.note.x = universal_note_x_buf;
+                    Stage_SnapNoteVisualOffsets();
                 }
             }
             else
@@ -4489,6 +4560,45 @@ void Stage_Tick(void)
                 }
             }
             if (opponentNotesEnabled == 0) opponentNotesEnabled = 1;
+        }
+        // Alt miss STR - preserve vocal, use step for end (1824 for rotten), no XA from STR
+        if (stage.has_alt_miss) {
+            static u32 last_miss_count = 0;
+            boolean is_missing = false;
+            // missing if health low or recent miss and combo low
+            if (stage.player_state[0].health < 7500) is_missing = true;
+            if (stage.player_state[0].miss > last_miss_count) is_missing = true;
+            if (stage.player_state[0].combo > 3) is_missing = false;
+            last_miss_count = stage.player_state[0].miss;
+            boolean in_video_range = (stage.song_step >= 0 && stage.song_step < 1824);
+            // preserve vocal
+            boolean was_vocal = (stage.flag & STAGE_FLAG_VOCAL_ACTIVE) != 0;
+            if (in_video_range) {
+                if (is_missing && !stage.alt_miss_active) {
+                    u32 saved_pos = stage.movie_pos;
+                    // switch to miss without XA handoff, preserve vocal
+                    extern void Str_SwitchToAltMiss(boolean to_miss, u32 pos);
+                    Str_SwitchToAltMiss(true, saved_pos);
+                    stage.alt_miss_active = true;
+                    // preserve vocal channel 0/2 vs 1/3
+                    if (was_vocal) { stage.flag |= STAGE_FLAG_VOCAL_ACTIVE; Audio_ChannelXA(stage.stage_def->music_channel); }
+                    else { stage.flag &= ~STAGE_FLAG_VOCAL_ACTIVE; Audio_ChannelXA(stage.stage_def->music_channel+1); }
+                } else if (!is_missing && stage.alt_miss_active) {
+                    u32 saved_pos = stage.movie_pos;
+                    boolean was_vocal2 = (stage.flag & STAGE_FLAG_VOCAL_ACTIVE) != 0;
+                    extern void Str_SwitchToAltMiss(boolean to_miss, u32 pos);
+                    Str_SwitchToAltMiss(false, saved_pos);
+                    stage.alt_miss_active = false;
+                    if (was_vocal2) { stage.flag |= STAGE_FLAG_VOCAL_ACTIVE; Audio_ChannelXA(stage.stage_def->music_channel); }
+                    else { stage.flag &= ~STAGE_FLAG_VOCAL_ACTIVE; Audio_ChannelXA(stage.stage_def->music_channel+1); }
+                }
+            }
+            // End video at 1824 using step, not XA - uses already playing STR and step
+            if (!stage.movie_is_playing) {
+                extern void Str_StopStreamAlt(void);
+                Str_StopStreamAlt();
+                stage.alt_miss_active = false;
+            }
         }
     }
 

@@ -60,13 +60,11 @@ static void SongSwap_SyncChartToXA(void)
 
 static void SongSwap_PlayMovie(CdlFILE *file, s32 music_start_centiseconds)
 {
-	Str_PlayFile(file);
+	Str_PlayFileEx(file, true, 30, 1);
 	SongSwap_PlayXAAtCentiseconds(music_start_centiseconds);
 	Audio_WaitPlayXA();
 	Audio_ResumeXA();
 	SongSwap_SyncChartToXA();
-	/* Audio_WaitPlayXA blocks during the post-movie seek. Discard that wall
-	 * time so the first gameplay frame cannot fast-forward the chart/visuals. */
 	Timer_Reset();
 }
 
@@ -86,7 +84,15 @@ static void SongSwap_RottenSmoothie(void)
 	{
 		case 1312:
 			if (!stage.movie_is_playing)
-				SongSwap_PlayMovie(&stage.str_grace_lba, 16400);
+			{
+				// grace is now video-only 30 fps - use game XA
+				Str_PlayFileEx(&stage.str_grace_lba, false, 30, 1);
+				SongSwap_PlayXAAtCentiseconds(16400);
+				Audio_WaitPlayXA();
+				Audio_ResumeXA();
+				SongSwap_SyncChartToXA();
+				Timer_Reset();
+			}
 			break;
 
 		case 1824:
@@ -95,10 +101,35 @@ static void SongSwap_RottenSmoothie(void)
 	}
 }
 
+static void SongSwap_AllStars(void)
+{
+	if (!SongSwap_JustStep())
+		return;
+
+	switch (stage.song_step)
+	{
+		case 0:
+			if (!stage.movie_is_playing && stage.has_asintro)
+			{
+				// asintro is GIF-derived native 24 fps video-only
+				Str_PlayFileEx(&stage.str_asintro_lba, false, 30, 1);
+				SongSwap_PlayXAAtCentiseconds(310);
+				Audio_WaitPlayXA();
+				Audio_ResumeXA();
+				SongSwap_SyncChartToXA();
+				Timer_Reset();
+			}
+			break;
+	}
+}
+
 void SongSwap_Tick(void)
 {
 	switch (stage.stage_id)
 	{
+		case StageId_4_8:
+			SongSwap_AllStars();
+			break;
 		case StageId_5_2:
 			SongSwap_RottenSmoothie();
 			break;

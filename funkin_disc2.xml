@@ -168,6 +168,12 @@
 				<file name = "hitstat.vag" type = "data" source = "iso/sounds/stage/hitstat.VAG"/>
 			</dir>
 			
+			<!-- Movie -->
+			<dir name = "str">
+				<file name = "asintro.str" type = "str" source = "iso/movie/asintro.str"/>
+				<file name = "act4.str" type = "str" source = "iso/movie/act4.str"/>
+			</dir>
+			
 			<!-- Music -->
 			<dir name = "music">
 				<file name = "menu2.xa" type = "xa" source = "iso/music/menu2.xa"/>

@@ -13,6 +13,7 @@
 #include "audio.h"
 #include "stage.h"
 #include "io.h"
+#include <string.h>
 
 /*
   Optimized STR player for weak PS1 targets/emulators.
@@ -42,6 +43,12 @@
 #define STR_AUDIO_REARM_FRAMES 6
 #define STR_SPEEDUP_STARVE_TICKS 12
 #define STR_RAW_SECTOR_SIZE 2336
+
+// Flexible presentation timing and optional game-XA passthrough
+static boolean str_use_game_xa = false;
+static int str_video_fps_num = STR_VIDEO_FPS;
+static int str_video_fps_den = 1;
+static int str_video_accum = 0;
 
 // All non-audio sectors in .STR files begin with this 32-byte header.
 typedef struct
@@ -126,6 +133,21 @@ static void STR_SetMovieCdMode(void)
 	if (str_audio_mode_valid)
 		return;
 
+	// Video-only / game-XA mode: keep existing XA filter/volume and
+	// do not force STR file 1/channel 0. This lets the game's XA
+	// continue on its own channel while video sectors are streamed
+	// (video-only files have no XA sectors so no filter conflict).
+	if (str_use_game_xa)
+	{
+		u8 mode = CdlModeRT | CdlModeSF;
+		if (str_double_speed)
+			mode |= CdlModeSpeed;
+		// Keep current CdlMode and filter; only ensure RT/SF remain.
+		CdControlB(CdlSetmode, (u8*)&mode, NULL);
+		str_audio_mode_valid = true;
+		return;
+	}
+
 	CdlFILTER filter;
 	filter.file = 1;
 	filter.chan = 0;
@@ -158,6 +180,8 @@ static void STR_EnableDoubleSpeed(void)
 
 static void STR_RearmMovieAudio(void)
 {
+	if (str_use_game_xa)
+		return;
 	CdlFILTER filter;
 	filter.file = 1;
 	filter.chan = 0;
@@ -186,6 +210,7 @@ static void STR_ResetDecodeState(void)
 	str_ctx->cached_clip.y = -32768;
 	str_ctx->cached_clip.w = -1;
 	str_ctx->cached_clip.h = -1;
+	str_video_accum = 0;
 }
 
 void cd_sector_handler(void)
@@ -226,6 +251,17 @@ void cd_sector_handler(void)
 		frame = &str_ctx->frames[str_ctx->cur_frame];
 		frame->width  = (sector_header->width  + 15) & 0xfff0;
 		frame->height = (sector_header->height + 15) & 0xfff0;
+
+		// If encoder stored native fps in reserved field, adopt it (fixes 25/2, 100/9 etc)
+		if (sector_header->_reserved != 0) {
+			int enc_num = sector_header->_reserved & 0xFFFF;
+			int enc_den = (sector_header->_reserved >> 16) & 0xFFFF;
+			if (enc_num > 0 && enc_num <= 60 && enc_den > 0 && enc_den <= 32) {
+				str_video_fps_num = enc_num;
+				str_video_fps_den = enc_den;
+				str_video_accum = 0;
+			}
+		}
 	}
 
 	str_ctx->sector_count--;
@@ -327,7 +363,12 @@ static void STR_InitStream(void)
 	stage.audio_last_pos_before_movie = Audio_TellXA_Milli();
 	/* Stop the song's XA read before the STR takes ownership of the drive.
 	 * The STR's own file-1/channel-0 XA sectors remain audible through ReadS. */
-	Audio_HandoffXA();
+	// Preserve vocal for all videos (alt and normal) - don't cut song XA, use step for timing
+    {
+        boolean was_vocal = (stage.flag & STAGE_FLAG_VOCAL_ACTIVE) != 0;
+        if (was_vocal) stage.flag |= STAGE_FLAG_VOCAL_ACTIVE;
+        else stage.flag &= ~STAGE_FLAG_VOCAL_ACTIVE;
+    }
 	str_movie_audio_rearm_frames = STR_AUDIO_REARM_FRAMES;
 	str_starve_ticks = 0;
 	str_stream_stopped = false;
@@ -509,8 +550,8 @@ static void STR_RestoreVideoBackground(void)
 
 /*
  * Run once per 60 Hz game tick. A completed frame is consumed only on a
- * 30 fps presentation slot; until then it stays prefetched in the alternate
- * stream buffer and the already uploaded frame remains on screen.
+ * video_fps presentation slot (fractional accumulator so 24 fps = 2.5 ticks).
+ * Until then it stays prefetched in the alternate stream buffer.
  */
 static void Str_Update(u8 *video_clock)
 {
@@ -537,10 +578,27 @@ static void Str_Update(u8 *video_clock)
 	if (!stage.movie_is_playing || stage.movie_paused)
 		return;
 
-	if (*video_clock < STR_GAME_FPS)
-		*video_clock += STR_VIDEO_FPS;
-	if (*video_clock < STR_GAME_FPS)
-		return;
+	// Support any numerator/denominator (e.g. 24 fps native, 30 fps mp4, 15 fallback).
+	// video_clock is kept for external callers that still pass it; internal
+	// accumulator str_video_accum provides fractional precision.
+	if (str_video_fps_den == 1 && str_video_fps_num == STR_VIDEO_FPS)
+	{
+		if (*video_clock < STR_GAME_FPS)
+			*video_clock += STR_VIDEO_FPS;
+		if (*video_clock < STR_GAME_FPS)
+			return;
+		*video_clock -= STR_GAME_FPS;
+	}
+	else
+	{
+		// Fractional: accumulate video fps, consume when >= game fps
+		str_video_accum += str_video_fps_num;
+		if (str_video_accum < STR_GAME_FPS * str_video_fps_den)
+			return;
+		str_video_accum -= STR_GAME_FPS * str_video_fps_den;
+		// Keep legacy pointer in sync for any external read
+		*video_clock = (u8)(str_video_accum % STR_GAME_FPS);
+	}
 
 	if (str_ctx->frame_ready < 0)
 	{
@@ -549,6 +607,12 @@ static void Str_Update(u8 *video_clock)
 	}
 
 	/* Keep the presentation slot pending if disc/MDEC input is late. */
+	// Step-based end for rotten (1824) even without alt - use already playing STR and step
+	if (stage.stage_id == StageId_5_2 && stage.song_step >= 1824 && stage.movie_is_playing)
+	{
+		STR_StopStream();
+		return;
+	}
 	if (str_ctx->frame_ready == 0)
 	{
 		if (str_file_exhausted)
@@ -558,13 +622,12 @@ static void Str_Update(u8 *video_clock)
 			 * the cutscene reaches the intended chart-resume timestamp. */
 			STR_StopStream();
 		}
-		else if (!str_double_speed && ++str_starve_ticks >= STR_SPEEDUP_STARVE_TICKS)
+		else if (!str_double_speed && !str_use_game_xa && ++str_starve_ticks >= STR_SPEEDUP_STARVE_TICKS)
 			STR_EnableDoubleSpeed();
 		return;
 	}
 
 	str_starve_ticks = 0;
-	*video_clock -= STR_GAME_FPS;
 	str_ctx->frame_ready = 0;
 	STR_RenderFrame(&str_ctx->frames[str_ctx->ready_frame]);
 }
@@ -578,7 +641,63 @@ void Str_Init(void)
 	str_stream_stopped = true;
 }
 
-void Str_PlayFile(CdlFILE* file)
+// Alt miss switch - preserves vocal, uses step for pos, no XA
+void Str_SwitchToAltMiss(boolean to_miss, u32 pos_ms)
+{
+	if (!stage.has_alt_miss) return;
+	// preserve vocal
+	boolean was_vocal = (stage.flag & STAGE_FLAG_VOCAL_ACTIVE) != 0;
+	STR_StopStream();
+	CdlFILE *f = to_miss ? &stage.str_alt_miss_lba : &stage.str_grace_lba;
+	// approx seek to pos_ms
+	u32 base = CdPosToInt(&f->pos);
+	u32 offset = (pos_ms * 75) / 1000;
+	u32 total = (f->size + 2047) / 2048;
+	if (offset >= total) offset = total ? total-1 : 0;
+	CdlLOC loc;
+	CdIntToPos(base + offset, &loc);
+	// alloc and start (no Audio_HandoffXA)
+	str_ctx = Mem_Alloc(sizeof(StreamContext));
+	sector_header = Mem_Alloc(sizeof(STR_Header));
+	if (!str_ctx || !sector_header) return;
+	EnterCriticalSection();
+	DecDCToutCallback(&mdec_dma_handler);
+	CdReadyCallback(&cd_event_handler);
+	ExitCriticalSection();
+	DecDCTvlcCopyTableV3((VLC_TableV3*)0x1f800000);
+	stage.movie_is_playing = true;
+	stage.movie_paused = false;
+	stage.movie_pos = pos_ms;
+	str_movie_audio_rearm_frames = STR_AUDIO_REARM_FRAMES;
+	str_starve_ticks = 0;
+	str_stream_stopped = false;
+	str_audio_mode_valid = false;
+	str_double_speed = false;
+	STR_ResetDecodeState();
+	if ((f->size % STR_RAW_SECTOR_SIZE) == 0)
+		str_sectors_remaining = f->size / STR_RAW_SECTOR_SIZE;
+	else
+		str_sectors_remaining = (f->size + 2047)/2048;
+	// adjust for offset
+	if (offset < str_sectors_remaining) str_sectors_remaining -= offset;
+	str_file_end_sector = base + total;
+	str_file_exhausted = false;
+	Timer_Tick();
+	CdControl(CdlReadS, (u8*)&loc, 0);
+	StreamBuffer *first = get_next_frame();
+	if (first == NULL) STR_StopStream();
+	else STR_RenderFrame(first);
+	// preserve vocal
+	if (was_vocal) { stage.flag |= STAGE_FLAG_VOCAL_ACTIVE; Audio_ChannelXA(stage.stage_def->music_channel); }
+	else { stage.flag &= ~STAGE_FLAG_VOCAL_ACTIVE; Audio_ChannelXA(stage.stage_def->music_channel+1); }
+}
+
+void Str_StopStreamAlt(void)
+{
+	STR_StopStream();
+}
+
+void Str_PlayFileEx(CdlFILE* file, boolean keep_game_xa, int fps_num, int fps_den)
 {
 	str_ctx = Mem_Alloc(sizeof(StreamContext));
 	sector_header = Mem_Alloc(sizeof(STR_Header));
@@ -593,6 +712,20 @@ void Str_PlayFile(CdlFILE* file)
 		sector_header = NULL;
 		return;
 	}
+
+	// Configure presentation rate and audio passthrough before stream init.
+	str_use_game_xa = keep_game_xa;
+	if (fps_num > 0 && fps_den > 0)
+	{
+		str_video_fps_num = fps_num;
+		str_video_fps_den = fps_den;
+	}
+	else
+	{
+		str_video_fps_num = STR_VIDEO_FPS;
+		str_video_fps_den = 1;
+	}
+	str_video_accum = 0;
 
 	STR_InitStream();
 	STR_SetMovieCdMode();
@@ -663,6 +796,15 @@ void Str_PlayFile(CdlFILE* file)
 	str_audio_mode_valid = false;
 }
 
+void Str_PlayFile(CdlFILE* file)
+{
+	// All STRs are video-only and use game XA (no embedded audio)
+	// Keep native fps from header if present, else heuristic 24/30
+	boolean is_gif_like = (file->size < 4000000);
+	int fps = is_gif_like ? 24 : 30;
+	Str_PlayFileEx(file, true, fps, 1);
+}
+
 void Str_Play(const char *filedir)
 {
 	CdlFILE file;
@@ -670,9 +812,12 @@ void Str_Play(const char *filedir)
 	IO_FindFile(&file, filedir);
 	CdSync(0, 0);
 
-
 	str_outside_gameplay = true;
-	Str_PlayFile(&file);
+	// All STRs use game XA (even outside gameplay, preserving filter is harmless
+	// and keeps single codepath). Detect gif for 24 fps vs 30 fps.
+	boolean is_gif = (strstr(filedir, "ASINTRO") != NULL || strstr(filedir, "ACT4") != NULL);
+	int fps = is_gif ? 24 : 30;
+	Str_PlayFileEx(&file, true, fps, 1);
 	str_outside_gameplay = false;
 }
 

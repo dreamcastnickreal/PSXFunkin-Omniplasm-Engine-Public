@@ -12,10 +12,13 @@
 
 void Str_Init(void);
 void Str_PlayFile(CdlFILE* file);
+void Str_PlayFileEx(CdlFILE* file, boolean keep_game_xa, int fps_num, int fps_den);
 void Str_Play(const char *filedir);
 void Str_CanPlayDef(void);
 void Str_StopMovie(void);
 void Str_SetPaused(boolean paused);
+void Str_SwitchToAltMiss(boolean to_miss, u32 pos);
+void Str_StopStreamAlt(void);
 
 extern boolean movie_is_playing;
 #endif

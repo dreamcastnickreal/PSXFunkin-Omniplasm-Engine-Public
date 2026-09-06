@@ -9,4 +9,10 @@ all: $(TOOLS)
 $(TOOLS):
 	cd $(dir $@) && $(MAKE)
 
-.PHONY: all
+clean:
+	rm -f $(TOOLS)
+	@for tool in $(TOOL_DIRS); do \
+		$(MAKE) -C $$tool clean 2>/dev/null || true; \
+	done
+
+.PHONY: all clean

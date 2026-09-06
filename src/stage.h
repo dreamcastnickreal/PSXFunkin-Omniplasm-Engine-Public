@@ -289,6 +289,14 @@ typedef struct
 	//STR Lbas
 	CdlFILE str_grace_lba;
 	boolean str_cleanup_notes;
+	CdlFILE str_alt_miss_lba;
+	boolean has_alt_miss;
+	boolean alt_miss_active;
+	u32 alt_miss_start_step;
+	CdlFILE str_asintro_lba;
+	CdlFILE str_act4_lba;
+	boolean has_asintro;
+	boolean has_act4;
 
 	//if stage have intro or no
 	boolean intro;
@@ -454,6 +462,7 @@ void Stage_HotSwapCharacter(u8 slot, Character *new_char);
 // Stage background string-name lookup (e.g. "week1", "week3", "kitchen")
 StageBack* StageBackMap_GetByName(const char *name);
 void Stage_SetBGNoteOffset(u8 player_index, fixed_t x, fixed_t y);
+void Stage_SetUniversalBackOffset(fixed_t x, fixed_t y);
 void Stage_BlendTexCol_FlipY(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fixed_t zoom, fixed_t rotation, u8 r, u8 g, u8 b, u8 mode);
 void Stage_DrawTexAll(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fixed_t zoom, fixed_t rotation, u8 angle, u8 r, u8 g, u8 b, u8 alpha, boolean flip_x, boolean flip_y, boolean clipped);
 void Stage_DrawBlendTexAll(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fixed_t zoom, fixed_t rotation, u8 angle, u8 r, u8 g, u8 b, u8 alpha, boolean flip_x, boolean flip_y, boolean clipped, u8 mode);
