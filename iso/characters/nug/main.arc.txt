@@ -1,0 +1,5 @@
+nug0.tim|nug0.png|nug0.png.txt
+nug1.tim|nug1.png|nug1.png.txt
+nug2.tim|nug2.png|nug2.png.txt
+nug3.tim|nug3.png|nug3.png.txt
+nug4.tim|nug4.png|nug4.png.txt

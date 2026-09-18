@@ -1,0 +1,333 @@
+{
+"format": "psxfunkin-editor-v1",
+"characterName": "Nug",
+"spriteSheets": [
+{
+"name": "nug0",
+"tim": "nug0.tim",
+"png": "nug0.png"
+},
+{
+"name": "nug1",
+"tim": "nug1.tim",
+"png": "nug1.png"
+},
+{
+"name": "nug2",
+"tim": "nug2.tim",
+"png": "nug2.png"
+},
+{
+"name": "nug3",
+"tim": "nug3.tim",
+"png": "nug3.png"
+},
+{
+"name": "nug4",
+"tim": "nug4.tim",
+"png": "nug4.png"
+}
+],
+"frames": [
+{
+"texId": 0,
+"srcX": 0,
+"srcY": 0,
+"srcW": 54,
+"srcH": 72,
+"offX": 8,
+"offY": 23,
+"name": "Left"
+},
+{
+"texId": 0,
+"srcX": 54,
+"srcY": 0,
+"srcW": 54,
+"srcH": 72,
+"offX": 8,
+"offY": 23,
+"name": "Left"
+},
+{
+"texId": 1,
+"srcX": 0,
+"srcY": 0,
+"srcW": 56,
+"srcH": 71,
+"offX": 2,
+"offY": 22,
+"name": "Right"
+},
+{
+"texId": 1,
+"srcX": 56,
+"srcY": 0,
+"srcW": 55,
+"srcH": 71,
+"offX": 3,
+"offY": 23,
+"name": "Right"
+},
+{
+"texId": 2,
+"srcX": 0,
+"srcY": 0,
+"srcW": 51,
+"srcH": 79,
+"offX": 4,
+"offY": 30,
+"name": "Up"
+},
+{
+"texId": 2,
+"srcX": 51,
+"srcY": 0,
+"srcW": 53,
+"srcH": 77,
+"offX": 4,
+"offY": 29,
+"name": "Up"
+},
+{
+"texId": 3,
+"srcX": 0,
+"srcY": 0,
+"srcW": 55,
+"srcH": 68,
+"offX": 5,
+"offY": 20,
+"name": "Down"
+},
+{
+"texId": 3,
+"srcX": 55,
+"srcY": 0,
+"srcW": 54,
+"srcH": 69,
+"offX": 4,
+"offY": 20,
+"name": "Down"
+},
+{
+"texId": 4,
+"srcX": 0,
+"srcY": 0,
+"srcW": 55,
+"srcH": 71,
+"offX": 5,
+"offY": 23,
+"name": "Idle"
+},
+{
+"texId": 4,
+"srcX": 55,
+"srcY": 0,
+"srcW": 54,
+"srcH": 72,
+"offX": 5,
+"offY": 23,
+"name": "Idle"
+}
+],
+"animationIndices": {
+"Left": [
+0,
+1
+],
+"Right": [
+2,
+3
+],
+"Up": [
+4,
+5
+],
+"Down": [
+6,
+7
+],
+"Idle": [
+8,
+9
+]
+},
+"timArchivePath": "main.arc",
+"animations": [
+{
+"anim_type": 0,
+"data": [
+[
+"nug0",
+[
+0,
+0,
+54,
+72
+],
+[
+8,
+23
+]
+],
+[
+"nug0",
+[
+54,
+0,
+54,
+72
+],
+[
+8,
+23
+]
+]
+],
+"end": "ASCR_BACK, 2",
+"loop": false,
+"name": "Left",
+"speed": 12
+},
+{
+"anim_type": 0,
+"data": [
+[
+"nug1",
+[
+0,
+0,
+56,
+71
+],
+[
+2,
+22
+]
+],
+[
+"nug1",
+[
+56,
+0,
+55,
+71
+],
+[
+3,
+23
+]
+]
+],
+"end": "ASCR_BACK, 2",
+"loop": false,
+"name": "Right",
+"speed": 12
+},
+{
+"anim_type": 0,
+"data": [
+[
+"nug2",
+[
+0,
+0,
+51,
+79
+],
+[
+4,
+30
+]
+],
+[
+"nug2",
+[
+51,
+0,
+53,
+77
+],
+[
+4,
+29
+]
+]
+],
+"end": "ASCR_BACK, 2",
+"loop": false,
+"name": "Up",
+"speed": 12
+},
+{
+"anim_type": 0,
+"data": [
+[
+"nug3",
+[
+0,
+0,
+55,
+68
+],
+[
+5,
+20
+]
+],
+[
+"nug3",
+[
+55,
+0,
+54,
+69
+],
+[
+4,
+20
+]
+]
+],
+"end": "ASCR_BACK, 2",
+"loop": false,
+"name": "Down",
+"speed": 12
+},
+{
+"anim_type": 0,
+"data": [
+[
+"nug4",
+[
+0,
+0,
+55,
+71
+],
+[
+5,
+23
+]
+],
+[
+"nug4",
+[
+55,
+0,
+54,
+72
+],
+[
+5,
+23
+]
+]
+],
+"end": "ASCR_BACK, 2",
+"loop": false,
+"name": "Idle",
+"speed": 12
+}
+]
+}

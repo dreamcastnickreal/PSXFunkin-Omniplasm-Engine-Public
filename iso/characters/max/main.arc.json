@@ -1,0 +1,42 @@
+{
+  "format": "psxfunkin-arc-input-v1",
+  "archive": "main",
+  "character": "Max",
+  "entries": [
+    {
+      "sheet": "max0",
+      "png": "max0.png",
+      "tim": "max0.tim",
+      "metadata": "max0.png.txt",
+      "source_group": "Idle"
+    },
+    {
+      "sheet": "max1",
+      "png": "max1.png",
+      "tim": "max1.tim",
+      "metadata": "max1.png.txt",
+      "source_group": "Left"
+    },
+    {
+      "sheet": "max2",
+      "png": "max2.png",
+      "tim": "max2.tim",
+      "metadata": "max2.png.txt",
+      "source_group": "Right"
+    },
+    {
+      "sheet": "max3",
+      "png": "max3.png",
+      "tim": "max3.tim",
+      "metadata": "max3.png.txt",
+      "source_group": "Up"
+    },
+    {
+      "sheet": "max4",
+      "png": "max4.png",
+      "tim": "max4.tim",
+      "metadata": "max4.png.txt",
+      "source_group": "Down"
+    }
+  ]
+}

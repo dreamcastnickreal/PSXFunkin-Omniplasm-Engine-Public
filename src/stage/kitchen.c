@@ -82,15 +82,15 @@ static const CharFrame handc_frame[3] = {
 };
 
 static const Animation handa_anim[1] = {
-	{6, (const u8[]) {0, 1, 2, ASCR_REPEAT}},
+	{6, (const u8[]) {0, 1, 2, ASCR_LOOP}},
 };
 
 static const Animation handb_anim[1] = {
-	{6, (const u8[]) {0, 1, 2, ASCR_REPEAT}},
+	{6, (const u8[]) {0, 1, 2, ASCR_LOOP}},
 };
 
 static const Animation handc_anim[1] = {
-	{6, (const u8[]) {0, 1, 2, ASCR_REPEAT}},
+	{6, (const u8[]) {0, 1, 2, ASCR_LOOP}},
 };
 
 void Kitchen_HandA_SetFrame(void* user, u8 frame)

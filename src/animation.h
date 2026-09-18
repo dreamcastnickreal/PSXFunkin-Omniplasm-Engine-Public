@@ -15,6 +15,8 @@
 #define ASCR_REPEAT 0xFF
 #define ASCR_CHGANI 0xFE
 #define ASCR_BACK   0xFD
+#define ASCR_LOOP   0xFC
+#define ASCR_HOLD   0xFB
 
 typedef struct
 {

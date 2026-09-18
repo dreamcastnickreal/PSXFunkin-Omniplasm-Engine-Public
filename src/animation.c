@@ -49,6 +49,13 @@ void Animatable_Animate(Animatable *this, void *user, void (*set_frame)(void*, u
 					this->anim_p -= this->anim_p[1];
 					this->ended = true;
 					break;
+				case ASCR_LOOP:
+					this->anim_p = this->anims[this->anim].script;
+					this->anim_time = 0;
+					break;
+				case ASCR_HOLD:
+					this->frame_changed = false;
+					break;
 				default:
 					set_frame(user, this->anim_p[0]);
 					this->frame_changed = true;

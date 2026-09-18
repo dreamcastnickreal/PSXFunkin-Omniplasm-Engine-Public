@@ -1,0 +1,5 @@
+max0.tim|max0.png|max0.png.txt
+max1.tim|max1.png|max1.png.txt
+max2.tim|max2.png|max2.png.txt
+max3.tim|max3.png|max3.png.txt
+max4.tim|max4.png|max4.png.txt

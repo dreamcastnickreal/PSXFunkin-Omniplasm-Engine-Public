@@ -1,0 +1,42 @@
+{
+  "format": "psxfunkin-arc-input-v1",
+  "archive": "main",
+  "character": "Nug",
+  "entries": [
+    {
+      "sheet": "nug0",
+      "png": "nug0.png",
+      "tim": "nug0.tim",
+      "metadata": "nug0.png.txt",
+      "source_group": "Left"
+    },
+    {
+      "sheet": "nug1",
+      "png": "nug1.png",
+      "tim": "nug1.tim",
+      "metadata": "nug1.png.txt",
+      "source_group": "Right"
+    },
+    {
+      "sheet": "nug2",
+      "png": "nug2.png",
+      "tim": "nug2.tim",
+      "metadata": "nug2.png.txt",
+      "source_group": "Up"
+    },
+    {
+      "sheet": "nug3",
+      "png": "nug3.png",
+      "tim": "nug3.tim",
+      "metadata": "nug3.png.txt",
+      "source_group": "Down"
+    },
+    {
+      "sheet": "nug4",
+      "png": "nug4.png",
+      "tim": "nug4.tim",
+      "metadata": "nug4.png.txt",
+      "source_group": "Idle"
+    }
+  ]
+}

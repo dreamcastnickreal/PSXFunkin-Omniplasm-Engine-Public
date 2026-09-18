@@ -1,0 +1,309 @@
+{
+"format": "psxfunkin-editor-v1",
+"characterName": "Max",
+"spriteSheets": [
+{
+"name": "max0",
+"tim": "max0.tim",
+"png": "max0.png"
+},
+{
+"name": "max1",
+"tim": "max1.tim",
+"png": "max1.png"
+},
+{
+"name": "max2",
+"tim": "max2.tim",
+"png": "max2.png"
+},
+{
+"name": "max3",
+"tim": "max3.tim",
+"png": "max3.png"
+},
+{
+"name": "max4",
+"tim": "max4.tim",
+"png": "max4.png"
+}
+],
+"frames": [
+{
+"texId": 0,
+"srcX": 0,
+"srcY": 0,
+"srcW": 63,
+"srcH": 112,
+"offX": 7,
+"offY": 38,
+"name": "Idle"
+},
+{
+"texId": 1,
+"srcX": 0,
+"srcY": 0,
+"srcW": 69,
+"srcH": 113,
+"offX": 13,
+"offY": 39,
+"name": "Left"
+},
+{
+"texId": 1,
+"srcX": 69,
+"srcY": 0,
+"srcW": 66,
+"srcH": 113,
+"offX": 12,
+"offY": 39,
+"name": "Left"
+},
+{
+"texId": 2,
+"srcX": 0,
+"srcY": 0,
+"srcW": 59,
+"srcH": 111,
+"offX": 1,
+"offY": 37,
+"name": "Right"
+},
+{
+"texId": 2,
+"srcX": 59,
+"srcY": 0,
+"srcW": 59,
+"srcH": 111,
+"offX": 2,
+"offY": 37,
+"name": "Right"
+},
+{
+"texId": 3,
+"srcX": 0,
+"srcY": 0,
+"srcW": 58,
+"srcH": 120,
+"offX": 3,
+"offY": 45,
+"name": "Up"
+},
+{
+"texId": 3,
+"srcX": 58,
+"srcY": 0,
+"srcW": 58,
+"srcH": 118,
+"offX": 3,
+"offY": 44,
+"name": "Up"
+},
+{
+"texId": 4,
+"srcX": 0,
+"srcY": 0,
+"srcW": 59,
+"srcH": 106,
+"offX": 7,
+"offY": 33,
+"name": "Down"
+},
+{
+"texId": 4,
+"srcX": 59,
+"srcY": 0,
+"srcW": 62,
+"srcH": 107,
+"offX": 8,
+"offY": 33,
+"name": "Down"
+}
+],
+"animationIndices": {
+"Idle": [
+0
+],
+"Left": [
+1,
+2
+],
+"Right": [
+3,
+4
+],
+"Up": [
+5,
+6
+],
+"Down": [
+7,
+8
+]
+},
+"timArchivePath": "main.arc",
+"animations": [
+{
+"anim_type": 0,
+"data": [
+[
+"max0",
+[
+0,
+0,
+63,
+112
+],
+[
+7,
+38
+]
+]
+],
+"end": "ASCR_BACK, 2",
+"loop": false,
+"name": "Idle",
+"speed": 12
+},
+{
+"anim_type": 0,
+"data": [
+[
+"max1",
+[
+0,
+0,
+69,
+113
+],
+[
+13,
+39
+]
+],
+[
+"max1",
+[
+69,
+0,
+66,
+113
+],
+[
+12,
+39
+]
+]
+],
+"end": "ASCR_BACK, 2",
+"loop": false,
+"name": "Left",
+"speed": 12
+},
+{
+"anim_type": 0,
+"data": [
+[
+"max2",
+[
+0,
+0,
+59,
+111
+],
+[
+1,
+37
+]
+],
+[
+"max2",
+[
+59,
+0,
+59,
+111
+],
+[
+2,
+37
+]
+]
+],
+"end": "ASCR_BACK, 2",
+"loop": false,
+"name": "Right",
+"speed": 12
+},
+{
+"anim_type": 0,
+"data": [
+[
+"max3",
+[
+0,
+0,
+58,
+120
+],
+[
+3,
+45
+]
+],
+[
+"max3",
+[
+58,
+0,
+58,
+118
+],
+[
+3,
+44
+]
+]
+],
+"end": "ASCR_BACK, 2",
+"loop": false,
+"name": "Up",
+"speed": 12
+},
+{
+"anim_type": 0,
+"data": [
+[
+"max4",
+[
+0,
+0,
+59,
+106
+],
+[
+7,
+33
+]
+],
+[
+"max4",
+[
+59,
+0,
+62,
+107
+],
+[
+8,
+33
+]
+]
+],
+"end": "ASCR_BACK, 2",
+"loop": false,
+"name": "Down",
+"speed": 12
+}
+]
+}
