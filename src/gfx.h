@@ -57,6 +57,14 @@ void Gfx_LoadTexCustomClut(Gfx_Tex *tex, IO_Data data, Gfx_LoadTex_Flag flag, s1
 boolean Gfx_CopyTexRegion(Gfx_Tex *dst, const Gfx_Tex *src, const RECT *region,
 	s16 vram_x, s16 vram_y, s16 clut_x, s16 clut_y);
 
+//VRAM occupancy tracker for automatic atlas placement
+//x/w are in VRAM halfwords (0-1024), y/h in lines (0-512)
+void Gfx_VramReset(void);
+void Gfx_VramMark(s16 x, s16 y, s16 w, s16 h);
+void Gfx_VramUnmark(s16 x, s16 y, s16 w, s16 h);
+void Gfx_VramMarkTim(IO_Data data);
+boolean Gfx_VramFindFree(u16 w, u16 h, s16 *out_x, s16 *out_y);
+
 void Gfx_DrawRect(const RECT *rect, u8 r, u8 g, u8 b);
 void Gfx_BlendRect(const RECT *rect, u8 r, u8 g, u8 b, u8 mode);
 void Gfx_BlitTexCol(Gfx_Tex *tex, const RECT *src, s32 x, s32 y, u8 r, u8 g, u8 b);

@@ -387,6 +387,7 @@ void Gfx_Init(void)
 	Gfx_AddTintSkipColor(0xFF, 0xFF, 0xFF);
 	Gfx_AddTintSkipColor(0xC0, 0xCA, 0xCC);
 
+	Gfx_VramReset();
 	FontData_Load(&fonts.font_cdr, Font_CDR, NULL);
 	
 	//Initialize drawing state
@@ -465,6 +466,159 @@ void Gfx_DisableClear(void)
 	draw[0].isbg = draw[1].isbg = 0;
 }
 
+//VRAM occupancy tracker for automatic atlas placement
+//One bit per 16x16 cell (x in halfwords, y in lines): 64x32 cells, 256 bytes
+#define GFX_VRAM_CELLS_X 64
+#define GFX_VRAM_CELLS_Y 32
+#define GFX_VRAM_CELL_SHIFT 4
+static u8 gfx_vram_occ[(GFX_VRAM_CELLS_X * GFX_VRAM_CELLS_Y + 7) >> 3];
+
+void Gfx_VramReset(void)
+{
+	u16 i;
+	for (i = 0; i < (u16)sizeof(gfx_vram_occ); i++)
+		gfx_vram_occ[i] = 0;
+	//Reserve both framebuffers (draw/display at (0,0) and (0,240))
+	Gfx_VramMark(0, 0, 320, 240);
+	Gfx_VramMark(0, 240, 320, 240);
+}
+
+void Gfx_VramMark(s16 x, s16 y, s16 w, s16 h)
+{
+	s16 ex, ey;
+	s16 cx, cy;
+	u16 bit;
+
+	//Clip to VRAM
+	if (x < 0)
+	{
+		w += x;
+		x = 0;
+	}
+	if (y < 0)
+	{
+		h += y;
+		y = 0;
+	}
+	if (w <= 0 || h <= 0)
+		return;
+	ex = x + w;
+	ey = y + h;
+	if (ex > 1024)
+		ex = 1024;
+	if (ey > 512)
+		ey = 512;
+
+	for (cy = y >> GFX_VRAM_CELL_SHIFT; cy <= ((ey - 1) >> GFX_VRAM_CELL_SHIFT); cy++)
+	{
+		for (cx = x >> GFX_VRAM_CELL_SHIFT; cx <= ((ex - 1) >> GFX_VRAM_CELL_SHIFT); cx++)
+		{
+			bit = (u16)((u16)cy * GFX_VRAM_CELLS_X + (u16)cx);
+			gfx_vram_occ[bit >> 3] |= (u8)(1 << (bit & 7));
+		}
+	}
+}
+
+void Gfx_VramMarkTim(IO_Data data)
+{
+	TIM_IMAGE tparam;
+
+	//Only parse real TIMs (ARC files may hold other data)
+	if (data == NULL || data[0] != 0x10)
+		return;
+	OpenTIM(data);
+	ReadTIM(&tparam);
+	Gfx_VramMark(tparam.prect->x, tparam.prect->y, tparam.prect->w, tparam.prect->h);
+	if (tparam.mode & 0x8)
+		Gfx_VramMark(tparam.crect->x, tparam.crect->y, tparam.crect->w, tparam.crect->h);
+}
+
+//Release an exact reservation previously made with Gfx_VramMark (e.g. an
+//atlas block no other rect overlaps). Never unmark foreign rects with this.
+void Gfx_VramUnmark(s16 x, s16 y, s16 w, s16 h)
+{
+	s16 ex, ey;
+	s16 cx, cy;
+	u16 bit;
+
+	//Clip to VRAM (mirror of Gfx_VramMark)
+	if (x < 0)
+	{
+		w += x;
+		x = 0;
+	}
+	if (y < 0)
+	{
+		h += y;
+		y = 0;
+	}
+	if (w <= 0 || h <= 0)
+		return;
+	ex = x + w;
+	ey = y + h;
+	if (ex > 1024)
+		ex = 1024;
+	if (ey > 512)
+		ey = 512;
+
+	for (cy = y >> GFX_VRAM_CELL_SHIFT; cy <= ((ey - 1) >> GFX_VRAM_CELL_SHIFT); cy++)
+	{
+		for (cx = x >> GFX_VRAM_CELL_SHIFT; cx <= ((ex - 1) >> GFX_VRAM_CELL_SHIFT); cx++)
+		{
+			bit = (u16)((u16)cy * GFX_VRAM_CELLS_X + (u16)cx);
+			gfx_vram_occ[bit >> 3] &= (u8)~(1 << (bit & 7));
+		}
+	}
+}
+
+boolean Gfx_VramFindFree(u16 w, u16 h, s16 *out_x, s16 *out_y)
+{
+	s16 x, y, ex, ey;
+	s16 cx, cy;
+	u16 bit;
+	boolean free;
+
+	if (w == 0 || h == 0 || w > 1024 || h > 512 || out_x == NULL || out_y == NULL)
+		return false;
+
+	//Scan bottom-right first (framebuffers sit bottom-left)
+	for (y = (s16)(512 - h) & ~((s16)((1 << GFX_VRAM_CELL_SHIFT) - 1)); y >= 0; y -= (1 << GFX_VRAM_CELL_SHIFT))
+	{
+		//A sampled rect may not cross a 256x256 texture-page boundary
+		if (((y & 255) + (s16)h) > 256)
+			continue;
+		for (x = (s16)(1024 - w) & ~((s16)((1 << GFX_VRAM_CELL_SHIFT) - 1)); x >= 0; x -= (1 << GFX_VRAM_CELL_SHIFT))
+		{
+			if (w >= 64 ? ((x & 63) != 0) : (((x & 63) + (s16)w) > 64))
+				continue;
+			ex = x + (s16)w;
+			ey = y + (s16)h;
+			free = true;
+			for (cy = y >> GFX_VRAM_CELL_SHIFT; cy <= ((ey - 1) >> GFX_VRAM_CELL_SHIFT); cy++)
+			{
+				for (cx = x >> GFX_VRAM_CELL_SHIFT; cx <= ((ex - 1) >> GFX_VRAM_CELL_SHIFT); cx++)
+				{
+					bit = (u16)((u16)cy * GFX_VRAM_CELLS_X + (u16)cx);
+					if (gfx_vram_occ[bit >> 3] & (1 << (bit & 7)))
+					{
+						free = false;
+						break;
+					}
+				}
+				if (!free)
+					break;
+			}
+			if (free)
+			{
+				*out_x = x;
+				*out_y = y;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 void Gfx_LoadTex(Gfx_Tex *tex, IO_Data data, Gfx_LoadTex_Flag flag)
 {
 	//Catch NULL data
@@ -500,6 +654,7 @@ void Gfx_LoadTex(Gfx_Tex *tex, IO_Data data, Gfx_LoadTex_Flag flag)
 			LoadImage(tparam.prect, (u32*)tparam.paddr);
 			DrawSync(0);
 		}
+		Gfx_VramMark(tparam.prect->x, tparam.prect->y, tparam.prect->w, tparam.prect->h);
 	}
 	
 	//Upload CLUT to framebuffer if present
@@ -517,6 +672,7 @@ void Gfx_LoadTex(Gfx_Tex *tex, IO_Data data, Gfx_LoadTex_Flag flag)
 			LoadImage(tparam.crect, (u32*)tparam.caddr);
 			DrawSync(0);
 		}
+		Gfx_VramMark(tparam.crect->x, tparam.crect->y, tparam.crect->w, tparam.crect->h);
 	}
 	
 	//Free data
@@ -556,6 +712,7 @@ void Gfx_LoadTexCustomClut(Gfx_Tex *tex, IO_Data data, Gfx_LoadTex_Flag flag, s1
 			LoadImage(tparam.prect, (u32*)tparam.paddr);
 			DrawSync(0);
 		}
+		Gfx_VramMark(tparam.prect->x, tparam.prect->y, tparam.prect->w, tparam.prect->h);
 	}
 
 	if ((tparam.mode & 0x8) && !(flag & GFX_LOADTEX_NOCLUT))
@@ -576,6 +733,7 @@ void Gfx_LoadTexCustomClut(Gfx_Tex *tex, IO_Data data, Gfx_LoadTex_Flag flag, s1
 			LoadImage(&crect, (u32*)tparam.caddr);
 			DrawSync(0);
 		}
+		Gfx_VramMark(crect.x, crect.y, crect.w, crect.h);
 	}
 
 	if (flag & GFX_LOADTEX_FREE)

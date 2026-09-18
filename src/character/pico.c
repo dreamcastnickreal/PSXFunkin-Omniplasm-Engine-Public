@@ -166,5 +166,11 @@ Character *Char_Pico_New(fixed_t x, fixed_t y, fixed_t scale)
 	//Initialize render state
 	this->tex_id = this->frame = 0xFF;
 	
+	//FlxTrail-style trail (inactive by default, auto VRAM on first capture)
+	Character_TrailConfigure((Character*)this, true, -1, -1, 4, 24,
+		FIXED_DEC(3,10), FIXED_DEC(69,1000));
+	Character_GhostSetNoHealthbarColor((Character*)this, true);
+	Character_TrailSetActive((Character*)this, false);
+	
 	return (Character*)this;
 }

@@ -3996,6 +3996,10 @@ void Stage_Load(StageId id, StageDiff difficulty, boolean story)
 	stage.bluemode = false;
 	stage.str_cleanup_notes = false;
 
+	//Fresh VRAM map for this song: HUD, stage, characters and ARCs re-mark
+	//themselves as they load, so auto ghost/trail atlases avoid them
+	Gfx_VramReset();
+
 	// Track the original requested song for restarts
 	stage.original_stage_id = id;
 	stage.original_stage_diff = difficulty;

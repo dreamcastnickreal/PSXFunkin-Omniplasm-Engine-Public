@@ -172,5 +172,12 @@ Character *Char_Dad_New(fixed_t x, fixed_t y, fixed_t scale)
 	//Initialize render state
 	this->tex_id = this->frame = 0xFF;
 	
+	//Evil trail (FlxTrail equivalent of `new FlxTrail(dad, null, 4, 24, 0.3, 0.069)`)
+	//Negative VRAM = auto placement in free VRAM on first capture
+	Character_TrailConfigure((Character*)this, true, -1, -1, 4, 24,
+		FIXED_DEC(3,10), FIXED_DEC(69,1000));
+	Character_GhostSetNoHealthbarColor((Character*)this, true);
+	Character_TrailSetActive((Character*)this, false);
+	
 	return (Character*)this;
 }

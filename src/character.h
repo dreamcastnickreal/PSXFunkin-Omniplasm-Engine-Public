@@ -22,6 +22,20 @@ typedef u8 CharSpec;
 #define CHARACTER_GHOST_MAX_OPPOSING  3
 #define CHARACTER_GHOST_SLOT_WORDS    64
 #define CHARACTER_GHOST_SLOT_HEIGHT   256
+#define CHARACTER_GHOST_MAX_ATLAS     4
+#define CHARACTER_GHOST_MAX_FREE      8
+
+//FlxTrail-style trail defaults (matches `new FlxTrail(dad, null, 4, 24, 0.3, 0.069)`)
+//length = cached images, delay = game frames between snapshots,
+//alpha/diff = base opacity and per-image opacity step (0-255)
+#define CHARACTER_TRAIL_DEFAULT_LENGTH 4
+#define CHARACTER_TRAIL_DEFAULT_DELAY  4
+#define CHARACTER_TRAIL_DEFAULT_ALPHA  76 //0.3 * 255
+#define CHARACTER_TRAIL_DEFAULT_DIFF   17 //0.069 * 255
+
+//Convert an FlxTrail 0.0-1.0 fixed_t alpha/diff to PSX 0-255 (no floats,
+//pass FIXED_DEC values, e.g. CHARACTER_TRAIL_FIXED2ALPHA(FIXED_DEC(3,10)))
+#define CHARACTER_TRAIL_FIXED2ALPHA(a) ((u8)(((s64)(a) * 255) >> FIXED_SHIFT))
 
 //Character enums
 typedef enum
@@ -56,6 +70,28 @@ typedef struct
 	boolean valid, fading;
 } CharacterGhostFrame;
 
+//One VRAM atlas block shared by ghost and trail frames. Frames pack into
+//blocks in order and spill into a new free block only when all placed
+//blocks are full, so a 64x256 block is filled before another is found.
+//Loaded frames stay in their blocks until dropped or the system resets.
+typedef struct
+{
+	s16 x, y; //block origin, -1 = unplaced
+	u16 pack_x, pack_y, pack_row_height;
+	u16 reserve_w, reserve_h; //finder reservation size (for exact Unmark)
+	u8 clut_next; //next per-block CLUT index (8 max per block)
+	boolean reserved; //true = placed via finder, release with Unmark
+} CharacterGhostAtlas;
+
+//Abandoned atlas rect (plus its CLUT) returned by dropped snapshots.
+//Reused by later captures so switching animations settles instead of
+//fragmenting VRAM into a restart loop.
+typedef struct
+{
+	s16 x, y, clut_x, clut_y;
+	u16 w, h;
+} CharacterGhostFree;
+
 typedef struct
 {
 	boolean enabled;
@@ -64,11 +100,16 @@ typedef struct
 	boolean secondary_is_main;
 	boolean capture_requested;
 	boolean color_override;
+	boolean no_healthbar_color; //true = never tint from health bar (default)
 	u8 color_r, color_g, color_b;
 	u8 count, needed_frames, used, head;
 	s16 vram_x, vram_y;
+	boolean vram_auto; //true = place atlas in free VRAM on first capture
 	u16 slot_words, slot_height;
-	u16 pack_x, pack_y, pack_row_height;
+	CharacterGhostAtlas atlases[CHARACTER_GHOST_MAX_ATLAS];
+	u8 atlas_count; //placed blocks (block 0 mirrors vram_x/vram_y)
+	CharacterGhostFree free_rects[CHARACTER_GHOST_MAX_FREE];
+	u8 free_count; //abandoned rects reusable by later captures
 	fixed_t request_time;
 	u8 requests_at_time;
 	u8 requested_anim, opposing_count;
@@ -76,6 +117,17 @@ typedef struct
 	boolean opposing_pending[CHARACTER_GHOST_MAX_OPPOSING];
 	Animatable opposing_animatable[CHARACTER_GHOST_MAX_OPPOSING];
 	CharacterGhostFrame frames[CHARACTER_GHOST_MAX_COUNT];
+
+	//FlxTrail-style trail settings ("trail", legacy ghost fields above untouched)
+	//Trail reuses frames[], the atlas blocks, slot_words/height, active,
+	//enabled and color_override above.
+	boolean trail_mode;  //true = FlxTrail snapshot trail, false = legacy ghost
+	u8 trail_length;     //FlxTrail length (cached images, max CHARACTER_GHOST_MAX_COUNT)
+	u8 trail_delay;      //game frames between snapshots (FlxTrail delay, 0 = every frame)
+	u8 trail_timer;      //countdown to next snapshot
+	u8 trail_alpha;      //base opacity 0-255 (FlxTrail alpha, e.g. 0.3 -> 76)
+	u8 trail_diff;       //opacity step per image 0-255 (FlxTrail diff, e.g. 0.069 -> 17)
+	u8 trail_used;       //valid cached trail images in frames[]
 } CharacterGhosts;
 
 typedef struct Character
@@ -127,16 +179,38 @@ void Character_DrawBlendCol_Reflection(Character *this, Gfx_Tex *tex, const Char
 
 void Character_GhostConfigure(Character *this, boolean enabled, s16 vram_x, s16 vram_y, u8 count);
 void Character_GhostConfigureSlots(Character *this, u16 slot_words, u16 slot_height);
+//Pass negative vram_x/vram_y for automatic placement: the atlas is put in
+//free VRAM on first capture, avoiding the framebuffers and every HUD,
+//character, stage, ARC and uploaded TIM (see Gfx_VramFindFree)
 void Character_GhostSetActive(Character *this, boolean active);
 void Character_GhostSetContinuous(Character *this, boolean continuous);
 void Character_GhostSetSecondaryMain(Character *this, boolean secondary_is_main);
 void Character_GhostSetColor(Character *this, u8 r, u8 g, u8 b);
+void Character_GhostSetNoHealthbarColor(Character *this, boolean no_healthbar_color);
 void Character_GhostAnimationRequest(Character *this, u8 anim);
 u8 Character_GhostOpposingCount(Character *this);
 boolean Character_GhostAnimateOpposing(Character *this, u8 index, const Animation *anims,
 	void *user, void (*set_frame)(void*, u8));
 void Character_GhostCaptureNow(Character *this, u8 opposing_index,
 	Gfx_Tex *tex, const CharFrame *cframe);
+
+//FlxTrail-style trail functions ("trail", legacy ghost code above is kept as-is)
+//Configures the ghost storage for trail snapshots:
+//  length = FlxTrail length (cached images)
+//  delay  = FlxTrail delay (game frames between snapshots, 0 = every frame)
+//  alpha  = FlxTrail alpha as fixed_t base opacity (e.g. FIXED_DEC(3,10) for 0.3)
+//  diff   = FlxTrail diff as fixed_t opacity step per image (e.g. FIXED_DEC(69,1000))
+//Example (Psych `new FlxTrail(dad, null, 4, 24, 0.3, 0.069)`):
+//  Character_TrailConfigure(dad, true, -1, -1, 4, 24,
+//      FIXED_DEC(3,10), FIXED_DEC(69,1000));
+void Character_TrailConfigure(Character *this, boolean enabled, s16 vram_x, s16 vram_y,
+	u8 length, u8 delay, fixed_t alpha, fixed_t diff);
+void Character_TrailSetLength(Character *this, u8 length);
+void Character_TrailSetDelay(Character *this, u8 delay);
+void Character_TrailSetAlpha(Character *this, fixed_t alpha);
+void Character_TrailSetDiff(Character *this, fixed_t diff);
+void Character_TrailSetActive(Character *this, boolean active);
+void Character_TrailClear(Character *this);
 
 void Character_CheckStartSing(Character *this);
 void Character_CheckEndSing(Character *this);

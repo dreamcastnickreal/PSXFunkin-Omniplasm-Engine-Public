@@ -6,6 +6,7 @@
 
 #include "archive.h"
 #include "main.h"
+#include "gfx.h"
 
 #ifdef PSXF_PC
 
@@ -51,9 +52,14 @@ IO_Data Archive_Find(IO_Data arc, const char *path)
 	//Check against all archive files
 	for (const ArchiveFile *file = (const ArchiveFile*)arc; file->path[0] != '\0'; file++)
 	{
+		IO_Data data;
 		if (strncmp(file->path, path, 12))
 			continue;
-		return (IO_Data)((u8*)arc + file->pos);
+		data = (IO_Data)((u8*)arc + file->pos);
+		//Pre-mark the TIM's VRAM so auto atlases avoid frames that have
+		//been resolved but not uploaded yet (e.g. character ARCs)
+		Gfx_VramMarkTim(data);
+		return data;
 	}
 	
 	//Failed to find the requested file
