@@ -222,6 +222,7 @@ Character *Char_GF_New(fixed_t x, fixed_t y, fixed_t scale)
 	
 	//Set character information
 	this->character.spec = 0;
+	this->character.death_simple = false;
 	
 	memcpy(this->character.health_i, char_gf_icons, sizeof(char_gf_icons));
 

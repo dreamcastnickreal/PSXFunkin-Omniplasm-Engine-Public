@@ -141,6 +141,7 @@ Character *Char_Monster_New(fixed_t x, fixed_t y, fixed_t scale)
 	
 	//Set character information
 	this->character.spec = 0;
+	this->character.death_simple = false;
 	
 	memcpy(this->character.health_i, char_monster_icons, sizeof(char_monster_icons));
 

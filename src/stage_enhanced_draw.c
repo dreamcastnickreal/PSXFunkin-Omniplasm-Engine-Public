@@ -79,12 +79,15 @@ void Stage_DrawTexAll(Gfx_Tex *tex, const RECT *src, const RECT_FIXED *dst, fixe
 		temp = s1; s1 = s3; s3 = temp;
 	}
 
-	// Draw with color and alpha (use Gfx directly - corners are already screen-space)
+	// Draw with color and alpha (use Gfx directly - corners are already screen-space).
+	// Alpha 255 is a plain opaque draw at full brightness; anything below is
+	// additive semi-transparency (mode 1) so the sprite stays full-bright and
+	// fades against the background instead of darkening into an opaque blob.
 	if (alpha == 255)
 		Gfx_DrawTexArbCol(tex, src, &s0, &s1, &s2, &s3, r, g, b);
-	else
-		Gfx_DrawTexArbCol(tex, src, &s0, &s1, &s2, &s3,
-			(r * alpha) >> 8, (g * alpha) >> 8, (b * alpha) >> 8);
+	else if (alpha != 0)
+		Gfx_BlendTexArbCol(tex, src, &s0, &s1, &s2, &s3,
+			(r * alpha) >> 8, (g * alpha) >> 8, (b * alpha) >> 8, 0);
 
 	// Restore clipping state
 	if (clipped)

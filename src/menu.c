@@ -343,7 +343,7 @@ void Menu_Load(MenuPage page)
 	
 	FontData_Load(&menu.font_bold, Font_Bold, NULL);
 	FontData_Load(&menu.font_arial, Font_Arial, NULL);
-	DiscSwap_SetScreenAssets(&menu.tex_back, &menu.tex_disc, &menu.font_bold, &menu.font_arial);
+	DiscSwap_SetScreenAssets(&menu.tex_back, &menu.tex_disc, &menu.font_bold, &fonts.font_cdr);
 	
 	menu.gf = Char_GF_New(FIXED_DEC(62,1), FIXED_DEC(-12,1), FIXED_DEC(1,1));
 	menu.mbf = Char_MenuP_New(FIXED_DEC(11,1), FIXED_DEC(40,1), FIXED_DEC(1,1));

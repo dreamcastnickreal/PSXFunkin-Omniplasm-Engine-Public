@@ -20,6 +20,7 @@ all:
 	@$(MAKE) -f Makefile.tim
 	@$(MAKE) -f Makefile.cht
 	@$(MAKE) -f Makefile.xa
+	@$(MAKE) -f Makefile.vag
 	@$(MAKE) -f Makefile.str
 	@mkpsxiso -y funkin_disc1.xml
 	@mkpsxiso -y funkin_disc2.xml
@@ -34,6 +35,7 @@ small:
 	@$(MAKE) -f Makefile.tim
 	@$(MAKE) -f Makefile.cht
 	@$(MAKE) -f Makefile.xa
+	@$(MAKE) -f Makefile.vag
 	@$(MAKE) -f Makefile.str
 	@mkpsxiso -y funkin_disc1.xml
 	@mkpsxiso -y funkin_disc2.xml

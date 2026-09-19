@@ -633,7 +633,26 @@ u8 Audio_GetLoudness(u8 band)
 
 /* .VAG file loader */
 #define VAG_HEADER_SIZE 48
+#define VAG_RATE_DEFAULT 44100
+#define VAG_RATE_ENTRIES 64
 static int lastChannelUsed = 0;
+
+//SPU address -> sample rate map so voices play at the VAG's own pitch
+//instead of a hardcoded 44100 Hz (a 22050 Hz file would play an octave high)
+static u32 vag_rate_addr[VAG_RATE_ENTRIES];
+static u32 vag_rate_hz[VAG_RATE_ENTRIES];
+static int vag_rate_next = 0;
+
+static u32 Audio_VagRateOf(u32 addr)
+{
+	int i;
+	for (i = 0; i < VAG_RATE_ENTRIES; i++)
+	{
+		if (vag_rate_addr[i] == addr && vag_rate_hz[i] != 0)
+			return vag_rate_hz[i];
+	}
+	return VAG_RATE_DEFAULT;
+}
 
 static int getFreeChannel(void) {
     int channel = lastChannelUsed;
@@ -642,13 +661,21 @@ static int getFreeChannel(void) {
 }
 
 void Audio_ClearAlloc(void) {
+	int i;
 	audio_alloc_ptr = ALLOC_START_ADDR;
+	for (i = 0; i < VAG_RATE_ENTRIES; i++)
+	{
+		vag_rate_addr[i] = 0;
+		vag_rate_hz[i] = 0;
+	}
+	vag_rate_next = 0;
 }
 
 u32 Audio_LoadVAGData(u32 *sound, u32 sound_size) {
 	// subtract size of .vag header (48 bytes), round to 64 bytes
 	u32 xfer_size = ((sound_size - VAG_HEADER_SIZE) + 63) & 0xffffffc0;
 	u8  *data = (u8 *) sound;
+	u32 rate;
 
 	// modify sound data to ensure sound "loops" to dummy sample
 	// https://psx-spx.consoledev.net/soundprocessingunitspu/#flag-bits-in-2nd-byte-of-adpcm-header
@@ -669,18 +696,36 @@ u32 Audio_LoadVAGData(u32 *sound, u32 sound_size) {
 	SpuWrite(data + VAG_HEADER_SIZE, xfer_size); // perform actual transfer
 	SpuIsTransferCompleted(SPU_TRANSFER_WAIT); // wait for DMA to complete
 
+	//Remember the VAG header sample rate (big-endian u32 at offset 16)
+	//so playback pitch matches the file instead of assuming 44100 Hz
+	rate = ((u32)data[16] << 24) | ((u32)data[17] << 16) |
+	       ((u32)data[18] << 8) | (u32)data[19];
+	if (rate == 0)
+		rate = VAG_RATE_DEFAULT;
+	vag_rate_addr[vag_rate_next] = addr;
+	vag_rate_hz[vag_rate_next] = rate;
+	vag_rate_next = (vag_rate_next + 1) % VAG_RATE_ENTRIES;
+
 	printf("Allocated new sound (addr=%08x, size=%d)\n", addr, xfer_size);
 	return addr;
 }
 
 void Audio_PlaySoundOnChannel(u32 addr, u32 channel, int volume) {
+	u32 rate, pitch;
 	SPU_KEY_OFF = (1 << channel);
 
 	SPU_CHANNELS[channel].vol_left   = volume;
 	SPU_CHANNELS[channel].vol_right  = volume;
 	SPU_CHANNELS[channel].addr       = SPU_RAM_ADDR(addr);
 	SPU_CHANNELS[channel].loop_addr  = SPU_RAM_ADDR(DUMMY_ADDR);
-	SPU_CHANNELS[channel].freq       = 0x1000; // 44100 Hz
+	//SPU pitch 0x1000 = 44100 Hz: scale by the file's own sample rate
+	rate = Audio_VagRateOf(addr);
+	pitch = (rate * 0x1000) / VAG_RATE_DEFAULT;
+	if (pitch < 1)
+		pitch = 1;
+	if (pitch > 0x3FFF)
+		pitch = 0x3FFF;
+	SPU_CHANNELS[channel].freq       = (u16)pitch;
 	SPU_CHANNELS[channel].adsr_param = 0x1fc080ff;
 
 	SPU_KEY_ON = (1 << channel);

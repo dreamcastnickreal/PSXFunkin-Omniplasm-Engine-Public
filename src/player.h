@@ -30,6 +30,13 @@ typedef enum
 	PlayerAnim_Dead6, //Retry
 	PlayerAnim_Dead7, //Blueball
 	
+	//Simple death scheme (used when the player character's death_simple
+	//bool is set): Death0 plays once on death, Death1 loops on the retry
+	//screen, Death2 plays when confirming the retry
+	PlayerAnim_Death0, //First death animation
+	PlayerAnim_Death1, //Retry loop
+	PlayerAnim_Death2, //Confirming retry
+	
 	PlayerAnim_Max,
 } PlayerAnim;
 

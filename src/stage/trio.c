@@ -32,14 +32,16 @@ typedef struct
 	Gfx_Tex tex_back10; //Xenophanes Background Flip
 } Back_Trio;
 
-void Back_Trio_DrawHUD(StageBack* back)
+void Back_Trio_DrawFG(StageBack *back)
 {
-	Back_Trio* this = (Back_Trio*)back;
-
+	Back_Trio *this = (Back_Trio*)back;
+	
 	fixed_t fx, fy;
-
+	
 	swapfard++;
-	opacity++;
+	//Ramp 0 -> 255 fast enough to complete within the 16 song_step
+	//static windows (resets to 0 at each window start below)
+	opacity += 4;
 
 	if (swapfard == 44)
 	{
@@ -188,35 +190,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -225,35 +235,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -262,35 +280,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -299,35 +325,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -336,35 +370,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back1_src, &back1_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -373,35 +415,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -410,35 +460,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -447,35 +505,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -484,35 +550,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -521,35 +595,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back2_src, &back2_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -558,35 +640,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -595,35 +685,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -632,35 +730,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -669,35 +775,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -706,35 +820,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back3_src, &back3_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -743,35 +865,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -780,35 +910,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -817,35 +955,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -854,35 +1000,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -891,35 +1045,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back4_src, &back4_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -928,35 +1090,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -965,35 +1135,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -1002,35 +1180,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -1039,35 +1225,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -1076,35 +1270,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back5_src, &back5_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -1113,35 +1315,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -1150,35 +1360,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -1187,35 +1405,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -1224,35 +1450,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -1261,35 +1495,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back6_src, &back6_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -1298,35 +1540,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -1335,35 +1585,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -1372,35 +1630,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -1409,35 +1675,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -1446,35 +1720,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back7_src, &back7_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -1483,35 +1765,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -1520,35 +1810,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -1557,35 +1855,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -1594,35 +1900,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -1631,35 +1945,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back8_src, &back8_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -1668,35 +1990,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -1705,35 +2035,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -1742,35 +2080,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -1779,35 +2125,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -1816,35 +2170,43 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
@@ -1853,46 +2215,48 @@ void Back_Trio_DrawHUD(StageBack* back)
 			{
 				if (stage.song_step >= 0 && stage.song_step <= 16)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1024 && stage.song_step <= 1040)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1088 && stage.song_step <= 1104)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1216 && stage.song_step <= 1232)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 1280 && stage.song_step <= 1296)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2304 && stage.song_step <= 2320)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 2816 && stage.song_step <= 2832)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 				if (stage.song_step >= 4096 && stage.song_step <= 4112)
 				{
-					Stage_BlendTexV2(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, 0, opacity);
+					if (opacity != 0)
+					Stage_DrawTexAll(&this->tex_back5, &back0_src, &back0_dst, stage.camera.bzoom, stage.camera.angle, 0, 0x80, 0x80, 0x80, opacity, false, false, false);
 				}
 			}
 		break;
 	}
-}
-
-void Back_Trio_DrawFG(StageBack *back)
-{
-	Back_Trio *this = (Back_Trio*)back;
 	
-	fixed_t fx, fy;
 	fx = stage.camera.x;
 	fy = stage.camera.y;
 
@@ -2476,7 +2840,7 @@ StageBack *Back_Trio_New(void)
 		return NULL;
 
 	//Set background functions
-	this->back.draw_hud = Back_Trio_DrawHUD;
+	this->back.draw_hud = NULL;
 	this->back.draw_fg = Back_Trio_DrawFG;
 	this->back.draw_md = NULL;
 	this->back.draw_bg = Back_Trio_DrawBG;

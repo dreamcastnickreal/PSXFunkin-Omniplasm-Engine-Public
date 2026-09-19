@@ -21,8 +21,8 @@ void PausedState()
 		"EXIT TO MENU"
 	};
 
-	//Select option if cross or start is pressed
-	if (pad_state.press & (PAD_CROSS))
+	//Select option if cross or start is pressed (start on RESUME unpauses)
+	if (pad_state.press & (PAD_CROSS | PAD_START))
 	{
 		switch (stage.pause_select)
 		{
@@ -108,8 +108,8 @@ void OptionsState()
 		"DEBUG MODE"
 	};
 
-	//Select option if cross or start is pressed
-	if (pad_state.press & (PAD_CROSS | PAD_START))
+	//Select option with cross only (start does nothing in this submenu)
+	if (pad_state.press & (PAD_CROSS))
 	{
 		if (*stage_options[stage.pause_select] != '\0')
 			stage.pause_scroll = -1;

@@ -407,6 +407,10 @@ typedef struct
 		StageState_DeadDecide, //Decided
 	} state;
 	
+	//Simple death scheme (Death0 -> Death1 loop -> Death2 confirm),
+	//latched from the dying player character's death_simple bool
+	boolean death_simple;
+	
 	u8 note_swap;
 	
 	//Object lists

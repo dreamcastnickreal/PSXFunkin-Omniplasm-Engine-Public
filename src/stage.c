@@ -85,6 +85,7 @@ static u32 Sounds[7];
 #define STAGE_DEF_FIRST StageId_1_1
 #define STAGE_DEF_COUNT 24
 #include "character/bf.h"
+#include "character/3dbf.h"
 #include "character/apple.h"
 #include "character/dad.h"
 #include "character/exep3.h"
@@ -130,6 +131,8 @@ static const CharMapEntry char_map[] =
 {
 	{"bf",        Char_BF_New},
 	{"boyfriend", Char_BF_New},
+	{"3dbf",      Char_3DBF_New},
+	{"threedebf", Char_3DBF_New},
 	{"dad",       Char_Dad_New},
 	{"spook",     Char_Spook_New},
 	{"monster",   Char_Monster_New},
@@ -411,6 +414,19 @@ static fixed_t universal_back_x = FIXED_DEC(50,1);
 static fixed_t universal_back_y = FIXED_DEC(32,1);
 static int universal_note_x_buf[18];
 static u8 cur_note_draw_player = 0;
+//Triple Trouble applies the flipped note columns mid-song; tracked
+//explicitly because stage.note.x always ends up on universal_note_x_buf
+static boolean stage_46_flipped = false;
+
+//Triple Trouble flips BF onto the left columns for steps 1296-2832.
+//Single source of truth for the swap; the per-tick layout refresh
+//(Stage_ConfigureNoteLayout) must honour it or the flip is reset to
+//the normal setup every frame before input and drawing run.
+static boolean Stage_TripleFlippedActive(void)
+{
+	return stage.stage_id == StageId_4_6 &&
+		stage.song_step >= 1296 && stage.song_step <= 2832;
+}
 
 //Stage note functions
 static u32 Stage_GetNoteType(Note* note)
@@ -739,9 +755,32 @@ static u8 Stage_HitNote(PlayerState *this, u8 type, fixed_t offset)
 		{
 			//Create splash object - determine background based on player's hud field
 			boolean splash_background = !this->hud; // If hud is true, splash is foreground; if hud is false, splash is background
+			//Splash anchor must follow the live strum layout. Triple Trouble
+			//swaps BF onto the flipped columns mid-song (tracked by
+			//stage_46_flipped); resolve those columns explicitly while the
+			//swap is active so bursts sit on the flipped BF receptors
+			//instead of the normal BF setup.
+			fixed_t splash_x = Stage_NoteVisualX(type) + stage.noteshakex;
+			if (stage_46_flipped)
+			{
+				const int *flip_cols;
+				switch (stage.keys)
+				{
+					case 5: flip_cols = note_x5k_flipped; break;
+					case 6: flip_cols = note_x6k_flipped; break;
+					case 7: flip_cols = note_x7k_flipped; break;
+					case 9: flip_cols = note_x9k_flipped; break;
+					default: flip_cols = note_x4k_flipped; break;
+				}
+				splash_x = flip_cols[type] + stage.noteshakex;
+				if (!this->hud)
+					splash_x += universal_back_x;
+			}
 			Object *splash = (Object*)Obj_Splash_New(
-					Stage_NoteVisualX(type),
-					Stage_NoteVisualY(type) * (stage.prefs.downscroll ? -1 : 1),
+					//Same base position as the strum (note-x), plus screen
+					//shake so bursts track shaking receptors exactly
+					splash_x,
+					Stage_NoteVisualY(type) * (stage.prefs.downscroll ? -1 : 1) + stage.noteshakey,
 					type % stage.keys,
 					splash_background
 				);
@@ -789,6 +828,14 @@ static void Stage_MissNote(PlayerState *this)
 			if (combo != NULL)
 				ObjectList_Add(&stage.objlist_fg, (Object*)combo);
 		}
+	}
+
+	//Play a random miss sound from the missing player's own bank
+	if (this->character != NULL)
+	{
+		u32 miss_addr = this->character->vag_sounds[CHARACTER_VAG_MISS0 + (u8)RandomRange(0, 2)];
+		if (miss_addr != 0)
+			Audio_PlaySound(miss_addr, 0x3fff);
 	}
 }
 
@@ -857,7 +904,7 @@ static void Stage_NoteCheck(PlayerState *this, u8 type)
 		}
 		else if (note->type & (NOTE_FLAG_DANGER))
 		{
-			//Check if mine can be hit
+			//Check if danger can be hit
 			fixed_t note_fp = (fixed_t)note->pos << FIXED_SHIFT;
 			if (note_fp - (stage.late_safe * 3 / 5) > stage.note_scroll)
 				break;
@@ -866,18 +913,18 @@ static void Stage_NoteCheck(PlayerState *this, u8 type)
 			if ((note->type & NOTE_FLAG_HIT) || (Stage_GetNoteType(note) % stage.max_keys) != type || (note->type & NOTE_FLAG_SUSTAIN))
 				continue;
 			
-			//Hit the mine
+			//Hit the danger (beneficial: sing, don't play a miss animation)
 			note->type |= NOTE_FLAG_HIT;
 				this->health += 230;
 
-			Stage_CheckMissAnimation(this, type);
+			Stage_CheckAnimations(this, note_anims[type % stage.keys][(note->type & NOTE_FLAG_ALT_ANIM) != 0]);
 			this->arrow_hitan[type % stage.keys] = -1;
 			
 			return;
 		}
 		else if (note->type & (NOTE_FLAG_STATIC))
 		{
-			//Check if mine can be hit
+			//Check if static can be hit
 			fixed_t note_fp = (fixed_t)note->pos << FIXED_SHIFT;
 			if (note_fp - (stage.late_safe * 3 / 5) > stage.note_scroll)
 				break;
@@ -886,11 +933,11 @@ static void Stage_NoteCheck(PlayerState *this, u8 type)
 			if ((note->type & NOTE_FLAG_HIT) || (Stage_GetNoteType(note) % stage.max_keys) != type || (note->type & NOTE_FLAG_SUSTAIN))
 				continue;
 			
-			//Hit the mine
+			//Hit the static (harmless: sing, don't play a miss animation)
 			note->type |= NOTE_FLAG_HIT;
 				this->health += 230;
 
-			Stage_CheckMissAnimation(this, type);
+			Stage_CheckAnimations(this, note_anims[type % stage.keys][(note->type & NOTE_FLAG_ALT_ANIM) != 0]);
 			this->arrow_hitan[type % stage.keys] = -1;
 			
 			return;
@@ -3519,6 +3566,8 @@ static void Stage_LoadSFX(void)
 	data = IO_ReadFile(&file);
 	Sounds[4] = Audio_LoadVAGData(data, file.size);
 	Mem_Free(data);
+	//Death SFX live in each player character's own bank (see
+	//Character_LoadVagSound), not in the stage's Sounds
 }
 
 static void Stage_LoadMusic(void)
@@ -3612,6 +3661,21 @@ static void Stage_ConfigureNoteLayout(void)
 	{
 		opponentNotesEnabled = 1;
 	}
+	//Triple Trouble mid-song swap: BF moves onto the flipped columns.
+	//Must live here because this refresh runs every tick; leaving the
+	//normal setup in place would wipe the swap before input/draw.
+	if (Stage_TripleFlippedActive())
+	{
+		switch (stage.keys)
+		{
+			case 5: stage.note.x = note_x5k_flipped; break;
+			case 6: stage.note.x = note_x6k_flipped; break;
+			case 7: stage.note.x = note_x7k_flipped; break;
+			case 9: stage.note.x = note_x9k_flipped; break;
+			case 4:
+			default: stage.note.x = note_x4k_flipped; break;
+		}
+	}
 
 	for (int i = 0; i < stage.keys; i++)
 	{
@@ -3643,6 +3707,10 @@ static void Stage_ConfigureNoteLayout(void)
 		}
 	}
 	Stage_SnapNoteVisualOffsets();
+	//Track whether the flipped Triple Trouble columns are the ones
+	//currently applied (set from the same condition that selects them
+	//above, since this refresh runs every tick)
+	stage_46_flipped = Stage_TripleFlippedActive();
 }
 
 static void Stage_LoadState(void)
@@ -3705,6 +3773,7 @@ static void Stage_LoadState(void)
 
 	Stage_ConfigureNoteLayout();
 	Stage_SnapNoteVisualOffsets();
+	stage_46_flipped = false;
 
 	ObjectList_Free(&stage.objlist_splash);
 	ObjectList_Free(&stage.objlist_fg);
@@ -4353,6 +4422,40 @@ static boolean Stage_NextLoad(void)
 static int deadtimer;
 static boolean inctimer;
 
+//Plays the game over track for the current disc and enters the retry state.
+//Shared by the legacy mic-drop flow and the simple Death0 -> Death1 flow.
+static void Stage_DeadRetryMusic(void)
+{
+	if (stage.stage_id >= StageId_1_1 && stage.stage_id <= StageId_3_3)
+	{
+		currentDisc = 1;
+	}
+	if (stage.stage_id >= StageId_4_1 && stage.stage_id <= StageId_4_8)
+	{
+		currentDisc = 2;
+	}
+	if (stage.stage_id >= StageId_5_1 && stage.stage_id <= StageId_5_6)
+	{
+		currentDisc = 3;
+	}
+	if (stage.stage_id >= StageId_Max && stage.stage_id <= StageId_Max)
+	{
+		currentDisc = 4;
+	}
+	if (currentDisc == 1) {
+		stage.state = StageState_DeadRetry;
+		Audio_PlayXA_TrackDisc1(XA_GameOver_Disc1, 0x40, 1, true, 0);
+	}
+	if (currentDisc == 2) {
+		stage.state = StageState_DeadRetry;
+		Audio_PlayXA_TrackDisc2(XA_GameOver_Disc2, 0x40, 1, true, 0);
+	}
+	if (currentDisc == 3) {
+		stage.state = StageState_DeadRetry;
+		Audio_PlayXA_TrackDisc3(XA_GameOver_Disc3, 0x40, 1, true, 0);
+	}
+}
+
 void Stage_Tick(void)
 {
 	SeamLoad:;
@@ -4367,6 +4470,25 @@ void Stage_Tick(void)
 		{
 			inctimer = true;
 			Audio_StopXA();
+			//Simple scheme: confirming the retry plays Death2 while reloading.
+			//Legacy plays Death2 too (mapped to the character's real confirm
+			//state, e.g. Dead6) plus its bank sound, with no state change.
+			if (stage.state == StageState_DeadRetry && stage.player != NULL)
+			{
+				if (stage.death_simple)
+				{
+					stage.player->set_anim(stage.player, PlayerAnim_Death2);
+					if (stage.player->vag_sounds[CHARACTER_VAG_DEATH2] != 0)
+						Audio_PlaySound(stage.player->vag_sounds[CHARACTER_VAG_DEATH2], 0x3fff);
+					stage.state = StageState_DeadDecide;
+				}
+				else
+				{
+					stage.player->set_anim(stage.player, PlayerAnim_Dead6);
+					if (stage.player->vag_sounds[CHARACTER_VAG_DEATH2] != 0)
+						Audio_PlaySound(stage.player->vag_sounds[CHARACTER_VAG_DEATH2], 0x3fff);
+				}
+			}
 		}
 	}
 	else if (pad_state.press & PAD_CIRCLE && stage.state != StageState_Play)
@@ -4517,51 +4639,32 @@ void Stage_Tick(void)
         }
         else if (stage.stage_id == StageId_4_6)
         {
-            boolean in_flipped = (stage.song_step >= 1296 && stage.song_step <= 2320);
-            if (in_flipped)
+            //Triple Trouble swaps the note columns mid-song. The applied
+            //layout is tracked explicitly: stage.note.x always ends up on
+            //universal_note_x_buf, so comparing against the flipped arrays
+            //could never trigger and the flip never engaged.
+            boolean in_flipped = (stage.song_step >= 1296 && stage.song_step <= 2832);
+            if (in_flipped && !stage_46_flipped)
             {
-                boolean need_flip = false;
                 switch (stage.keys)
                 {
-                    case 4: if (stage.note.x != note_x4k_flipped && stage.note.x != universal_note_x_buf) need_flip = true; break;
-                    case 5: if (stage.note.x != note_x5k_flipped && stage.note.x != universal_note_x_buf) need_flip = true; break;
-                    case 6: if (stage.note.x != note_x6k_flipped && stage.note.x != universal_note_x_buf) need_flip = true; break;
-                    case 7: if (stage.note.x != note_x7k_flipped && stage.note.x != universal_note_x_buf) need_flip = true; break;
-                    case 9: if (stage.note.x != note_x9k_flipped && stage.note.x != universal_note_x_buf) need_flip = true; break;
-                    default: break;
+                    case 5: stage.note.x = note_x5k_flipped; break;
+                    case 6: stage.note.x = note_x6k_flipped; break;
+                    case 7: stage.note.x = note_x7k_flipped; break;
+                    case 9: stage.note.x = note_x9k_flipped; break;
+                    case 4:
+                    default: stage.note.x = note_x4k_flipped; break;
                 }
-                if (need_flip) {
-                    switch (stage.keys)
-                    {
-                        case 4: stage.note.x = note_x4k_flipped; break;
-                        case 5: stage.note.x = note_x5k_flipped; break;
-                        case 6: stage.note.x = note_x6k_flipped; break;
-                        case 7: stage.note.x = note_x7k_flipped; break;
-                        case 9: stage.note.x = note_x9k_flipped; break;
-                        default: break;
-                    }
-                    for (int i = 0; i < stage.keys * 2; i++) { int p = (i < stage.keys) ? 0 : 1; if (!stage.player_state[p].hud) universal_note_x_buf[i] = stage.note.x[i] + universal_back_x; else universal_note_x_buf[i] = stage.note.x[i]; }
-                    stage.note.x = universal_note_x_buf;
-                    Stage_SnapNoteVisualOffsets();
-                }
+                for (int i = 0; i < stage.keys * 2; i++) { int p = (i < stage.keys) ? 0 : 1; if (!stage.player_state[p].hud) universal_note_x_buf[i] = stage.note.x[i] + universal_back_x; else universal_note_x_buf[i] = stage.note.x[i]; }
+                stage.note.x = universal_note_x_buf;
+                Stage_SnapNoteVisualOffsets();
+                stage_46_flipped = true;
             }
-            else
+            else if (!in_flipped && stage_46_flipped)
             {
-                boolean need_restore = false;
-                switch (stage.keys)
-                {
-                    case 4: if (stage.note.x != note_x4k_normal) need_restore = true; break;
-                    case 5: if (stage.note.x != note_x5k_normal) need_restore = true; break;
-                    case 6: if (stage.note.x != note_x6k_normal) need_restore = true; break;
-                    case 7: if (stage.note.x != note_x7k_normal) need_restore = true; break;
-                    case 9: if (stage.note.x != note_x9k_normal) need_restore = true; break;
-                    default: break;
-                }
-                if (need_restore)
-                {
-                    Stage_ConfigureNoteLayout();
-                    Stage_SnapNoteVisualOffsets();
-                }
+                Stage_ConfigureNoteLayout();
+                Stage_SnapNoteVisualOffsets();
+                stage_46_flipped = false;
             }
             if (opponentNotesEnabled == 0) opponentNotesEnabled = 1;
         }
@@ -5640,17 +5743,17 @@ void Stage_Tick(void)
 								note_anims[Stage_GetNoteType(note) % stage.keys]
 								          [(note->type & NOTE_FLAG_ALT_ANIM) != 0];
 
-							//Opponent hits note
-							stage.player_state[1].arrow_hitan[Stage_GetNoteType(note) % stage.keys] = stage.step_time;
-							Stage_StartVocal();
-							if (stage.player_state[1].character != NULL)
-								Character_GhostAnimationRequest(stage.player_state[1].character,
-									opponent_note_anim);
-							if (note->type & NOTE_FLAG_SUSTAIN)
-								opponent_snote = opponent_note_anim;
-							else
-								opponent_anote = opponent_note_anim;
-							note->type |= NOTE_FLAG_HIT;
+						//Opponent hits note
+						stage.player_state[1].arrow_hitan[Stage_GetNoteType(note) % stage.keys] = stage.step_time;
+						Stage_StartVocal();
+						if (stage.player_state[1].character != NULL)
+							Character_GhostAnimationRequest(stage.player_state[1].character,
+								opponent_note_anim);
+						if (note->type & NOTE_FLAG_SUSTAIN)
+							opponent_snote = opponent_note_anim;
+						else
+							opponent_anote = opponent_note_anim;
+						note->type |= NOTE_FLAG_HIT;
 
 							switch(stage.stage_id)
 							{
@@ -5894,8 +5997,22 @@ void Stage_Tick(void)
 			//Change background colour to black
 			Gfx_SetClear(0, 0, 0);
 			
-			//Run death animation, focus on player, and change state
-			stage.player->set_anim(stage.player, PlayerAnim_Dead0);
+			//Run death animation, focus on player, and change state.
+			//The scheme is latched from the dying player character: legacy
+			//Dead0..Dead5, or simple Death0 (first death) when opted in.
+			stage.death_simple = (stage.player != NULL && stage.player->death_simple);
+			if (stage.death_simple)
+			{
+				stage.player->set_anim(stage.player, PlayerAnim_Death0);
+				if (stage.player->vag_sounds[CHARACTER_VAG_DEATH0] != 0)
+					Audio_PlaySound(stage.player->vag_sounds[CHARACTER_VAG_DEATH0], 0x3fff);
+			}
+			else
+			{
+				stage.player->set_anim(stage.player, PlayerAnim_Dead0);
+				if (stage.player->vag_sounds[CHARACTER_VAG_DEATH0] != 0)
+					Audio_PlaySound(stage.player->vag_sounds[CHARACTER_VAG_DEATH0], 0x3fff);
+			}
 			
 			Stage_FocusCharacter(stage.player);
 			stage.song_time = 0;
@@ -5910,6 +6027,20 @@ void Stage_Tick(void)
 				stage.song_time += FIXED_UNIT / 60;
 			Stage_ScrollCamera();
 			stage.player->tick(stage.player);
+
+			if (stage.death_simple)
+			{
+				//First death animation done: enter the Death1 retry loop.
+				//Death0 should CHGANI into Death1 like the legacy scheme;
+				//an ended Death0 is linked here as well. No dead.arc read.
+				if (stage.player->animatable.anim != PlayerAnim_Death1 &&
+				    !Animatable_Ended(&stage.player->animatable))
+					break;
+				if (stage.player->animatable.anim != PlayerAnim_Death1)
+					stage.player->set_anim(stage.player, PlayerAnim_Death1);
+				Stage_DeadRetryMusic();
+				break;
+			}
 			
 			//Drop mic and change state if CD has finished reading and animation has ended
 			if (IO_IsReading() || stage.player->animatable.anim != PlayerAnim_Dead1)
@@ -5927,50 +6058,31 @@ void Stage_Tick(void)
 			
 			//Enter next state once mic has been dropped
 			if (stage.player->animatable.anim == PlayerAnim_Dead3)
-			{
-				if (stage.stage_id >= StageId_1_1 && stage.stage_id <= StageId_3_3)
-				{
-					currentDisc = 1;
-				}
-				if (stage.stage_id >= StageId_4_1 && stage.stage_id <= StageId_4_8)
-				{
-					currentDisc = 2;
-				}
-				if (stage.stage_id >= StageId_5_1 && stage.stage_id <= StageId_5_6)
-				{
-					currentDisc = 3;
-				}
-				if (stage.stage_id >= StageId_Max && stage.stage_id <= StageId_Max)
-				{
-					currentDisc = 4;
-				}
-				if (currentDisc == 1) {
-					stage.state = StageState_DeadRetry;
-					Audio_PlayXA_TrackDisc1(XA_GameOver_Disc1, 0x40, 1, true, 0);
-				}
-				if (currentDisc == 2) {
-					stage.state = StageState_DeadRetry;
-					Audio_PlayXA_TrackDisc2(XA_GameOver_Disc2, 0x40, 1, true, 0);
-				}
-				if (currentDisc == 3) {
-					stage.state = StageState_DeadRetry;
-					Audio_PlayXA_TrackDisc3(XA_GameOver_Disc3, 0x40, 1, true, 0);
-				}
-			}
+				Stage_DeadRetryMusic();
 			break;
 		}
 		case StageState_DeadRetry:
 		{
-			//Randomly twitch
-			if (stage.player->animatable.anim == PlayerAnim_Dead3)
+			if (!stage.death_simple)
 			{
-				if (RandomRange(0, 29) == 0)
-					stage.player->set_anim(stage.player, PlayerAnim_Dead4);
-				if (RandomRange(0, 29) == 0)
-					stage.player->set_anim(stage.player, PlayerAnim_Dead5);
+				//Randomly twitch (legacy scheme only; Death1 loops itself)
+				if (stage.player->animatable.anim == PlayerAnim_Dead3)
+				{
+					if (RandomRange(0, 29) == 0)
+						stage.player->set_anim(stage.player, PlayerAnim_Dead4);
+					if (RandomRange(0, 29) == 0)
+						stage.player->set_anim(stage.player, PlayerAnim_Dead5);
+				}
 			}
 			
 			//Scroll camera and tick player
+			Stage_ScrollCamera();
+			stage.player->tick(stage.player);
+			break;
+		}
+		case StageState_DeadDecide:
+		{
+			//Scroll camera and tick player while Death2 confirms the retry
 			Stage_ScrollCamera();
 			stage.player->tick(stage.player);
 			break;

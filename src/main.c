@@ -102,7 +102,9 @@ int main(int argc, char **argv)
 	if (ReadSave() == false)
 	{
 		//options that's already enable for be more easy
+		stage.prefs.icon_bounce = true;
 		stage.prefs.songtimer = true;
+		stage.prefs.ghost = true;
 	}
 	
 	//Start game

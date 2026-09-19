@@ -1,0 +1,1340 @@
+{
+"format": "psxfunkin-editor-v1",
+"characterName": "Dead",
+"spriteSheets": [
+{
+"name": "dead0",
+"tim": "dead0.tim",
+"png": "dead0.png"
+},
+{
+"name": "dead1",
+"tim": "dead1.tim",
+"png": "dead1.png"
+},
+{
+"name": "dead2",
+"tim": "dead2.tim",
+"png": "dead2.png"
+},
+{
+"name": "dead3",
+"tim": "dead3.tim",
+"png": "dead3.png"
+},
+{
+"name": "dead4",
+"tim": "dead4.tim",
+"png": "dead4.png"
+},
+{
+"name": "dead5",
+"tim": "dead5.tim",
+"png": "dead5.png"
+},
+{
+"name": "dead6",
+"tim": "dead6.tim",
+"png": "dead6.png"
+},
+{
+"name": "dead7",
+"tim": "dead7.tim",
+"png": "dead7.png"
+},
+{
+"name": "dead8",
+"tim": "dead8.tim",
+"png": "dead8.png"
+},
+{
+"name": "dead9",
+"tim": "dead9.tim",
+"png": "dead9.png"
+},
+{
+"name": "dead10",
+"tim": "dead10.tim",
+"png": "dead10.png"
+},
+{
+"name": "dead11",
+"tim": "dead11.tim",
+"png": "dead11.png"
+},
+{
+"name": "dead12",
+"tim": "dead12.tim",
+"png": "dead12.png"
+},
+{
+"name": "dead13",
+"tim": "dead13.tim",
+"png": "dead13.png"
+}
+],
+"frames": [
+{
+"texId": 0,
+"srcX": 0,
+"srcY": 0,
+"srcW": 81,
+"srcH": 96,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 0,
+"srcX": 81,
+"srcY": 0,
+"srcW": 86,
+"srcH": 96,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 0,
+"srcX": 167,
+"srcY": 0,
+"srcW": 84,
+"srcH": 96,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 0,
+"srcX": 0,
+"srcY": 96,
+"srcW": 102,
+"srcH": 96,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 0,
+"srcX": 102,
+"srcY": 96,
+"srcW": 102,
+"srcH": 96,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 1,
+"srcX": 0,
+"srcY": 0,
+"srcW": 104,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 1,
+"srcX": 104,
+"srcY": 0,
+"srcW": 104,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 1,
+"srcX": 0,
+"srcY": 95,
+"srcW": 102,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 1,
+"srcX": 102,
+"srcY": 95,
+"srcW": 101,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 2,
+"srcX": 0,
+"srcY": 0,
+"srcW": 103,
+"srcH": 96,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 2,
+"srcX": 103,
+"srcY": 0,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 2,
+"srcX": 0,
+"srcY": 96,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 2,
+"srcX": 103,
+"srcY": 96,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 3,
+"srcX": 0,
+"srcY": 0,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 3,
+"srcX": 103,
+"srcY": 0,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 3,
+"srcX": 0,
+"srcY": 95,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 3,
+"srcX": 103,
+"srcY": 95,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 4,
+"srcX": 0,
+"srcY": 0,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 4,
+"srcX": 103,
+"srcY": 0,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 4,
+"srcX": 0,
+"srcY": 95,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 4,
+"srcX": 103,
+"srcY": 95,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 5,
+"srcX": 0,
+"srcY": 0,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 5,
+"srcX": 103,
+"srcY": 0,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 5,
+"srcX": 0,
+"srcY": 95,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 5,
+"srcX": 103,
+"srcY": 95,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 6,
+"srcX": 0,
+"srcY": 0,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 6,
+"srcX": 103,
+"srcY": 0,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 6,
+"srcX": 0,
+"srcY": 95,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 6,
+"srcX": 103,
+"srcY": 95,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "FirstDeath"
+},
+{
+"texId": 7,
+"srcX": 0,
+"srcY": 0,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "DeathLoop"
+},
+{
+"texId": 7,
+"srcX": 103,
+"srcY": 0,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "DeathLoop"
+},
+{
+"texId": 7,
+"srcX": 0,
+"srcY": 95,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "DeathLoop"
+},
+{
+"texId": 7,
+"srcX": 103,
+"srcY": 95,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "DeathLoop"
+},
+{
+"texId": 8,
+"srcX": 0,
+"srcY": 0,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "DeathLoop"
+},
+{
+"texId": 9,
+"srcX": 0,
+"srcY": 0,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "DeathConfirm"
+},
+{
+"texId": 9,
+"srcX": 103,
+"srcY": 0,
+"srcW": 103,
+"srcH": 103,
+"offX": 26,
+"offY": 46,
+"name": "DeathConfirm"
+},
+{
+"texId": 9,
+"srcX": 0,
+"srcY": 103,
+"srcW": 103,
+"srcH": 110,
+"offX": 26,
+"offY": 46,
+"name": "DeathConfirm"
+},
+{
+"texId": 9,
+"srcX": 103,
+"srcY": 103,
+"srcW": 103,
+"srcH": 102,
+"offX": 26,
+"offY": 46,
+"name": "DeathConfirm"
+},
+{
+"texId": 10,
+"srcX": 0,
+"srcY": 0,
+"srcW": 103,
+"srcH": 102,
+"offX": 26,
+"offY": 46,
+"name": "DeathConfirm"
+},
+{
+"texId": 10,
+"srcX": 103,
+"srcY": 0,
+"srcW": 103,
+"srcH": 101,
+"offX": 26,
+"offY": 46,
+"name": "DeathConfirm"
+},
+{
+"texId": 10,
+"srcX": 0,
+"srcY": 102,
+"srcW": 103,
+"srcH": 100,
+"offX": 26,
+"offY": 46,
+"name": "DeathConfirm"
+},
+{
+"texId": 10,
+"srcX": 103,
+"srcY": 102,
+"srcW": 103,
+"srcH": 100,
+"offX": 26,
+"offY": 46,
+"name": "DeathConfirm"
+},
+{
+"texId": 11,
+"srcX": 0,
+"srcY": 0,
+"srcW": 103,
+"srcH": 100,
+"offX": 26,
+"offY": 46,
+"name": "DeathConfirm"
+},
+{
+"texId": 11,
+"srcX": 103,
+"srcY": 0,
+"srcW": 103,
+"srcH": 100,
+"offX": 26,
+"offY": 46,
+"name": "DeathConfirm"
+},
+{
+"texId": 11,
+"srcX": 0,
+"srcY": 100,
+"srcW": 103,
+"srcH": 98,
+"offX": 26,
+"offY": 46,
+"name": "DeathConfirm"
+},
+{
+"texId": 11,
+"srcX": 103,
+"srcY": 100,
+"srcW": 103,
+"srcH": 98,
+"offX": 26,
+"offY": 46,
+"name": "DeathConfirm"
+},
+{
+"texId": 12,
+"srcX": 0,
+"srcY": 0,
+"srcW": 103,
+"srcH": 96,
+"offX": 26,
+"offY": 46,
+"name": "DeathConfirm"
+},
+{
+"texId": 12,
+"srcX": 103,
+"srcY": 0,
+"srcW": 103,
+"srcH": 96,
+"offX": 26,
+"offY": 46,
+"name": "DeathConfirm"
+},
+{
+"texId": 12,
+"srcX": 0,
+"srcY": 96,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "DeathConfirm"
+},
+{
+"texId": 12,
+"srcX": 103,
+"srcY": 96,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "DeathConfirm"
+},
+{
+"texId": 13,
+"srcX": 0,
+"srcY": 0,
+"srcW": 103,
+"srcH": 95,
+"offX": 26,
+"offY": 46,
+"name": "DeathConfirm"
+}
+],
+"animationIndices": {
+"FirstDeath": [
+0,
+1,
+2,
+3,
+4,
+5,
+6,
+7,
+8,
+9,
+10,
+11,
+12,
+13,
+14,
+15,
+16,
+17,
+18,
+19,
+20,
+21,
+22,
+23,
+24,
+25,
+26,
+27,
+28
+],
+"DeathLoop": [
+29,
+30,
+31,
+32,
+33
+],
+"DeathConfirm": [
+34,
+35,
+36,
+37,
+38,
+39,
+40,
+41,
+42,
+43,
+44,
+45,
+46,
+47,
+48,
+49,
+50
+]
+},
+"timArchivePath": "main.arc",
+"animations": [
+{
+"anim_type": 0,
+"data": [
+[
+"dead0",
+[
+0,
+0,
+81,
+96
+],
+[
+26,
+46
+]
+],
+[
+"dead0",
+[
+81,
+0,
+86,
+96
+],
+[
+26,
+46
+]
+],
+[
+"dead0",
+[
+167,
+0,
+84,
+96
+],
+[
+26,
+46
+]
+],
+[
+"dead0",
+[
+0,
+96,
+102,
+96
+],
+[
+26,
+46
+]
+],
+[
+"dead0",
+[
+102,
+96,
+102,
+96
+],
+[
+26,
+46
+]
+],
+[
+"dead1",
+[
+0,
+0,
+104,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead1",
+[
+104,
+0,
+104,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead1",
+[
+0,
+95,
+102,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead1",
+[
+102,
+95,
+101,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead2",
+[
+0,
+0,
+103,
+96
+],
+[
+26,
+46
+]
+],
+[
+"dead2",
+[
+103,
+0,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead2",
+[
+0,
+96,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead2",
+[
+103,
+96,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead3",
+[
+0,
+0,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead3",
+[
+103,
+0,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead3",
+[
+0,
+95,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead3",
+[
+103,
+95,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead4",
+[
+0,
+0,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead4",
+[
+103,
+0,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead4",
+[
+0,
+95,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead4",
+[
+103,
+95,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead5",
+[
+0,
+0,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead5",
+[
+103,
+0,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead5",
+[
+0,
+95,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead5",
+[
+103,
+95,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead6",
+[
+0,
+0,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead6",
+[
+103,
+0,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead6",
+[
+0,
+95,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead6",
+[
+103,
+95,
+103,
+95
+],
+[
+26,
+46
+]
+]
+],
+"end": "ASCR_BACK, 2",
+"loop": false,
+"name": "FirstDeath",
+"speed": 12
+},
+{
+"anim_type": 0,
+"data": [
+[
+"dead7",
+[
+0,
+0,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead7",
+[
+103,
+0,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead7",
+[
+0,
+95,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead7",
+[
+103,
+95,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead8",
+[
+0,
+0,
+103,
+95
+],
+[
+26,
+46
+]
+]
+],
+"end": "ASCR_BACK, 2",
+"loop": false,
+"name": "DeathLoop",
+"speed": 12
+},
+{
+"anim_type": 0,
+"data": [
+[
+"dead9",
+[
+0,
+0,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead9",
+[
+103,
+0,
+103,
+103
+],
+[
+26,
+46
+]
+],
+[
+"dead9",
+[
+0,
+103,
+103,
+110
+],
+[
+26,
+46
+]
+],
+[
+"dead9",
+[
+103,
+103,
+103,
+102
+],
+[
+26,
+46
+]
+],
+[
+"dead10",
+[
+0,
+0,
+103,
+102
+],
+[
+26,
+46
+]
+],
+[
+"dead10",
+[
+103,
+0,
+103,
+101
+],
+[
+26,
+46
+]
+],
+[
+"dead10",
+[
+0,
+102,
+103,
+100
+],
+[
+26,
+46
+]
+],
+[
+"dead10",
+[
+103,
+102,
+103,
+100
+],
+[
+26,
+46
+]
+],
+[
+"dead11",
+[
+0,
+0,
+103,
+100
+],
+[
+26,
+46
+]
+],
+[
+"dead11",
+[
+103,
+0,
+103,
+100
+],
+[
+26,
+46
+]
+],
+[
+"dead11",
+[
+0,
+100,
+103,
+98
+],
+[
+26,
+46
+]
+],
+[
+"dead11",
+[
+103,
+100,
+103,
+98
+],
+[
+26,
+46
+]
+],
+[
+"dead12",
+[
+0,
+0,
+103,
+96
+],
+[
+26,
+46
+]
+],
+[
+"dead12",
+[
+103,
+0,
+103,
+96
+],
+[
+26,
+46
+]
+],
+[
+"dead12",
+[
+0,
+96,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead12",
+[
+103,
+96,
+103,
+95
+],
+[
+26,
+46
+]
+],
+[
+"dead13",
+[
+0,
+0,
+103,
+95
+],
+[
+26,
+46
+]
+]
+],
+"end": "ASCR_BACK, 2",
+"loop": false,
+"name": "DeathConfirm",
+"speed": 12
+}
+]
+}

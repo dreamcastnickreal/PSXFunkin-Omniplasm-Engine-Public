@@ -8,7 +8,7 @@ On Windows, you basically have two choices:
 - MSYS2 (i'll just provide my pre-setup msys2, since i am bad at explaining shit to you guys. it already has mkpsxiso compiled and other optimizations ABSOLUTELY NESSESSARY for omniplasm ngine)
 
 ### MSYS2
-Well, here you go: https://drive.google.com/file/d/1yHJosGwlBV0evd4maSpxu5lGNC08SViv/view?usp=sharing
+Well, here you go: https://drive.google.com/file/d/1zAoBmnvdQW7HY6xmvu79QErXX1Pj3GP8/view?usp=sharing
 
 ## Copying PsyQ files
 First, go to the [mips](/mips/) folder of the repo, and create a new folder named `psyq`.

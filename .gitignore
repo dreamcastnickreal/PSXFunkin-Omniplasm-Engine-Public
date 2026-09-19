@@ -34,10 +34,17 @@ build/
 
 # Exclude converted assets
 iso/**/*.tim
+iso/**/*.TIM
 iso/**/*.arc
+iso/**/*.ARC
 iso/**/*.xa
+iso/**/*.XA
 iso/**/*.cht
+iso/**/*.CHT
 iso/**/*.str
+iso/**/*.STR
+iso/**/*.vag
+iso/**/*.VAG
 
 # Don't remove this
 !main.exe

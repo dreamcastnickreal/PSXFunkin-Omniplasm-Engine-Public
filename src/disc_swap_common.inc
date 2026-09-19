@@ -19,6 +19,7 @@ static FontData *disc_swap_font_title = NULL;
 static FontData *disc_swap_font_body = NULL;
 static const char *disc_swap_screen_title = NULL;
 static const char *disc_swap_screen_message = NULL;
+static char disc_swap_message_buffer[128];
 
 void DiscSwap_SetScreenAssets(Gfx_Tex *back, Gfx_Tex *disc, FontData *title_font, FontData *body_font)
 {
@@ -30,23 +31,49 @@ void DiscSwap_SetScreenAssets(Gfx_Tex *back, Gfx_Tex *disc, FontData *title_font
 
 static void DiscSwap_DrawFancyScreen(const char *title, const char *message)
 {
-	RECT bg = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+	RECT back_src = {0, 0, 255, 255};
+	RECT back_dst = {0, -SCREEN_WIDEADD2, SCREEN_WIDTH, SCREEN_WIDTH * 4 / 5};
+	RECT disc_src = {0, 0, 128, 85};
+	RECT disc_dst = {8, SCREEN_HEIGHT - 51, 64, 43};
+	char disc_number[8];
 	GameLoop prev_gameloop = gameloop;
 
 	gameloop = GameLoop_Menu;
-	if (fonts.font_cdr.draw != NULL)
-	{
-		fonts.font_cdr.draw(&fonts.font_cdr, title, 10, 20, FontAlign_Left);
-		fonts.font_cdr.draw(&fonts.font_cdr, message, 10, 36, FontAlign_Left);
-		fonts.font_cdr.draw(&fonts.font_cdr, "Insert disc and close lid.", 10, 68, FontAlign_Left);
-		fonts.font_cdr.draw(&fonts.font_cdr, "Press O to cancel.", 10, 84, FontAlign_Left);
-	}
-	Gfx_DrawRect(&bg, 0, 0, 0);
 
-	Gfx_Flip();
+	/* Exact menu.c title style requested. */
+	if (disc_swap_font_title != NULL && disc_swap_font_title->draw != NULL)
+		disc_swap_font_title->draw(disc_swap_font_title, title,
+			SCREEN_WIDTH2, SCREEN_HEIGHT2 - 96, FontAlign_Center);
+
+	/* Body uses the CDR font supplied by Menu_Load(). */
+	if (disc_swap_font_body != NULL && disc_swap_font_body->draw != NULL)
+	{
+		disc_swap_font_body->draw(disc_swap_font_body, message,
+			32, 124, FontAlign_Left);
+		disc_swap_font_body->draw(disc_swap_font_body, "Insert disc and close lid.",
+			32, 148, FontAlign_Left);
+		disc_swap_font_body->draw(disc_swap_font_body, "Press O to cancel.",
+			32, 164, FontAlign_Left);
+	}
+
+	/* Draw the currently detected disc number in the same bold font used by menu.c. */
+	sprintf(disc_number, "%d", currentDisc);
+	if (disc_swap_font_title != NULL && disc_swap_font_title->draw != NULL)
+		disc_swap_font_title->draw(disc_swap_font_title, disc_number,
+			36, SCREEN_HEIGHT - 36, FontAlign_Center);
+
+	/* Draw disc.tim as a scaled 128x85 source into a 64x43 destination. */
+	if (disc_swap_disc_tex != NULL)
+		Gfx_DrawTex(disc_swap_disc_tex, &disc_src, &disc_dst);
+
+	/* Use the exact same background draw used by menu.c. */
+	if (disc_swap_back_tex != NULL)
+		Gfx_DrawTexCol(disc_swap_back_tex, &back_src, &back_dst,
+			64 >> 1, 64 >> 1, 64 >> 1);
+
+	Gfx_Flip();	
 	gameloop = prev_gameloop;
 }
-
 static void DiscSwap_Service(void)
 {
 	Pad_Update();
@@ -81,13 +108,18 @@ static void DiscSwap_WaitForButtonRelease(void)
 
 static int DiscSwap_DetectDisc(void)
 {
-	if (IO_ExistFile("\\DISC1.ID;1"))
+	CdlFILE file;
+
+	/* Do not use IO_ExistFile() here.  Its file cache is associated with the
+	 * previous currentDisc, so it can keep reporting the old disc after a swap.
+	 * CdSearchFile() queries the CD filesystem for the currently mounted disc. */
+	if (CdSearchFile(&file, "\\DISC1.ID;1") != NULL)
 		return 1;
-	if (IO_ExistFile("\\DISC2.ID;1"))
+	if (CdSearchFile(&file, "\\DISC2.ID;1") != NULL)
 		return 2;
-	if (IO_ExistFile("\\DISC3.ID;1"))
+	if (CdSearchFile(&file, "\\DISC3.ID;1") != NULL)
 		return 3;
-	if (IO_ExistFile("\\DISC4.ID;1"))
+	if (CdSearchFile(&file, "\\DISC4.ID;1") != NULL)
 		return 4;
 	return 0;
 }
@@ -95,7 +127,9 @@ static int DiscSwap_DetectDisc(void)
 void DisplayMessage(const char* message)
 {
 	disc_swap_screen_title = "CHANGE DISC";
-	disc_swap_screen_message = message;
+	strncpy(disc_swap_message_buffer, message, sizeof(disc_swap_message_buffer) - 1);
+	disc_swap_message_buffer[sizeof(disc_swap_message_buffer) - 1] = '\0';
+	disc_swap_screen_message = disc_swap_message_buffer;
 	Trans_Clear();
 	DiscSwap_DrawFancyScreen(disc_swap_screen_title, disc_swap_screen_message);
 	DiscSwap_DrawFancyScreen(disc_swap_screen_title, disc_swap_screen_message);

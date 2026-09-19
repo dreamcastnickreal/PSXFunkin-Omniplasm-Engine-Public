@@ -17,6 +17,15 @@
 typedef u8 CharSpec;
 #define CHAR_SPEC_MISSANIM (1 << 0) //Has miss animations
 
+//Per-player VAG sound bank (SPU addresses, 0 = empty slot)
+#define CHARACTER_VAG_MAX    8
+#define CHARACTER_VAG_DEATH0 0 //First death sound
+#define CHARACTER_VAG_DEATH2 1 //Confirm-retry sound
+#define CHARACTER_VAG_MISS0  2 //Miss sounds (random pick of the 3 on a miss)
+#define CHARACTER_VAG_MISS1  3
+#define CHARACTER_VAG_MISS2  4
+//Slots 5-7 are spare
+
 #define CHARACTER_GHOST_DEFAULT_COUNT 4
 #define CHARACTER_GHOST_MAX_COUNT     8
 #define CHARACTER_GHOST_MAX_OPPOSING  3
@@ -142,12 +151,14 @@ typedef struct Character
 
 	//Character information
 	CharSpec spec;
+	boolean death_simple; //true = simple Death0/Death1/Death2 scheme (see player.h)
 	u16 health_i[2][4];
 	u32 health_bar; //hud1.tim
 	fixed_t focus_x, focus_y, focus_zoom;
 
 	fixed_t size;
 	u8 opacity;
+	u32 vag_sounds[CHARACTER_VAG_MAX]; //per-player VAG bank (SPU addrs, 0 = empty)
 
 	//Animation state
 	Animatable animatable;
@@ -166,6 +177,7 @@ typedef struct Character
 //Character functions
 void Character_Free(Character *this);
 void Character_Init(Character *this, fixed_t x, fixed_t y);
+boolean Character_LoadVagSound(Character *this, u8 slot, const char *path);
 void Character_DrawParallax(Character *this, Gfx_Tex *tex, const CharFrame *cframe, fixed_t parallax);
 void Character_DrawParallaxFlipped(Character *this, Gfx_Tex *tex, const CharFrame *cframe, fixed_t parallax);
 void Character_Draw(Character *this, Gfx_Tex *tex, const CharFrame *cframe);

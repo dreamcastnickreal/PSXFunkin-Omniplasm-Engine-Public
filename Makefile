@@ -75,6 +75,7 @@ SRCS = src/main.c \
        src/animation.c \
        src/character.c \
        src/character/bf.c \
+       src/character/3dbf.c \
        src/character/speaker.c \
        src/character/dad.c \
        src/character/spook.c \
@@ -142,6 +143,7 @@ DISC1_INCLUDE = \
        src/stage/dummy.c \
        src/stage/week1.c \
        src/character/bf.c \
+       src/character/3dbf.c \
        src/character/speaker.c \
        src/character/dad.c \
        src/character/gf.c \
@@ -160,6 +162,7 @@ DISC2_INCLUDE = \
        src/stage/dummy.c \
        src/stage/bvoid.c \
        src/character/bf.c \
+	   src/character/3dbf.c \
        src/character/speaker.c \
        src/character/dad.c \
        src/character/gf.c \
@@ -177,6 +180,7 @@ DISC3_INCLUDE = \
        src/stage/bvoid.c \
        src/stage/week1.c \
        src/character/bf.c \
+	   src/character/3dbf.c \
        src/character/speaker.c \
        src/character/dad.c \
        src/character/gf.c \

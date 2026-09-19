@@ -28,6 +28,8 @@ all: \
 	iso/stage/pause.tim \
 	iso/characters/bf/main.arc \
 	iso/characters/bf/dead.arc \
+	iso/characters/3dbf/main.arc \
+	iso/characters/3dbf/dead.arc \
 	iso/characters/apple/main.arc \
 	iso/characters/apple/dead.arc \
 	iso/characters/dad/main.arc \
@@ -71,6 +73,10 @@ iso/menu/backgrounds/week.arc: iso/menu/backgrounds/week0.tim iso/menu/backgroun
 # BF
 iso/characters/bf/main.arc: iso/characters/bf/bf0.tim iso/characters/bf/bf1.tim iso/characters/bf/bf2.tim iso/characters/bf/bf3.tim iso/characters/bf/bf4.tim iso/characters/bf/bf5.tim iso/characters/bf/bf6.tim iso/characters/bf/bfalt0.tim iso/characters/bf/bfalt1.tim iso/characters/bf/bfalt2.tim iso/characters/bf/bfalt3.tim iso/characters/bf/bfalt4.tim iso/characters/bf/dead0.tim
 iso/characters/bf/dead.arc: iso/characters/bf/dead1.tim iso/characters/bf/dead2.tim iso/characters/bf/retry.tim
+
+# 3D BF
+iso/characters/3dbf/main.arc: iso/characters/3dbf/3dbf0.tim iso/characters/3dbf/3dbf1.tim iso/characters/3dbf/3dbf2.tim iso/characters/3dbf/3dbf3.tim iso/characters/3dbf/3dbf4.tim iso/characters/3dbf/3dbf5.tim iso/characters/3dbf/3dbf6.tim iso/characters/3dbf/3dbf7.tim iso/characters/3dbf/3dbf8.tim
+iso/characters/3dbf/dead.arc: iso/characters/3dbf/dead0.tim iso/characters/3dbf/dead1.tim iso/characters/3dbf/dead2.tim iso/characters/3dbf/dead3.tim iso/characters/3dbf/dead4.tim iso/characters/3dbf/dead5.tim iso/characters/3dbf/dead6.tim iso/characters/3dbf/dead7.tim iso/characters/3dbf/dead8.tim iso/characters/3dbf/dead9.tim iso/characters/3dbf/dead10.tim iso/characters/3dbf/dead11.tim iso/characters/3dbf/dead12.tim iso/characters/3dbf/dead13.tim iso/characters/3dbf/retry.tim
 
 # Apple
 iso/characters/apple/main.arc: iso/characters/apple/apple0.tim iso/characters/apple/apple1.tim iso/characters/apple/apple2.tim iso/characters/apple/apple3.tim iso/characters/apple/apple4.tim iso/characters/apple/apple5.tim iso/characters/apple/real0.tim iso/characters/apple/real1.tim iso/characters/apple/real2.tim iso/characters/apple/real3.tim iso/characters/apple/real4.tim iso/characters/apple/real5.tim iso/characters/apple/real6.tim iso/characters/apple/real7.tim iso/characters/apple/real8.tim iso/characters/apple/dead0.tim

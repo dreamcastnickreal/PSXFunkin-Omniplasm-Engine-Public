@@ -79,6 +79,7 @@ typedef struct
 	u8 frame, tex_id;
 	
 	u8 retry_bump;
+	u8 confirm_frame;
 	
 	SkullFragment skull[COUNT_OF(char_bf_skull)];
 	u8 skull_scale;
@@ -206,6 +207,9 @@ static const Animation char_bf_anim[PlayerAnim_Max] = {
 	
 	{10, (const u8[]){55, 55, 55, ASCR_BACK, 1}}, //PlayerAnim_Dead4
 	{ 3, (const u8[]){58, 59, 55, ASCR_REPEAT}},  //PlayerAnim_Dead5
+	{ 0, (const u8[]){ASCR_CHGANI, PlayerAnim_Dead0}}, //PlayerAnim_Death0 (legacy: first death)
+	{ 0, (const u8[]){ASCR_CHGANI, PlayerAnim_Dead3}}, //PlayerAnim_Death1 (legacy: retry idle)
+	{ 0, (const u8[]){ASCR_CHGANI, PlayerAnim_Dead6}}, //PlayerAnim_Death2 (legacy: confirm)
 };
 
 static const Animation char_flip_anim[PlayerAnim_Max] = {
@@ -239,6 +243,9 @@ static const Animation char_flip_anim[PlayerAnim_Max] = {
 	
 	{10, (const u8[]){55, 55, 55, ASCR_BACK, 1}}, //PlayerAnim_Dead4
 	{ 3, (const u8[]){58, 59, 55, ASCR_REPEAT}},  //PlayerAnim_Dead5
+	{ 0, (const u8[]){ASCR_CHGANI, PlayerAnim_Dead0}}, //PlayerAnim_Death0 (legacy: first death)
+	{ 0, (const u8[]){ASCR_CHGANI, PlayerAnim_Dead3}}, //PlayerAnim_Death1 (legacy: retry idle)
+	{ 0, (const u8[]){ASCR_CHGANI, PlayerAnim_Dead6}}, //PlayerAnim_Death2 (legacy: confirm)
 };
 
 static const Animation char_bfalt_anim[PlayerAnim_Max] = {
@@ -272,6 +279,9 @@ static const Animation char_bfalt_anim[PlayerAnim_Max] = {
 	
 	{10, (const u8[]){55, 55, 55, ASCR_BACK, 1}}, //PlayerAnim_Dead4
 	{ 3, (const u8[]){58, 59, 55, ASCR_REPEAT}},  //PlayerAnim_Dead5
+	{ 0, (const u8[]){ASCR_CHGANI, PlayerAnim_Dead0}}, //PlayerAnim_Death0 (legacy: first death)
+	{ 0, (const u8[]){ASCR_CHGANI, PlayerAnim_Dead3}}, //PlayerAnim_Death1 (legacy: retry idle)
+	{ 0, (const u8[]){ASCR_CHGANI, PlayerAnim_Dead6}}, //PlayerAnim_Death2 (legacy: confirm)
 };
 
 static const Animation char_altflip_anim[PlayerAnim_Max] = {
@@ -305,6 +315,9 @@ static const Animation char_altflip_anim[PlayerAnim_Max] = {
 	
 	{10, (const u8[]){55, 55, 55, ASCR_BACK, 1}}, //PlayerAnim_Dead4
 	{ 3, (const u8[]){58, 59, 55, ASCR_REPEAT}},  //PlayerAnim_Dead5
+	{ 0, (const u8[]){ASCR_CHGANI, PlayerAnim_Dead0}}, //PlayerAnim_Death0 (legacy: first death)
+	{ 0, (const u8[]){ASCR_CHGANI, PlayerAnim_Dead3}}, //PlayerAnim_Death1 (legacy: retry idle)
+	{ 0, (const u8[]){ASCR_CHGANI, PlayerAnim_Dead6}}, //PlayerAnim_Death2 (legacy: confirm)
 };
 
 //Boyfriend player functions
@@ -529,30 +542,34 @@ void Char_BF_Tick(Character *character)
 		button_dst.y += FIXED_DEC(56,1);
 		Stage_DrawTex(&this->tex_retry, &button_src, &button_dst, FIXED_MUL(stage.camera.zoom, stage.bump), stage.camera.angle);
 		
-		//Draw 'RETRY'
 		u8 retry_frame;
-		
+
 		if (character->animatable.anim == PlayerAnim_Dead6)
 		{
-			//Selected retry
-			retry_frame = 2 - (this->retry_bump >> 3);
-			if (retry_frame >= 3)
+			// Selected retry: play 3 -> 4 -> 5 -> 0 once
+			if (this->confirm_frame < 24)
+			{
+				retry_frame = 3 + (this->confirm_frame >> 3);
+				this->confirm_frame++;
+			}
+			else
+			{
 				retry_frame = 0;
-			if (this->retry_bump & 2)
-				retry_frame += 3;
-			
-			if (++this->retry_bump == 0xFF)
-				this->retry_bump = 0xFD;
+			}
 		}
 		else
 		{
-			//Idle
-			retry_frame = 1 +  (this->retry_bump >> 2);
+			// Idle
+			retry_frame = 1 + (this->retry_bump >> 2);
+
 			if (retry_frame >= 3)
 				retry_frame = 0;
-			
+
 			if (++this->retry_bump >= 55)
 				this->retry_bump = 0;
+
+			// Reset confirm animation when not selected
+			this->confirm_frame = 0;
 		}
 		
 		RECT retry_src = {
@@ -684,6 +701,7 @@ Character *Char_BF_New(fixed_t x, fixed_t y, fixed_t scale)
 	
 	//Set character information
 	this->character.spec = CHAR_SPEC_MISSANIM;
+	this->character.death_simple = false;
 	
 	memcpy(this->character.health_i, char_bf_icons, sizeof(char_bf_icons));
 	
@@ -729,9 +747,19 @@ Character *Char_BF_New(fixed_t x, fixed_t y, fixed_t scale)
 	Character_GhostSetNoHealthbarColor((Character*)this, true);
 	Character_TrailSetActive((Character*)this, false);
 	
+	//Death sounds into this player's own bank (missing files are skipped)
+	Character_LoadVagSound((Character*)this, CHARACTER_VAG_DEATH0, "\\SOUNDS\\DEATH0.VAG;1");
+	Character_LoadVagSound((Character*)this, CHARACTER_VAG_DEATH2, "\\SOUNDS\\DEATH2.VAG;1");
+	
+	//Miss sounds into this player's own bank (a random one plays per miss)
+	Character_LoadVagSound((Character*)this, CHARACTER_VAG_MISS0, "\\SOUNDS\\MISS1.VAG;1");
+	Character_LoadVagSound((Character*)this, CHARACTER_VAG_MISS1, "\\SOUNDS\\MISS2.VAG;1");
+	Character_LoadVagSound((Character*)this, CHARACTER_VAG_MISS2, "\\SOUNDS\\MISS3.VAG;1");
+	
 	//Initialize player state
 	this->retry_bump = 0;
-	
+	this->confirm_frame = 0;
+
 	//Copy skull fragments
 	memcpy(this->skull, char_bf_skull, sizeof(char_bf_skull));
 	this->skull_scale = 64;

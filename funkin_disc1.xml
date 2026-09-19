@@ -131,6 +131,10 @@
 				<file name = "bf.arc" type = "data" source = "iso/characters/bf/main.arc"/>
 				<file name = "bfdead.arc" type = "data" source = "iso/characters/bf/dead.arc"/>
 				
+				<!-- 3D Boyfriend assets -->
+				<file name = "3dbf.arc" type = "data" source = "iso/characters/3dbf/main.arc"/>
+				<file name = "3ddead.arc" type = "data" source = "iso/characters/3dbf/dead.arc"/>
+				
 				<!-- Menu Characters assets -->
 				<file name = "menup.arc" type = "data" source = "iso/characters/menup/main.arc"/>
 			</dir>
@@ -183,6 +187,12 @@
 				<file name = "intro2.vag" type = "data" source = "iso/sounds/stage/intro2.VAG"/>
 				<file name = "intro3.vag" type = "data" source = "iso/sounds/stage/intro3.VAG"/>
 				<file name = "hitstat.vag" type = "data" source = "iso/sounds/stage/hitstat.VAG"/>
+				<file name = "miss1.vag" type = "data" source = "iso/sounds/player/miss1.VAG"/>
+				<file name = "miss2.vag" type = "data" source = "iso/sounds/player/miss2.VAG"/>
+				<file name = "miss3.vag" type = "data" source = "iso/sounds/player/miss3.VAG"/>
+				<!-- Death Sounds -->
+				<file name = "death0.vag" type = "data" source = "iso/sounds/death/death0.VAG"/>
+				<file name = "death2.vag" type = "data" source = "iso/sounds/death/death2.VAG"/>
 			</dir>
 			
 			<!-- Music -->

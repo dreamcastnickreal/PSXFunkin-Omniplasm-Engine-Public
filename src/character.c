@@ -9,6 +9,7 @@
 #include "mem.h"
 #include "main.h"
 #include "stage.h"
+#include "audio.h"
 
 //Forward declarations for the shared ghost/trail atlas block helpers
 static void Character_GhostReleaseAtlases(Character *this, u8 keep_from);
@@ -42,7 +43,10 @@ void Character_Init(Character *this, fixed_t x, fixed_t y)
 	this->x = x;
 	this->y = y;
 	this->opacity = 255;
+	this->death_simple = false;
 	this->ghosts_storage = NULL;
+	this->vag_sounds[0] = this->vag_sounds[1] = this->vag_sounds[2] = this->vag_sounds[3] = 0;
+	this->vag_sounds[4] = this->vag_sounds[5] = this->vag_sounds[6] = this->vag_sounds[7] = 0;
 
 	this->set_anim(this, CharAnim_Idle);
 	this->pad_held = 0;
@@ -50,6 +54,24 @@ void Character_Init(Character *this, fixed_t x, fixed_t y)
 	this->sing_end = 0;
 
 	Character_GhostConfigure(this, false, 0, 0, CHARACTER_GHOST_DEFAULT_COUNT);
+}
+
+//Load a VAG file into the player's own sound bank (0 = empty slot).
+//Missing files are skipped so builds without the VAG still boot.
+boolean Character_LoadVagSound(Character *this, u8 slot, const char *path)
+{
+	CdlFILE file;
+	u32 *data;
+
+	if (this == NULL || slot >= CHARACTER_VAG_MAX || path == NULL)
+		return false;
+	if (!IO_ExistFile(path))
+		return false;
+	IO_FindFile(&file, path);
+	data = IO_ReadFile(&file);
+	this->vag_sounds[slot] = Audio_LoadVAGData(data, file.size);
+	Mem_Free(data);
+	return true;
 }
 
 void Character_GhostConfigure(Character *this, boolean enabled, s16 vram_x, s16 vram_y, u8 count)
@@ -358,6 +380,8 @@ static void Character_GhostDrawStored(Character *this)
 			continue;
 
 		opacity = 255 - ((u32)ghost->distance * 255 / FIXED_DEC(10,1));
+		if (opacity == 0)
+			continue;
 		if (ghost->fading)
 		{
 			this->x = ghost->x + FIXED_MUL(ghost->drift_x, ghost->distance);
@@ -378,11 +402,12 @@ static void Character_GhostDrawStored(Character *this)
 		dst.y = this->y - stage.camera.y - FIXED_MUL(FIXED_DEC(ghost->frame.off[1],1),this->size);
 		dst.w = FIXED_MUL(src.w << FIXED_SHIFT, this->size);
 		dst.h = FIXED_MUL(src.h << FIXED_SHIFT, this->size);
-		/* Additive blending lets opacity zero contribute nothing, producing a
-		 * real fade instead of darkening the background like mode 0. */
-		Stage_BlendTexColOpacity(&ghost->tex, &src, &dst,
-			stage.camera.bzoom, stage.camera.angle,
-			ghost->r, ghost->g, ghost->b, 0, opacity);
+		/* Opaque draws: older ghosts land behind progressively darker,
+		 * so the fade reads without additive blowout. */
+		Stage_DrawTexAll(&ghost->tex, &src, &dst,
+			stage.camera.bzoom, stage.camera.angle, 0,
+			ghost->r, ghost->g, ghost->b, opacity,
+			false, false, false);
 
 		if (!stage.paused && ghost->fading)
 		{
@@ -1081,12 +1106,12 @@ static void Character_TrailDrawStored(Character *this)
 		dst.y = this->y - stage.camera.y - FIXED_MUL(FIXED_DEC(trail->frame.off[1],1),this->size);
 		dst.w = FIXED_MUL(src.w << FIXED_SHIFT, this->size);
 		dst.h = FIXED_MUL(src.h << FIXED_SHIFT, this->size);
-		//Blended draws keep the additive afterimage glow; per-slot alpha
-		//scaling fakes the opacity falloff (newest brightest in front)
-		Stage_DrawBlendTexAll(&trail->tex, &src, &dst,
+		//Opaque draws: newest brightest lands in front of progressively
+		//darker copies, so the fade reads without additive blowout
+		Stage_DrawTexAll(&trail->tex, &src, &dst,
 			stage.camera.bzoom, stage.camera.angle, 0,
 			trail->r, trail->g, trail->b, (u8)opacity,
-			false, false, false, 0);
+			false, false, false);
 	}
 	this->x = old_x;
 	this->y = old_y;

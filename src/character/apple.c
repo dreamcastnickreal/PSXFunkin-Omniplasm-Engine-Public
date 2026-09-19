@@ -203,6 +203,9 @@ static const Animation char_apple_anim[PlayerAnim_Max] = {
 	
 	{10, (const u8[]){58, 58, 58, ASCR_BACK, 1}}, //PlayerAnim_Dead4
 	{ 3, (const u8[]){59, 59, 59, ASCR_REPEAT}},  //PlayerAnim_Dead5
+	{ 0, (const u8[]){ASCR_CHGANI, PlayerAnim_Dead0}}, //PlayerAnim_Death0 (legacy: first death)
+	{ 0, (const u8[]){ASCR_CHGANI, PlayerAnim_Dead3}}, //PlayerAnim_Death1 (legacy: retry idle)
+	{ 0, (const u8[]){ASCR_CHGANI, PlayerAnim_Dead6}}, //PlayerAnim_Death2 (legacy: confirm)
 };
 
 static const Animation char_real_anim[PlayerAnim_Max] = {
@@ -236,6 +239,9 @@ static const Animation char_real_anim[PlayerAnim_Max] = {
 	
 	{10, (const u8[]){58, 58, 58, ASCR_BACK, 1}}, //PlayerAnim_Dead4
 	{3, (const u8[]){59, 59, 59, ASCR_REPEAT}},  //PlayerAnim_Dead5
+	{ 0, (const u8[]){ASCR_CHGANI, PlayerAnim_Dead0}}, //PlayerAnim_Death0 (legacy: first death)
+	{ 0, (const u8[]){ASCR_CHGANI, PlayerAnim_Dead3}}, //PlayerAnim_Death1 (legacy: retry idle)
+	{ 0, (const u8[]){ASCR_CHGANI, PlayerAnim_Dead6}}, //PlayerAnim_Death2 (legacy: confirm)
 };
 
 //Boyfriend player functions
@@ -507,6 +513,7 @@ Character *Char_Apple_New(fixed_t x, fixed_t y, fixed_t scale)
 	
 	//Set character information
 	this->character.spec = CHAR_SPEC_MISSANIM;
+	this->character.death_simple = false;
 	
 	memcpy(this->character.health_i, char_apple_icons, sizeof(char_apple_icons));
 	
@@ -554,6 +561,12 @@ Character *Char_Apple_New(fixed_t x, fixed_t y, fixed_t scale)
 		FIXED_DEC(3,10), FIXED_DEC(69,1000));
 	Character_GhostSetNoHealthbarColor((Character*)this, true);
 	Character_TrailSetActive((Character*)this, false);
+	
+	//Miss sounds into this player's own bank (a random one plays per miss;
+	//no death sounds on apple, bank slots stay empty and silent)
+	Character_LoadVagSound((Character*)this, CHARACTER_VAG_MISS0, "\\SOUNDS\\MISS1.VAG;1");
+	Character_LoadVagSound((Character*)this, CHARACTER_VAG_MISS1, "\\SOUNDS\\MISS2.VAG;1");
+	Character_LoadVagSound((Character*)this, CHARACTER_VAG_MISS2, "\\SOUNDS\\MISS3.VAG;1");
 	
 	//Initialize player state
 	this->retry_bump = 0;
