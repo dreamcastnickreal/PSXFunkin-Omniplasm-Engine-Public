@@ -74,6 +74,14 @@
 				<!-- Background art -->
 				<file name = "back.arc" type = "data" source = "iso/stages/trio/back.arc"/>
 			</dir>
+			
+			<dir name = "stars">
+				<!-- Background art -->
+				<file name = "act1.arc" type = "data" source = "iso/stages/stars/act1.arc"/>
+				<file name = "act2.arc" type = "data" source = "iso/stages/stars/act2.arc"/>
+				<file name = "act3.arc" type = "data" source = "iso/stages/stars/act3.arc"/>
+				<file name = "act4.arc" type = "data" source = "iso/stages/stars/act4.arc"/>
+			</dir>
 
 			<!-- Extra Mods assets -->
 			<dir name = "chart">

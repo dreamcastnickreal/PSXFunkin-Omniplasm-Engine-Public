@@ -59,6 +59,10 @@ all: \
 	iso/stages/kitchen/handa.arc \
 	iso/stages/kitchen/handb.arc \
 	iso/stages/kitchen/handc.arc \
+	iso/stages/stars/act1.arc \
+	iso/stages/stars/act2.arc \
+	iso/stages/stars/act3.arc \
+	iso/stages/stars/act4.arc \
 
 iso/%.tim: iso/%.png
 	tools/funkintimconv/funkintimconv $@ $<
@@ -144,6 +148,18 @@ iso/stages/kitchen/back.arc: iso/stages/kitchen/back0.tim iso/stages/kitchen/bac
 iso/stages/kitchen/handa.arc: iso/stages/kitchen/handa.tim 
 iso/stages/kitchen/handb.arc: iso/stages/kitchen/handb.tim
 iso/stages/kitchen/handc.arc: iso/stages/kitchen/handc.tim
+
+# Stars Act 1
+iso/stages/stars/act1.arc: iso/stages/stars/act1/bg.tim iso/stages/stars/act1/blend.tim iso/stages/stars/act1/fg.tim iso/stages/stars/act1/floor.tim iso/stages/stars/act1/p1.tim iso/stages/stars/act1/p2tran0.tim iso/stages/stars/act1/p2tran1.tim iso/stages/stars/act1/p2tran2.tim iso/stages/stars/act1/p2tran3.tim iso/stages/stars/act1/sky.tim iso/stages/stars/act1/sl.tim iso/stages/stars/act1/stat0.tim iso/stages/stars/act1/stat1.tim
+
+# Stars Act 2
+iso/stages/stars/act2.arc: iso/stages/stars/act2/blend.tim iso/stages/stars/act2/close.tim iso/stages/stars/act2/far.tim iso/stages/stars/act2/p2.tim iso/stages/stars/act2/pipelr.tim iso/stages/stars/act2/pipem.tim iso/stages/stars/act2/scroll.tim iso/stages/stars/act2/stat0.tim iso/stages/stars/act2/stat1.tim
+
+# Stars Act 3
+iso/stages/stars/act3.arc: iso/stages/stars/act3/arm.tim iso/stages/stars/act3/body0.tim iso/stages/stars/act3/body1.tim iso/stages/stars/act3/body2.tim iso/stages/stars/act3/body3.tim iso/stages/stars/act3/body4.tim iso/stages/stars/act3/body5.tim iso/stages/stars/act3/body6.tim iso/stages/stars/act3/body7.tim iso/stages/stars/act3/body8.tim iso/stages/stars/act3/body9.tim iso/stages/stars/act3/body10.tim iso/stages/stars/act3/eyes.tim iso/stages/stars/act3/headp10.tim iso/stages/stars/act3/headp11.tim iso/stages/stars/act3/headp12.tim iso/stages/stars/act3/headp13.tim iso/stages/stars/act3/headp14.tim iso/stages/stars/act3/headp15.tim iso/stages/stars/act3/headp16.tim iso/stages/stars/act3/headp17.tim iso/stages/stars/act3/headp18.tim iso/stages/stars/act3/headp19.tim iso/stages/stars/act3/headp20.tim iso/stages/stars/act3/headp21.tim iso/stages/stars/act3/headp22.tim iso/stages/stars/act3/headp23.tim iso/stages/stars/act3/headp24.tim iso/stages/stars/act3/headp25.tim iso/stages/stars/act3/headp26.tim iso/stages/stars/act3/headp27.tim iso/stages/stars/act3/headp28.tim iso/stages/stars/act3/headp29.tim iso/stages/stars/act3/headp110.tim iso/stages/stars/act3/headp210.tim iso/stages/stars/act3/headp211.tim iso/stages/stars/act3/headp212.tim iso/stages/stars/act3/headp213.tim iso/stages/stars/act3/hills.tim iso/stages/stars/act3/p3.tim iso/stages/stars/act3/pipe.tim iso/stages/stars/act3/spot.tim iso/stages/stars/act3/stat0.tim iso/stages/stars/act3/stat1.tim
+
+# Stars Act 4
+iso/stages/stars/act4.arc: iso/stages/stars/act4/dead0.tim iso/stages/stars/act4/dead1.tim iso/stages/stars/act4/dead2.tim iso/stages/stars/act4/dead3.tim iso/stages/stars/act4/dead4.tim iso/stages/stars/act4/dead5.tim iso/stages/stars/act4/dead6.tim iso/stages/stars/act4/dead7.tim iso/stages/stars/act4/dead8.tim iso/stages/stars/act4/dead9.tim iso/stages/stars/act4/exe.tim iso/stages/stars/act4/go.tim iso/stages/stars/act4/light.tim iso/stages/stars/act4/mem.tim iso/stages/stars/act4/obj.tim iso/stages/stars/act4/pipe.tim iso/stages/stars/act4/rip0.tim iso/stages/stars/act4/rip1.tim iso/stages/stars/act4/rip2.tim iso/stages/stars/act4/stat0.tim iso/stages/stars/act4/stat1.tim iso/stages/stars/act4/strike0.tim iso/stages/stars/act4/strike1.tim iso/stages/stars/act4/strike2.tim
 
 clean:
 	echo "Cleaning .arc and .tim files:"

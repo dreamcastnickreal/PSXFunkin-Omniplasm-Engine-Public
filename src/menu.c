@@ -907,12 +907,13 @@ void Menu_Tick(void)
 				//Select option if cross is pressed
 				if (pad_state.press & (PAD_START | PAD_CROSS))
 				{
-					//play confirm sound
-					Audio_PlaySound(Sounds[1], 0x3fff);
-					menu.previous_page = MenuPage_Story;
-					menu.next_page = MenuPage_Stage;
-					menu.page_param.stage.id = menu_options[menu.select].stage;
-					menu.page_param.stage.story = true;
+				//play confirm sound
+				Audio_PlaySound(Sounds[1], 0x3fff);
+				//NOTE: previous_page intentionally left alone (still the
+				//parent menu) so CIRCLE keeps working after a swap cancel.
+				menu.next_page = MenuPage_Stage;
+				menu.page_param.stage.id = menu_options[menu.select].stage;
+				menu.page_param.stage.story = true;
 					menu.trans_time = FIXED_UNIT;
 					menu.page_state.title.fade = FIXED_DEC(255,1);
 					menu.page_state.title.fadespd = FIXED_DEC(510,1);
@@ -1098,12 +1099,13 @@ void Menu_Tick(void)
 				//Select option if cross is pressed
 				if (pad_state.press & (PAD_START | PAD_CROSS))
 				{
-					//play confirm sound
-					Audio_PlaySound(Sounds[1], 0x3fff);
-					menu.previous_page = MenuPage_Freeplay;
-					menu.next_page = MenuPage_Stage;
-					menu.page_param.stage.id = menu_options[menu.select].stage;
-					menu.page_param.stage.story = false;
+				//play confirm sound
+				Audio_PlaySound(Sounds[1], 0x3fff);
+				//NOTE: previous_page intentionally left alone (still the
+				//parent menu) so CIRCLE keeps working after a swap cancel.
+				menu.next_page = MenuPage_Stage;
+				menu.page_param.stage.id = menu_options[menu.select].stage;
+				menu.page_param.stage.story = false;
 					Trans_Start();
 				}
 				
@@ -1464,37 +1466,81 @@ void Menu_Tick(void)
 			if (currentDisc != required_disc)
 				disc_swap_needed = true;
 			
-			// If disc swap is needed, handle the swap process
-			if (disc_swap_needed)
+		// If disc swap is needed, handle the swap process
+		if (disc_swap_needed)
+		{
+			int swap_result = 0;
+			boolean choice_made;
+			while (!disc_swap_cancelled && currentDisc != required_disc)
 			{
-				while (!disc_swap_cancelled && currentDisc != required_disc)
+				char message[100];
+				sprintf(message, "Please insert disc %d.", required_disc);
+				DisplayMessage(message);
+
+				swap_result = HandleDiscSwap();
+				if (swap_result == DISC_SWAP_CANCELLED)
 				{
-					char message[100];
-					sprintf(message, "Please insert disc %d.", required_disc);
+					disc_swap_cancelled = true;
+				}
+				else if (currentDisc != required_disc)
+				{
+					//Swap finished without the needed disc in the drive
+					//(wrong disc or unreadable media). Wait for an
+					//explicit choice instead of spinning: CROSS retries,
+					//CIRCLE backs out to song select.
+					if (swap_result == 0)
+						sprintf(message, "Wrong disc. Need disc %d.", required_disc);
+					else
+						sprintf(message, "Could not read disc. Need disc %d.", required_disc);
 					DisplayMessage(message);
 
-					if (HandleDiscSwap() != 0)
-						disc_swap_cancelled = true;
-
-					if (!disc_swap_cancelled && currentDisc != required_disc)
+					choice_made = false;
+					while (!choice_made)
 					{
-						sprintf(message, "Wrong disc. Need disc %d.", required_disc);
-						DisplayMessage(message);
 						Pad_Update();
-						VSync(0);
+						if (pad_state.press & PAD_CIRCLE)
+						{
+							disc_swap_cancelled = true;
+							choice_made = true;
+						}
+						else if (pad_state.press & (PAD_CROSS | PAD_START))
+						{
+							choice_made = true;
+						}
+						else
+						{
+							VSync(0);
+						}
 					}
 				}
 			}
-			
-			// Check if disc swap was cancelled or user wants to go back
-			if (disc_swap_cancelled || (pad_state.press & PAD_CIRCLE))
-			{
-				//play cancel sound
-				Audio_PlaySound(Sounds[2], 0x3fff);
-				menu.next_page = menu.previous_page;
-				Trans_Start();
-				break;
+		}
+		
+		// Check if disc swap was cancelled or user wants to go back
+		if (disc_swap_cancelled || (pad_state.press & PAD_CIRCLE))
+		{
+			//play cancel sound
+			Audio_PlaySound(Sounds[2], 0x3fff);
+			//CdSwitchDisc stops XA: bring the menu music back for the
+			//disc that's actually in the drive, then go back.
+			//(Fire-and-forget: no WaitPlayXA, so an empty drive can't
+			//hang here; the main loop keeps XA running once readable.)
+			CheckCurrentDisc();
+			if (currentDisc == 1) {
+				Audio_PlayXA_TrackDisc1(XA_GettinFreaky_Disc1, 0x40, 0, true, 0);
+			} else if (currentDisc == 2) {
+				Audio_PlayXA_TrackDisc2(XA_GettinFreaky_Disc2, 0x40, 0, true, 0);
+			} else {
+				Audio_PlayXA_TrackDisc3(XA_GettinFreaky_Disc3, 0x40, 0, true, 0);
 			}
+			menu.page = menu.next_page = menu.page_param.stage.story ? MenuPage_Story : MenuPage_Freeplay;
+			//Return instantly with a clean transition state: the swap
+			//prompt drew over a cleared screen, so there is nothing to
+			//fade out from. Trans_Start here would play a fade-out AND a
+			//fade-in back-to-back that lock menu inputs in between.
+			Trans_Clear();
+			break;
+		}
 			
 			Menu_Unload();
 			LoadScr_Start();

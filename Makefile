@@ -71,6 +71,7 @@ SRCS = src/main.c \
        src/stage/week2.c \
        src/stage/week3.c \
        src/stage/trio.c \
+	   src/stage/stars_act1.c \
        src/stage/kitchen.c \
        src/animation.c \
        src/character.c \
@@ -171,7 +172,8 @@ DISC2_INCLUDE = \
        src/character/menugf.c \
        src/character/exep3.c \
        src/character/ultram.c \
-       src/stage/trio.c
+       src/stage/trio.c \
+	   src/stage/stars_act1.c 
 
 # Disc3 extras (used on disc3)
 DISC3_INCLUDE = \

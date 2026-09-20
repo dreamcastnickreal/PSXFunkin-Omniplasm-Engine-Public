@@ -173,7 +173,7 @@
 		{Char_GF_New,     FIXED_DEC(0,1),  FIXED_DEC(-10,1), FIXED_DEC(1,1)},
 		
 		//Stage background
-		Back_Dummy_New,
+		Back_Stars_Act1_New,
 		
 		//Camera Offset (X, Y, Scale)
 		FIXED_DEC(0,1), FIXED_DEC(0,1), FIXED_DEC(1,1),

@@ -115,6 +115,15 @@ void IO_Quit(void)
 	
 }
 
+//Drop every cached file location. Must be called across a disc swap:
+//entries are tagged with the old currentDisc, so without this the new
+//disc is never actually probed and the old disc keeps "matching".
+void IO_ClearFileCache(void)
+{
+	memset(io_file_cache, 0, sizeof(io_file_cache));
+	io_file_cache_next = 0;
+}
+
 boolean IO_ExistFile(const char* path)
 {
 	CdlFILE file;

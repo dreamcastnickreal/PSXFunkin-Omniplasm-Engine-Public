@@ -47,6 +47,8 @@ extern FileNode2 *fileList2;
 
 int HandleDiscSwap(void);
 void DiscSwap_SetScreenAssets(Gfx_Tex *back, Gfx_Tex *disc, FontData *title_font, FontData *body_font);
+//Return value of HandleDiscSwap()/CdSwitchDisc() when the user backs out
+#define DISC_SWAP_CANCELLED 1
 int UserPressedButton(void);
 int CdSwitchDisc(void);
 int CheckDiscIndicator(void);

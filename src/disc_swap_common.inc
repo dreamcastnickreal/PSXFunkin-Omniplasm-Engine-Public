@@ -9,7 +9,9 @@
 
 #define DISC_SWAP_READY_TIMEOUT 900
 #define DISC_SWAP_SETTLE_FRAMES 45
+#ifndef DISC_SWAP_CANCELLED
 #define DISC_SWAP_CANCELLED 1
+#endif
 #define DISC_SWAP_OPEN_TIMEOUT 900
 #define DISC_SWAP_CHECK_RETRIES 5
 
@@ -94,10 +96,18 @@ static boolean DiscSwap_DriveOpen(void)
 	return (DiscSwap_ReadStatus() & CdlStatShellOpen) != 0;
 }
 
-static void DiscSwap_WaitFrames(int frames)
+//Bounded wait that also bails the moment CIRCLE is tapped, so a single
+//cancel press works anywhere in the swap flow instead of being
+//swallowed by a blind wait (which forced pressing twice).
+static boolean DiscSwap_WaitFramesOrCancel(int frames)
 {
 	while (frames-- > 0)
+	{
 		DiscSwap_Service();
+		if (pad_state.press & PAD_CIRCLE)
+			return true;
+	}
+	return false;
 }
 
 static void DiscSwap_WaitForButtonRelease(void)
@@ -160,7 +170,7 @@ int CdTrayReq(int req, void* param)
 	return DiscSwap_DriveOpen() ? CdlTrayOpen : CdlTrayClose;
 }
 
-static boolean DiscSwap_WaitForDriveReady(int timeout)
+static boolean DiscSwap_WaitForDriveReady(int timeout, boolean *cancelled)
 {
 	int ready;
 
@@ -173,12 +183,17 @@ static boolean DiscSwap_WaitForDriveReady(int timeout)
 				return true;
 		}
 		DiscSwap_Service();
+		if (pad_state.press & PAD_CIRCLE)
+		{
+			*cancelled = true;
+			return false;
+		}
 	}
 
 	return false;
 }
 
-static boolean DiscSwap_ResetChangedDisc(void)
+static boolean DiscSwap_ResetChangedDisc(boolean *cancelled)
 {
 	u8 result[8];
 
@@ -186,28 +201,44 @@ static boolean DiscSwap_ResetChangedDisc(void)
 	CdReadBreak();
 	CdControlB(CdlPause, NULL, NULL);
 	CdSync(0, NULL);
-	DiscSwap_WaitFrames(DISC_SWAP_SETTLE_FRAMES);
+	if (DiscSwap_WaitFramesOrCancel(DISC_SWAP_SETTLE_FRAMES))
+	{
+		*cancelled = true;
+		return false;
+	}
 
 	CdInit();
 	CdSync(0, NULL);
-	DiscSwap_WaitFrames(DISC_SWAP_SETTLE_FRAMES);
+	if (DiscSwap_WaitFramesOrCancel(DISC_SWAP_SETTLE_FRAMES))
+	{
+		*cancelled = true;
+		return false;
+	}
 
-	if (!DiscSwap_WaitForDriveReady(DISC_SWAP_READY_TIMEOUT))
+	if (!DiscSwap_WaitForDriveReady(DISC_SWAP_READY_TIMEOUT, cancelled))
 		return false;
 
 	CdControlB(CdlStandby, NULL, NULL);
 	CdSync(0, NULL);
-	DiscSwap_WaitFrames(DISC_SWAP_SETTLE_FRAMES);
+	if (DiscSwap_WaitFramesOrCancel(DISC_SWAP_SETTLE_FRAMES))
+	{
+		*cancelled = true;
+		return false;
+	}
 
 	// Force a TOC read; emulators like DuckStation refresh the swapped image here.
 	CdControlB(CdlGetTN, NULL, result);
 	CdSync(0, NULL);
-	DiscSwap_WaitFrames(DISC_SWAP_SETTLE_FRAMES);
+	if (DiscSwap_WaitFramesOrCancel(DISC_SWAP_SETTLE_FRAMES))
+	{
+		*cancelled = true;
+		return false;
+	}
 
 	return true;
 }
 
-static int DiscSwap_DetectReadyDisc(void)
+static int DiscSwap_DetectReadyDisc(boolean *cancelled)
 {
 	int retry;
 	int detected_disc;
@@ -215,10 +246,16 @@ static int DiscSwap_DetectReadyDisc(void)
 	for (retry = 0; retry < DISC_SWAP_CHECK_RETRIES; retry++)
 	{
 		DisplayMessage("Initializing new disc...");
-		if (!DiscSwap_ResetChangedDisc())
+		if (!DiscSwap_ResetChangedDisc(cancelled))
 		{
+			if (*cancelled)
+				return 0;
 			DisplayMessage("Waiting for disc drive...");
-			DiscSwap_WaitFrames(60);
+			if (DiscSwap_WaitFramesOrCancel(60))
+			{
+				*cancelled = true;
+				return 0;
+			}
 			continue;
 		}
 
@@ -228,7 +265,11 @@ static int DiscSwap_DetectReadyDisc(void)
 			return detected_disc;
 
 		DisplayMessage("Disc ID not found, retrying...");
-		DiscSwap_WaitFrames(60);
+		if (DiscSwap_WaitFramesOrCancel(60))
+		{
+			*cancelled = true;
+			return 0;
+		}
 	}
 
 	return 0;
@@ -239,6 +280,7 @@ int CdSwitchDisc(void)
 	int timeout;
 	int detected_disc;
 	boolean saw_open = false;
+	boolean detect_cancelled = false;
 
 	DisplayMessage("Insert requested disc, then close lid.");
 
@@ -246,7 +288,9 @@ int CdSwitchDisc(void)
 	CdControlB(CdlPause, NULL, NULL);
 	CdSync(0, 0);
 
-	DiscSwap_WaitForButtonRelease();
+	//NOTE: no WaitForButtonRelease here on purpose. Draining input at
+	//entry eats a CIRCLE tap aimed at this prompt, forcing the user to
+	//press twice. A stale edge cannot exist here (song pick uses CROSS).
 	for (timeout = 0; timeout < DISC_SWAP_OPEN_TIMEOUT; timeout++)
 	{
 		if (DiscSwap_DriveOpen())
@@ -279,11 +323,24 @@ int CdSwitchDisc(void)
 		}
 	}
 
-	detected_disc = DiscSwap_DetectReadyDisc();
+	//The lid is closed on a (possibly) new disc. Drop cached file
+	//locations from the old disc so detection below probes the drive
+	//instead of matching the previous disc from cache.
+	IO_ClearFileCache();
+
+	detected_disc = DiscSwap_DetectReadyDisc(&detect_cancelled);
+	if (detect_cancelled)
+	{
+		DiscSwap_WaitForButtonRelease();
+		return DISC_SWAP_CANCELLED;
+	}
 	if (detected_disc != 0)
 	{
 		currentDisc = detected_disc;
 
+		//Forget anything cached mid-detection under the old disc tag,
+		//then re-learn XA locations from the new disc.
+		IO_ClearFileCache();
 		Audio_ReloadXAFiles();
 		return 0;
 	}

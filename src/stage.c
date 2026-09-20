@@ -103,6 +103,7 @@ static u32 Sounds[7];
 #include "stage/week2.h"
 #include "stage/week3.h"
 #include "stage/trio.h"
+#include "stage/stars_act1.h"
 #include "stage/kitchen.h"
 
 static const StageDef stage_defs[STAGE_DEF_COUNT] = {

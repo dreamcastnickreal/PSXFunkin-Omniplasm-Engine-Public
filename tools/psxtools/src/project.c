@@ -11,6 +11,8 @@
 
 #include "project.h"
 
+#include <dirent.h>
+
 #define SCREEN_WIDTH  320
 #define SCREEN_HEIGHT 240
 #define SCREEN_CX     (SCREEN_WIDTH/2)
@@ -323,6 +325,162 @@ static void sprite_free(Sprite *s)
 	free(s->dyn_x);
 	free(s->dyn_y);
 	free(s);
+}
+
+// ---- Omni stage texture search (anywhere under iso/stages/) ----
+// Omni stage C files live in src/stage/ while their PNG sources live
+// anywhere under iso/stages/ (iso/stages/trio/, iso/stages/stars/act1/
+// ...), so week_dir (the C file's folder) cannot find them. Search the
+// whole iso/stages tree for <base>.png instead, preferring hits whose
+// folder matches the ARC the texture loads from (this disambiguates
+// same-named files such as act1/act2 blend.png).
+
+static bool file_exists(const char *path)
+{
+	FILE *f = fopen(path, "rb");
+	if (!f) return false;
+	fclose(f);
+	return true;
+}
+
+static void str_tolower(char *s)
+{
+	for (; *s; s++) *s = (char)tolower((unsigned char)*s);
+}
+
+//Split an engine ARC path like "\STARS\ACT1.ARC;1" into lowercased
+//folder + file-basename tokens (no extension, no ;1 version).
+static void omni_arc_tokens(const char *arc, char *dir_tok, size_t dir_sz,
+                            char *file_tok, size_t file_sz)
+{
+	char tmp[512];
+	char *parts[16];
+	int n = 0;
+	char *p;
+
+	dir_tok[0] = 0;
+	file_tok[0] = 0;
+	if (!arc || !arc[0])
+		return;
+	snprintf(tmp, sizeof(tmp), "%s", arc);
+	if ((p = strchr(tmp, ';')) != NULL)
+		*p = 0;
+	for (p = strtok(tmp, "/\\"); p && n < 16; p = strtok(NULL, "/\\"))
+		parts[n++] = p;
+	if (n == 0)
+		return;
+	{
+		char *last = parts[n - 1];
+		char *dot = strrchr(last, '.');
+		size_t L = dot ? (size_t)(dot - last) : strlen(last);
+		if (L >= file_sz)
+			L = file_sz - 1;
+		memcpy(file_tok, last, L);
+		file_tok[L] = 0;
+		str_tolower(file_tok);
+	}
+	if (n >= 2)
+	{
+		snprintf(dir_tok, dir_sz, "%s", parts[n - 2]);
+		str_tolower(dir_tok);
+	}
+}
+
+typedef struct
+{
+	char want[128];     // lowercased "<base>.png"
+	char dir_tok[64];   // lowercased ARC folder, e.g. "act1"
+	char file_tok[64];  // lowercased ARC basename, e.g. "act1"
+	char best[2048];    // best full path found so far
+	int best_score;
+} OmniSearch;
+
+static void omni_search_dir(const char *dir, OmniSearch *st, int depth)
+{
+	DIR *d;
+	struct dirent *e;
+
+	if (depth > 8 || !dir || !dir[0] || !st)
+		return;
+	d = opendir(dir);
+	if (!d)
+		return;
+	while ((e = readdir(d)) != NULL)
+	{
+		char full[2048];
+		char low[260];
+		bool is_want = false;
+
+		if (strcmp(e->d_name, ".") == 0 || strcmp(e->d_name, "..") == 0)
+			continue;
+		snprintf(full, sizeof(full), "%s/%s", dir, e->d_name);
+
+		//match <want>.png (case-insensitive)
+		snprintf(low, sizeof(low), "%s", e->d_name);
+		str_tolower(low);
+		if (strcmp(low, st->want) == 0 && file_exists(full))
+		{
+			char flow[2048];
+			int score = 0;
+			snprintf(flow, sizeof(flow), "%s", full);
+			str_tolower(flow);
+			if (st->dir_tok[0] && strstr(flow, st->dir_tok))
+				score += 2;
+			if (st->file_tok[0] && strstr(flow, st->file_tok))
+				score += 1;
+			if (score > st->best_score)
+			{
+				st->best_score = score;
+				snprintf(st->best, sizeof(st->best), "%s", full);
+			}
+			is_want = true;
+		}
+
+		//recurse into subdirectories
+		if (!is_want && st->best_score < 3)
+		{
+			DIR *sub = opendir(full);
+			if (sub)
+			{
+				closedir(sub);
+				omni_search_dir(full, st, depth + 1);
+			}
+		}
+		if (st->best_score >= 3)
+			break;
+	}
+	closedir(d);
+}
+
+//Resolve an omni stage texture to a source PNG: search anywhere under
+//<project_root>/iso/stages for <base>.png, preferring the ARC folder
+//match. Falls back to the legacy week_dir/base.png when not found.
+static char *omni_resolve_tex_path(Project *pr, const char *base,
+                                   const char *arc)
+{
+	const char *wd = (pr && pr->week_dir) ? pr->week_dir : ".";
+	char fallback[2048];
+	char root[2048];
+	OmniSearch st;
+
+	snprintf(fallback, sizeof(fallback), "%s/%s.png", wd, base ? base : "");
+
+	if (!pr || pr->kind != PROJ_OMNI_STAGE || !pr->project_root ||
+	    !base || !base[0])
+		return xstrdup(fallback);
+
+	memset(&st, 0, sizeof(st));
+	snprintf(st.want, sizeof(st.want), "%s.png", base);
+	str_tolower(st.want);
+	omni_arc_tokens(arc, st.dir_tok, sizeof(st.dir_tok),
+	                st.file_tok, sizeof(st.file_tok));
+
+	snprintf(root, sizeof(root), "%s/iso/stages", pr->project_root);
+	omni_search_dir(root, &st, 0);
+
+	if (st.best[0] != 0)
+		return xstrdup(st.best);
+	return xstrdup(fallback);
 }
 
 // ================= Omniplasm src/stage/*.c support =================
@@ -928,14 +1086,11 @@ static void omni_parse_draws(Project *pr, const char *body, StageLayer layer,
 				s->arc = xstrdup(lm->c);
 				char tb[128];
 				tim_base(lm->b, tb, sizeof(tb));
-				s->base = xstrdup(tb);
-				s->name = xstrdup(tb);
-				s->var_name = xstrdup(field);
-				{
-					char path[2048];
-					snprintf(path, sizeof(path), "%s/%s.png", pr->week_dir, tb);
-					s->tex_path = xstrdup(path);
-				}
+			s->base = xstrdup(tb);
+			s->name = xstrdup(tb);
+			s->var_name = xstrdup(field);
+			//source PNG may live anywhere under iso/stages/
+			s->tex_path = omni_resolve_tex_path(pr, tb, lm->c);
 				double sv[4] = {0, 0, 0, 0};
 				if (omni_find_src(body, srcvar, sv))
 				{
@@ -1472,11 +1627,8 @@ static void omni_anim_instance(Project *pr, AnimSet *a, const char *body,
 	s->tim = xstrdup((f0->tex >= 0 && f0->tex < a->tim_count && a->tims[f0->tex])
 	                 ? a->tims[f0->tex] : "");
 	s->arc = xstrdup(a->arc_path ? a->arc_path : "");
-	{
-		char path[2048];
-		snprintf(path, sizeof(path), "%s/%s.png", pr->week_dir, tb);
-		s->tex_path = xstrdup(path);
-	}
+	//source PNG may live anywhere under iso/stages/
+	s->tex_path = omni_resolve_tex_path(pr, tb, a->arc_path);
 	double px, py;
 	parallax_at_line(body, (int)line, &px, &py);
 	s->par_x = px;
